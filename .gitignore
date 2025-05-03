@@ -1,0 +1,27 @@
+# Python bytecode
+
+**pycache**/
+\*.py\[cod]
+\*\$py.class
+
+# Django SQLite database
+
+/db.sqlite3
+
+# Environment variables
+
+.env
+
+# Virtual environments
+
+venv/
+.venv/
+
+# IDE/editor settings
+
+.vscode/
+.idea/
+
+# Logs
+
+\*.log

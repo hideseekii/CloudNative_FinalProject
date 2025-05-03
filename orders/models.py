@@ -81,32 +81,3 @@ class OrderItem(models.Model):
         return f"訂單 #{self.order.order_id} 的品項 {self.dish.name_zh} x{self.quantity}"
 
 
-class Review(models.Model):
-    review_id = models.AutoField(primary_key=True)
-    user      = models.ForeignKey(
-                    settings.AUTH_USER_MODEL,
-                    on_delete=models.CASCADE,
-                    related_name='reviews'
-                )
-    dish      = models.ForeignKey(
-                    Dish,
-                    on_delete=models.CASCADE,
-                    related_name='reviews'
-                )
-    order     = models.ForeignKey(
-                    Order,
-                    on_delete=models.CASCADE,
-                    related_name='reviews'
-                )
-    rating    = models.PositiveSmallIntegerField(
-                    '星等評分',
-                    validators=[MinValueValidator(0), MaxValueValidator(5)]
-                )
-    comment   = models.TextField('文字評價', blank=True)
-    created   = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ('user', 'dish', 'order')
-
-    def __str__(self):
-        return f"{self.user.username} 評價 {self.dish.name_zh}: {self.rating} 星"
