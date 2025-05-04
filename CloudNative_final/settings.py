@@ -43,6 +43,10 @@ INSTALLED_APPS = [
     'reviews',
 ]
 
+# 登入後的跳轉
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/users/login/'
+
 AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
@@ -60,17 +64,25 @@ ROOT_URLCONF = 'CloudNative_final.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        # 指向專案根的 templates 資料夾
+        'DIRS': [ BASE_DIR / 'templates' ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                # 以下四行 Admin 與一般 template 都需要
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # 其他如 i18n 或 staticfiles（若有需要）
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
             ],
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'CloudNative_final.wsgi.application'
 
