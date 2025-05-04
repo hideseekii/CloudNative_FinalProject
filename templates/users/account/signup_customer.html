@@ -1,0 +1,12 @@
+<!-- templates/users/signup_customer.html -->
+{% extends "base.html" %}
+{% block title %}顧客註冊{% endblock %}
+{% block content %}
+  <h2>顧客註冊</h2>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">註冊為顧客</button>
+  </form>
+  <p>或註冊為員工？<a href="{% url 'signup_staff' %}">點此</a></p>
+{% endblock %}
