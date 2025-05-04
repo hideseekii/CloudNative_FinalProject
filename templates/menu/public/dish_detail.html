@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ dish.name_zh }} 詳細資訊</title>
+  <style>
+    .container { max-width: 600px; margin: auto; }
+    img { max-width: 100%; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>{{ dish.name_zh }} / {{ dish.name_en }}</h1>
+    <p><strong>價格：</strong>NT${{ dish.price }}</p>
+
+    {% if dish.image_url %}
+      <img src="{{ dish.image_url }}" alt="{{ dish.name_zh }}">
+    {% endif %}
+
+    <h3>菜品描述（中文）</h3>
+    <p>{{ dish.description_zh }}</p>
+
+    <h3>菜品描述（英文）</h3>
+    <p>{{ dish.description_en }}</p>
+
+    <p><a href="{% url 'menu:dish_list' %}">← 回列表</a></p>
+  </div>
+</body>
+</html>
