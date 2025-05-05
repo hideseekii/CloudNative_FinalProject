@@ -43,9 +43,13 @@ INSTALLED_APPS = [
     'reviews',
 ]
 
+# 建議添加這些設置
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # 關閉瀏覽器時過期
+SESSION_COOKIE_AGE = 60  # session cookie 有效期為 1 天（以秒為單位）
+
 # 登入後的跳轉
 LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/users/login/'
+LOGOUT_REDIRECT_URL = '/'  # 改為根路徑，即首頁
 
 AUTH_USER_MODEL = 'users.User'
 

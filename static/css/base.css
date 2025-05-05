@@ -1,0 +1,128 @@
+/* 將此文件放在 static/css/base.css */
+
+/* 全局樣式 */
+body {
+    font-family: 'Segoe UI', '微軟正黑體', sans-serif;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* 導航欄樣式 */
+.navbar {
+    padding: 15px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.navbar-brand img {
+    margin-right: 10px;
+}
+
+.nav-link {
+    font-weight: 500;
+    padding: 8px 15px !important;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    color: #e67e22 !important;
+}
+
+/* 頁尾樣式 */
+.footer {
+    background-color: #212529;
+    color: #fff;
+}
+
+.footer h5 {
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.footer p {
+    margin-bottom: 10px;
+}
+
+.footer i {
+    margin-right: 10px;
+}
+
+.social-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+    background-color: #e67e22;
+    transform: translateY(-3px);
+}
+
+/* 按鈕樣式 */
+.btn-primary {
+    background-color: #e67e22;
+    border-color: #e67e22;
+}
+
+.btn-primary:hover {
+    background-color: #d35400;
+    border-color: #d35400;
+}
+
+.btn-outline-primary {
+    color: #e67e22;
+    border-color: #e67e22;
+}
+
+.btn-outline-primary:hover {
+    background-color: #e67e22;
+    color: white;
+}
+
+/* 響應式調整 */
+@media (max-width: 992px) {
+    .navbar-nav {
+        margin-top: 10px;
+    }
+}
+
+/* 訊息提示樣式 */
+.alert {
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+    color: #856404;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}

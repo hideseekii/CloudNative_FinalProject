@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}歡迎光臨我們的餐廳{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">歡迎光臨</h1>
+        <p class="hero-subtitle">品味美食，享受生活</p>
+        <div class="hero-buttons">
+            <a href="{% url 'menu:dish_list' %}" class="btn btn-primary">瀏覽菜單</a>
+            <a href="#" class="btn btn-secondary">立即訂位</a>
+        </div>
+    </div>
+</div>
+
+<div class="features-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <div class="feature-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <h3>精緻美食</h3>
+                    <p>我們提供各式各樣的美食選擇，從傳統到創新，滿足您的味蕾。</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>線上訂位</h3>
+                    <p>輕鬆在線預約您的座位，避免等待，提前規劃您的用餐體驗。</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>會員專享</h3>
+                    <p>加入我們的會員計劃，享受獨家優惠和特別活動。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="about-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h2>關於我們</h2>
+                <p>我們的餐廳創立於2010年，致力於提供高品質的餐飲服務和舒適的用餐環境。我們的廚師團隊擁有豐富的經驗，精心挑選食材，為您準備最美味的料理。</p>
+                <p>無論是商務聚餐、家庭聚會還是浪漫約會，我們都能為您創造難忘的用餐體驗。</p>
+                <a href="#" class="btn btn-outline-primary">了解更多</a>
+            </div>
+            <div class="col-md-6">
+                <div class="about-image">
+                    <!-- 這裡放餐廳照片 -->
+                    <!-- <img src="{% static 'img/restaurant.jpg' %}" alt="餐廳照片" class="img-fluid"> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="special-offers-section">
+    <div class="container">
+        <h2 class="text-center">本週特惠</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="offer-card">
+                    <div class="offer-image">
+                        <!-- <img src="{% static 'img/special1.jpg' %}" alt="特惠菜單" class="img-fluid"> -->
+                    </div>
+                    <div class="offer-content">
+                        <h3>雙人套餐</h3>
+                        <p>特價 NT$999，含前菜、主菜、甜點和飲料。</p>
+                        <a href="{% url 'menu:dish_list' %}" class="btn btn-sm btn-primary">查看詳情</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="offer-card">
+                    <div class="offer-image">
+                        <!-- <img src="{% static 'img/special2.jpg' %}" alt="特惠菜單" class="img-fluid"> -->
+                    </div>
+                    <div class="offer-content">
+                        <h3>商業午餐</h3>
+                        <p>週一至週五限定，只要 NT$299。</p>
+                        <a href="{% url 'menu:dish_list' %}" class="btn btn-sm btn-primary">查看詳情</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="offer-card">
+                    <div class="offer-image">
+                        <!-- <img src="{% static 'img/special3.jpg' %}" alt="特惠菜單" class="img-fluid"> -->
+                    </div>
+                    <div class="offer-content">
+                        <h3>會員日</h3>
+                        <p>每月第一個週三，會員享有全單8折優惠。</p>
+                        <a href="#" class="btn btn-sm btn-primary">成為會員</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="testimonials-section bg-light py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">顧客評價</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"料理非常美味，服務也很貼心，是我最喜歡的餐廳之一。"</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <p>- 陳小姐</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"環境很舒適，是商業洽談的好地方，我的客戶都很滿意。"</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <p>- 林先生</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"每次來都能嚐到不同的美食，廚師的創意令人驚艷。"</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <p>- 王先生</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="contact-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h2>聯絡我們</h2>
+                <p><i class="fas fa-map-marker-alt"></i> 地址：台北市信義區松高路123號</p>
+                <p><i class="fas fa-phone"></i> 電話：(02) 1234-5678</p>
+                <p><i class="fas fa-envelope"></i> 信箱：info@restaurant.com</p>
+                <div class="opening-hours">
+                    <h3>營業時間</h3>
+                    <p>週一至週五：11:30 - 22:00</p>
+                    <p>週六至週日：11:00 - 23:00</p>
+                </div>
+                <div class="social-links mt-3">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-line"></i></a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="map-container">
+                    <!-- 這裡可以放置 Google 地圖嵌入碼 -->
+                    <!-- <img src="{% static 'img/map.jpg' %}" alt="餐廳地圖" class="img-fluid"> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

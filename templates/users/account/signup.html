@@ -1,6 +1,6 @@
 {% extends "users/account/account_base.html" %}
 
-{% block auth_title %}登入{% endblock %}
+{% block auth_title %}帳號註冊{% endblock %}
 
 {% block auth_content %}
 <form method="post" novalidate>
@@ -17,16 +17,16 @@
             {% endfor %}
         </div>
         {% endif %}
+        {% if field.help_text %}
+        <small class="form-text text-muted">{{ field.help_text }}</small>
+        {% endif %}
     </div>
     {% endfor %}
     
-    <div class="form-group">
-        <button type="submit" class="btn btn-primary">登入</button>
-    </div>
+    <button type="submit" class="btn btn-primary">註冊</button>
 </form>
 
 <div class="auth-links">
-    <p>忘記密碼？<a href="{% url 'password_reset' %}">點此重設密碼</a></p>
-    <p>還沒有帳號？<a href="{% url 'signup' %}">立即註冊</a></p>
+    <p>已經有帳號？<a href="{% url 'login' %}">點此登入</a></p>
 </div>
 {% endblock %}

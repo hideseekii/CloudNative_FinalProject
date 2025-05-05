@@ -1,21 +1,126 @@
-<!-- templates/base.html -->
 <!DOCTYPE html>
+{% load static %}
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}My Site{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}餐廳管理系統{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome 圖標 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <!-- 自定義 CSS -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <nav>
-        <a href="/">Home</a> |
-        {% if user.is_authenticated %}
-            <a href="{% url 'logout' %}">Logout</a>
-        {% else %}
-            <a href="{% url 'login' %}">Login</a> |
-            <a href="{% url 'signup_customer' %}">顧客註冊</a> |
-        {% endif %}
+    <!-- 導航欄 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <!-- <img src="{% static 'img/logo.png' %}" alt="餐廳 Logo" height="40"> -->
+                美味餐廳
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">首頁</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'menu:dish_list' %}">菜單</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">訂位</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">關於我們</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">聯絡我們</a>
+                    </li>
+                </ul>
+                <div class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        <div class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="{% url 'menu:cart_detail' %}">購物車</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'password_change' %}">變更密碼</a></li>
+                                <li><a class="dropdown-item" href="{% url 'logout' %}">登出</a></li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a class="nav-link" href="{% url 'login' %}?next={{ request.path }}">登入</a>
+                        <a class="nav-link" href="{% url 'signup' %}">註冊</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </nav>
-    <hr>
-    {% block content %}{% endblock %}
+
+    <!-- 訊息提示 -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- 主要內容 -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- 頁尾 -->
+    <footer class="footer bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <h5>美味餐廳</h5>
+                    <p>提供您最優質的餐飲體驗</p>
+                    <div class="social-links">
+                        <a href="#" class="text-white me-2"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-line"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <h5>聯絡資訊</h5>
+                    <p><i class="fas fa-map-marker-alt"></i> 地址：台北市信義區松高路123號</p>
+                    <p><i class="fas fa-phone"></i> 電話：(02) 1234-5678</p>
+                    <p><i class="fas fa-envelope"></i> 信箱：info@restaurant.com</p>
+                </div>
+                <div class="col-lg-4">
+                    <h5>營業時間</h5>
+                    <p>週一至週五：11:30 - 22:00</p>
+                    <p>週六至週日：11:00 - 23:00</p>
+                    <p>國定假日：11:00 - 22:00</p>
+                </div>
+            </div>
+            <hr class="mt-4">
+            <div class="text-center">
+                <p>&copy; {% now "Y" %} 美味餐廳. 版權所有.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- 自定義 JS -->
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
