@@ -1,12 +1,16 @@
 # menu/urls.py
 from django.urls import path
-from menu.views.public import DishListView, DishDetailView
+from . import views
 
 app_name = 'menu'
 
 urlpatterns = [
-    # http://…/menu/       → 列表
-    path('', DishListView.as_view(), name='dish_list'),
-    # http://…/menu/3/     → 該 id 詳情
-    path('<int:pk>/', DishDetailView.as_view(), name='dish_detail'),
+    # 公開區域
+    path('', views.DishListView.as_view(), name='dish_list'),
+    path('<int:pk>/', views.DishDetailView.as_view(), name='dish_detail'),
+    
+    # 購物車功能
+    path('cart/add/<int:pk>/', views.add_to_cart, name='add_to_cart'),
+    path('cart/remove/<int:pk>/', views.remove_from_cart, name='remove_from_cart'),
+    path('cart/', views.cart_view, name='cart'),
 ]

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'users',
     'menu',
     'orders',
@@ -47,10 +49,12 @@ INSTALLED_APPS = [
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # 關閉瀏覽器時過期
 SESSION_COOKIE_AGE = 60  # session cookie 有效期為 1 天（以秒為單位）
 
+# Add this to your settings.py
+LOGIN_URL = '/users/login/'  # Use the actual path to your login view
+
 # 登入後的跳轉
 LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'  # 改為根路徑，即首頁
-
+LOGOUT_REDIRECT_URL = '/'  
 AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
@@ -61,6 +65,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'CloudNative_final.urls'
@@ -136,7 +141,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),  # 確保這裡是指向項目根目錄下的 static 文件夾
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

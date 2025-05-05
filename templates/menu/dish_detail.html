@@ -1,0 +1,42 @@
+{% extends "menu/base.html" %}
+
+{% block title %}{{ dish.name_zh }} - 美味餐廳{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="dish-detail">
+        <div class="dish-detail-image">
+            {% if dish.image_url %}
+            <img src="{{ dish.image_url }}" alt="{{ dish.name_zh }}">
+            {% endif %}
+        </div>
+        <div class="dish-detail-content">
+            <h1 class="dish-detail-title">{{ dish.name_zh }}</h1>
+            {% if dish.name_en %}<h2 class="dish-detail-subtitle">{{ dish.name_en }}</h2>{% endif %}
+            
+            <div class="dish-detail-price">NT$ {{ dish.price }}</div>
+            
+            {% if dish.description_zh %}
+            <div class="dish-detail-description">
+                <p>{{ dish.description_zh }}</p>
+            </div>
+            {% endif %}
+            
+            {% if dish.description_en %}
+            <div class="dish-detail-description">
+                <p>{{ dish.description_en }}</p>
+            </div>
+            {% endif %}
+            
+            <div class="dish-detail-actions">
+                <a href="{% url 'menu:dish_list' %}" class="btn btn-secondary">返回菜單</a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'menu:add_to_cart' dish.dish_id %}" class="btn btn-primary">加入購物車</a>
+                {% else %}
+                <a href="{% url 'login' %}?next={% url 'menu:add_to_cart' dish.dish_id %}" class="btn btn-primary">登入購買</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

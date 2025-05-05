@@ -1,0 +1,73 @@
+<!-- templates/orders/order_detail.html -->
+{% extends "menu/base.html" %}
+{% load static %}
+
+{% block title %}訂單詳情 - 美味餐廳{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="mb-0">訂單詳情</h1>
+            <a href="{% url 'orders:order_history' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-list"></i> 訂單歷史
+            </a>
+        </div>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">訂單信息</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>訂單編號:</strong> #{{ order.order_id }}</p>
+                <p><strong>訂單日期:</strong> {{ order.datetime|date:"Y-m-d H:i" }}</p>
+                <p><strong>訂單狀態:</strong> <span class="badge {% if order.state == 'finished' %}bg-success{% else %}bg-warning{% endif %}">{{ order.get_state_display }}</span></p>
+                <p><strong>訂單總額:</strong> <span class="text-primary fw-bold">NT$ {{ order.total_price }}</span></p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">訂單明細</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>菜品</th>
+                                <th>單價</th>
+                                <th>數量</th>
+                                <th>小計</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                            <tr>
+                                <td>{{ item.dish.name_zh }}</td>
+                                <td>NT$ {{ item.unit_price }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>NT$ {{ item.unit_price|floatformat:2|mult:item.quantity }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="3" class="text-end">總計</th>
+                                <th>NT$ {{ order.total_price }}</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
