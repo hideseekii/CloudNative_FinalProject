@@ -14,15 +14,19 @@ urlpatterns = [
     path('login/',  LoginView.as_view(),  name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
 
-    path('password_change/',      PasswordChangeView.as_view(),       name='password_change'),
-    path('password_change/done/', PasswordChangeDoneView.as_view(),   name='password_change_done'),
-
-    path('password_reset/',      PasswordResetView.as_view(),        name='password_reset'),
-    path('password_reset/done/', PasswordResetDoneView.as_view(),    name='password_reset_done'),
-    path('reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    path('reset/done/',            PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    # 密碼變更
+    path('password-change/', PasswordChangeView.as_view(), name='password_change'),
+    path('password-change/done/', PasswordChangeDoneView.as_view(), name='password_change_done'),
+    
+    # 密碼重設
+    path('password-reset/', PasswordResetView.as_view(), name='password_reset'),
+    path('password-reset/done/', PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('password-reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('password-reset/complete/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     
     # 個人資料相關 URL
     path('profile/', ProfileView.as_view(), name='profile'),
     path('profile/edit/', ProfileEditView.as_view(), name='profile_edit'),
 ]
+
+

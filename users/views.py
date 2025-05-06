@@ -37,12 +37,11 @@ class LogoutView(auth_views.LogoutView):
             logout(request)  # 顯式調用登出功能
         return super().dispatch(request, *args, **kwargs)
 
-# ... 其他視圖代碼 ...
 
 # 密碼變更
 class PasswordChangeView(auth_views.PasswordChangeView):
     template_name = 'users/account/password_change_form.html'
-    success_url   = reverse_lazy('password_change_done')
+    success_url = reverse_lazy('password_change_done')
     
     def form_valid(self, form):
         messages.success(self.request, "您的密碼已成功變更！")
@@ -53,9 +52,12 @@ class PasswordChangeDoneView(auth_views.PasswordChangeDoneView):
 
 # 密碼重設：輸入 email
 class PasswordResetView(auth_views.PasswordResetView):
-    template_name       = 'users/account/password_reset_form.html'
+    template_name = 'users/account/password_reset_form.html'
     email_template_name = 'users/account/password_reset_email.html'
-    success_url         = reverse_lazy('password_reset_done')
+    success_url = reverse_lazy('password_reset_done')
+    # 添加下列設置以確保使用自定義模板
+    html_email_template_name = 'users/account/password_reset_email.html'
+    subject_template_name = 'users/account/password_reset_subject.txt'
     
     def form_valid(self, form):
         messages.success(self.request, "密碼重設郵件已發送，請檢查您的郵箱。")
@@ -67,30 +69,39 @@ class PasswordResetDoneView(auth_views.PasswordResetDoneView):
 # 重設連結點開後：設定新密碼
 class PasswordResetConfirmView(auth_views.PasswordResetConfirmView):
     template_name = 'users/account/password_reset_confirm.html'
-    success_url   = reverse_lazy('password_reset_complete')
+    success_url = reverse_lazy('password_reset_complete')
     
     def form_valid(self, form):
         messages.success(self.request, "您的密碼已成功重設！")
         return super().form_valid(form)
 
 class PasswordResetCompleteView(auth_views.PasswordResetCompleteView):
-    template_name = 'users/account/password_reset_complete.html'
+    template_name = 'users/account/password_reset_complete.html'    
 
+# =====================
 # 個人資料相關視圖
+# =====================
 class ProfileView(generic.DetailView):
+    """使用者個人資料顯示頁面"""
     template_name = 'users/account/profile.html'
     
     def get_object(self):
+        """獲取當前登入使用者作為資料對象"""
         return self.request.user
 
+
 class ProfileEditView(generic.UpdateView):
+    """使用者個人資料編輯頁面"""
     template_name = 'users/account/profile_edit.html'
-    fields = ['username', 'email', 'first_name', 'last_name']  # 根據您的 User 模型調整
+    fields = ['username', 'email', 'first_name', 'last_name']  # 可根據User模型調整
     success_url = reverse_lazy('profile')
     
     def get_object(self):
+        """獲取當前登入使用者作為編輯對象"""
         return self.request.user
     
     def form_valid(self, form):
+        """表單驗證成功時的處理"""
         messages.success(self.request, "個人資料已成功更新！")
         return super().form_valid(form)
+
