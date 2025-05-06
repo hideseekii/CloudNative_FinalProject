@@ -4,8 +4,12 @@ from django.views.generic import ListView, DetailView
 from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
+from decimal import Decimal
+
 
 from .models import Dish
+from orders.models import Order, OrderItem
 
 # 公開區域視圖
 class DishListView(ListView):
@@ -113,3 +117,54 @@ def cart_view(request):
     
     return render(request, 'menu/cart.html', context)
 
+
+@login_required
+@transaction.atomic
+def checkout(request):
+    # Get cart contents
+    cart = request.session.get('cart', {})
+    
+    # Check if cart is empty
+    if not cart:
+        messages.warning(request, "您的購物車是空的，請先添加商品。")
+        return redirect('menu:cart')
+    
+    # Calculate total and prepare items
+    cart_items = []
+    total_price = Decimal('0.00')
+    
+    for dish_id, quantity in cart.items():
+        try:
+            dish = Dish.objects.get(dish_id=int(dish_id))
+            subtotal = dish.price * quantity
+            total_price += subtotal
+            cart_items.append({
+                'dish': dish,
+                'quantity': quantity,
+                'subtotal': subtotal
+            })
+        except Dish.DoesNotExist:
+            continue
+    
+    # Create order
+    order = Order.objects.create(
+        consumer=request.user,
+        total_price=total_price,
+        state=Order.State.UNFINISHED
+    )
+    
+    # Create order items
+    for item in cart_items:
+        OrderItem.objects.create(
+            order=order,
+            dish=item['dish'],
+            quantity=item['quantity'],
+            unit_price=item['dish'].price
+        )
+    
+    # Clear cart
+    request.session['cart'] = {}
+    request.session.modified = True
+    
+    messages.success(request, f"訂單已成功創建，訂單編號: #{order.order_id}")
+    return redirect('orders:order_detail', order_id=order.order_id)
