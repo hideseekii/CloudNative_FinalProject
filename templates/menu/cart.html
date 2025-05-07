@@ -1,0 +1,81 @@
+{% extends "menu/base.html" %}
+{% load static %}
+
+{% block title %}購物車 - 美味餐廳{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">購物車</h1>
+
+{% if cart_items %}
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>菜品</th>
+                        <th>單價</th>
+                        <th>數量</th>
+                        <th>小計</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'menu:dish_detail' item.dish.dish_id %}">{{ item.dish.name_zh }}</a>
+                        </td>
+                        <td>NT$ {{ item.dish.price }}</td>
+                        <td>
+                            <div class="quantity-control">
+                                <a href="{% url 'menu:remove_from_cart' item.dish.dish_id %}" class="quantity-btn">
+                                    <i class="fas fa-minus"></i>
+                                </a>
+                                <span class="quantity-value">{{ item.quantity }}</span>
+                                <a href="{% url 'menu:add_to_cart' item.dish.dish_id %}" class="quantity-btn">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                            </div>
+                        </td>
+                        <td>NT$ {{ item.subtotal }}</td>
+                        <td>
+                            <a href="{% url 'menu:remove_from_cart' item.dish.dish_id %}" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i> 移除
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="3" class="text-end">總計</th>
+                        <th>NT$ {{ total_price }}</th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer text-end">
+        <a href="{% url 'menu:dish_list' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> 繼續購物
+        </a>
+        <a href="{% url 'menu:checkout' %}" class="btn btn-primary">
+            <i class="fas fa-check"></i> 結帳
+        </a>
+    </div>
+</div>
+{% else %}
+<div class="card text-center p-5">
+    <div class="card-body">
+        <i class="fas fa-shopping-cart fa-4x mb-3 text-muted"></i>
+        <h2 class="mb-3">您的購物車是空的</h2>
+        <p class="mb-4">您還沒有選購任何美食。快去選購美味的餐點吧！</p>
+        <a href="{% url 'menu:dish_list' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-utensils"></i> 瀏覽菜單
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

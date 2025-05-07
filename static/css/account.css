@@ -1,0 +1,374 @@
+/* account.css - redesigned to match menu color scheme */
+:root {
+    --primary-color: #e74c3c;
+    --primary-hover: #c0392b;
+    --secondary-color: #34495e;
+    --secondary-hover: #2c3e50;
+    --light-bg: #f8f9fa;
+    --border-color: #dee2e6;
+    --text-color: #333;
+    --text-muted: #6c757d;
+}
+
+/* Login container */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 200px);
+    padding: 2rem;
+    background-color: var(--light-bg);
+}
+
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.login-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Login header */
+.login-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 2.5rem 2rem;
+    text-align: center;
+}
+
+.login-logo {
+    background-color: white;
+    color: var(--primary-color);
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.login-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+/* Login form */
+.login-form {
+    padding: 2rem;
+}
+
+.form-floating {
+    margin-bottom: 1.5rem;
+}
+
+.form-floating input {
+    border: 1px solid var(--border-color);
+}
+
+.form-floating input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(231, 76, 60, 0.25);
+}
+
+.login-actions {
+    margin-top: 1rem;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+    background-color: var(--primary-hover);
+}
+
+/* Login options */
+.login-options {
+    padding: 0 2rem 2rem;
+}
+
+.forgot-password {
+    display: block;
+    text-align: right;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.forgot-password:hover {
+    color: var(--primary-color);
+}
+
+.login-divider {
+    position: relative;
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+.login-divider:before {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: var(--border-color);
+    position: absolute;
+    top: 50%;
+}
+
+.login-divider span {
+    position: relative;
+    background-color: white;
+    padding: 0 1rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.register-option {
+    text-align: center;
+}
+
+.register-option p {
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.btn-register {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-register:hover {
+    background-color: var(--secondary-hover);
+}
+
+/* Alerts */
+.login-messages {
+    padding: 1rem 2rem 0;
+}
+
+.alert {
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.alert i {
+    margin-right: 0.5rem;
+}
+
+.invalid-feedback {
+    font-size: 0.85rem;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.login-container {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Add to your account.css file */
+
+/* Signup specific styles */
+.signup-card {
+    max-width: 480px;
+}
+
+.signup-form .form-floating {
+    position: relative;
+}
+
+.signup-form .form-text {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.signup-form .invalid-feedback {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+}
+
+/* Fix for Django's input rendering */
+.signup-form input {
+    width: 100%;
+    padding: 1rem 0.75rem 0.4rem;
+    height: calc(3.5rem + 2px);
+    line-height: 1.25;
+}
+
+.signup-form select.form-control {
+    height: calc(3.5rem + 2px);
+    padding-top: 1.625rem;
+    padding-bottom: 0.625rem;
+    line-height: 1.2;
+}
+
+/* Error styling */
+.signup-form input.is-invalid,
+.signup-form select.is-invalid {
+    border-color: var(--danger-color);
+}
+
+/* Override Bootstrap floating labels */
+.form-floating > .form-control:focus,
+.form-floating > .form-control:not(:placeholder-shown) {
+    padding-top: 1.625rem;
+    padding-bottom: 0.625rem;
+}
+
+/* Password Reset Form Styles */
+
+/* Container styling */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+    padding: 2rem 0;
+}
+
+.auth-box {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    width: 100%;
+    max-width: 450px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.auth-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Form introduction text */
+.mb-4 {
+    color: #6c757d;
+    text-align: center;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+/* Title styling */
+.auth-title {
+    color: #34495e;
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+/* Form groups */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #34495e;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.form-group input:focus {
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.25);
+    outline: none;
+}
+
+/* Error messages */
+.field-errors {
+    margin-top: 0.5rem;
+}
+
+.error-message {
+    color: #e74c3c;
+    font-size: 0.85rem;
+    display: block;
+}
+
+/* Button styling */
+.btn {
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+    display: block;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.btn-primary {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #c0392b;
+}
+
+/* Links section */
+.auth-links {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.auth-links a {
+    color: #e74c3c;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.auth-links a:hover {
+    color: #c0392b;
+    text-decoration: underline;
+}

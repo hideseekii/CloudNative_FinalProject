@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}訂單詳情 #{{ order.order_id }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h2">訂單詳情</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'menu:dish_list' %}">首頁</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'orders:order_history' %}">訂單歷史</a></li>
+                    <li class="breadcrumb-item active">訂單 #{{ order.order_id }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">訂單資訊</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>訂單編號:</strong> #{{ order.order_id }}</p>
+                    <p><strong>訂單時間:</strong> {{ order.datetime|date:"Y-m-d H:i" }}</p>
+                    <p><strong>訂單狀態:</strong> 
+                        <span class="badge {% if order.state == 'finished' %}bg-success{% else %}bg-warning{% endif %}">
+                            {{ order.get_state_display }}
+                        </span>
+                    </p>
+                    <p class="mb-0"><strong>總金額:</strong> 
+                        <span class="text-primary fw-bold">NT$ {{ order.total_price }}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">訂單品項</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>菜品</th>
+                                    <th>單價</th>
+                                    <th>數量</th>
+                                    <th class="text-end">小計</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order_items %}
+                                <tr>
+                                    <td>{{ item.dish.name_zh }}</td>
+                                    <td>NT$ {{ item.unit_price }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td class="text-end">NT$ {{ item.quantity|floatformat:"0" | multiply:item.unit_price }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot class="table-group-divider">
+                                <tr>
+                                    <th colspan="3" class="text-end">總計:</th>
+                                    <th class="text-end">NT$ {{ order.total_price }}</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer text-end">
+                    <a href="{% url 'orders:order_history' %}" class="btn btn-secondary">
+                        <i class="fas fa-list"></i> 訂單歷史
+                    </a>
+                    <a href="{% url 'menu:dish_list' %}" class="btn btn-primary">
+                        <i class="fas fa-utensils"></i> 繼續購物
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

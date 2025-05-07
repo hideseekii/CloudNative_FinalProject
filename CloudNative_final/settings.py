@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,12 +38,23 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'users',
     'menu',
     'orders',
     'reviews',
 ]
 
+# 建議添加這些設置
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # 關閉瀏覽器時過期
+SESSION_COOKIE_AGE = 60  # session cookie 有效期為 1 天（以秒為單位）
+
+# Add this to your settings.py
+LOGIN_URL = '/users/login/'  # Use the actual path to your login view
+
+# 登入後的跳轉
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'  
 AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
@@ -53,6 +65,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'CloudNative_final.urls'
@@ -60,17 +73,25 @@ ROOT_URLCONF = 'CloudNative_final.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        # 指向專案根的 templates 資料夾
+        'DIRS': [ BASE_DIR / 'templates' ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                # 以下四行 Admin 與一般 template 都需要
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # 其他如 i18n 或 staticfiles（若有需要）
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
             ],
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'CloudNative_final.wsgi.application'
 
@@ -120,7 +141,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),  # 確保這裡是指向項目根目錄下的 static 文件夾
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

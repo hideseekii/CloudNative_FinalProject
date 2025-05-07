@@ -1,0 +1,31 @@
+{% extends "users/account/account_base.html" %}
+
+{% block auth_title %}編輯個人資料{% endblock %}
+
+{% block auth_content %}
+<form method="post" novalidate>
+    {% csrf_token %}
+    
+    {% for field in form %}
+    <div class="form-group">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.errors %}
+        <div class="field-errors">
+            {% for error in field.errors %}
+            <span class="error-message">{{ error }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if field.help_text %}
+        <small class="form-text text-muted">{{ field.help_text }}</small>
+        {% endif %}
+    </div>
+    {% endfor %}
+    
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">保存變更</button>
+        <a href="{% url 'profile' %}" class="btn btn-secondary">取消</a>
+    </div>
+</form>
+{% endblock %}
