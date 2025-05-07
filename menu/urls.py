@@ -13,4 +13,7 @@ urlpatterns = [
     path('cart/add/<int:pk>/', views.add_to_cart, name='add_to_cart'),
     path('cart/remove/<int:pk>/', views.remove_from_cart, name='remove_from_cart'),
     path('cart/', views.cart_view, name='cart'),
+    
+    # 添加結帳路徑
+    path('checkout/', views.checkout, name='checkout'),
 ]
