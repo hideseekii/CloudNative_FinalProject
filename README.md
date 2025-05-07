@@ -1,5 +1,4 @@
 ﻿# Cloud-Native-NYCU-Final_Project
-# Cloud-Native-NYCU-FinalProject
 
 ## Project Overview
 
