@@ -100,7 +100,7 @@ python manage.py runserver
 
 Open `http://127.0.0.1:8000/` in your browser; admin at `http://127.0.0.1:8000/admin/`.
 
-### 4. Containerized setup (Docker)
+### 4. Containerized setup (Docker) !!!還沒做
 
 Ensure Docker & Docker Compose are installed.
 
