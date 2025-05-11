@@ -26,7 +26,7 @@ urlpatterns = [
     # Original URLs
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
-    path('menu/', include('menu.urls'), namespace='menu'),
+    path('menu/', include(('menu.urls', 'menu'), namespace='menu')),
     path('', RedirectView.as_view(pattern_name='menu:dish_list'), name='home'),
     path('orders/', include('orders.urls')),
     
