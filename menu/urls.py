@@ -1,6 +1,7 @@
 # menu/urls.py
 from django.urls import path
 from . import views
+from .views import DishListView, DishCreateView, DishUpdateView, DishDeleteView
 
 app_name = 'menu'
 
@@ -16,4 +17,10 @@ urlpatterns = [
     
     # 添加結帳路徑
     path('checkout/', views.checkout, name='checkout'),
+
+    # 添加staff新增刪除功能
+    path('dishes/', DishListView.as_view(), name='dish_list'),
+    path('dishes/add/', DishCreateView.as_view(), name='dish_add'),
+    path('dishes/<int:pk>/edit/', DishUpdateView.as_view(), name='dish_edit'),
+    path('dishes/<int:pk>/delete/', DishDeleteView.as_view(), name='dish_delete'),
 ]

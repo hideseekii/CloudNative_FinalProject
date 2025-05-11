@@ -11,6 +11,12 @@ from decimal import Decimal
 from .models import Dish
 from orders.models import Order, OrderItem
 
+
+# for staff import
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from .models import Dish
+from common.mixins import StaffRequiredMixin
+
 # 公開區域視圖
 class DishListView(ListView):
     model = Dish
@@ -168,3 +174,26 @@ def checkout(request):
     
     messages.success(request, f"訂單已成功創建，訂單編號: #{order.order_id}")
     return redirect('orders:order_detail', order_id=order.order_id)
+
+
+# 給staff 的新增刪除
+class DishListView(ListView):
+    model = Dish
+    template_name = 'menu/dish_list.html'
+
+class DishCreateView(StaffRequiredMixin, CreateView):
+    model = Dish
+    fields = ['name_zh','name_en','description_zh','price','image_url','is_available']
+    template_name = 'menu/dish_form.html'
+    success_url = '/menu/dishes/'
+
+class DishUpdateView(StaffRequiredMixin, UpdateView):
+    model = Dish
+    fields = ['name_zh','name_en','description_zh','price','image_url','is_available']
+    template_name = 'menu/dish_form.html'
+    success_url = '/menu/dishes/'
+
+class DishDeleteView(StaffRequiredMixin, DeleteView):
+    model = Dish
+    template_name = 'menu/dish_confirm_delete.html'
+    success_url = '/menu/dishes/'
