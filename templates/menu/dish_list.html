@@ -8,6 +8,15 @@
     <div class="col-12">
         <h1 class="mb-4">菜單</h1>
         
+        {# ← 在搜索表单上方，给 staff 一个「新增菜色」按钮 #}
+        {% if user.is_authenticated and user.role == 'staff' %}
+        <div class="mb-3">
+            <a href="{% url 'menu:dish_add' %}" class="btn btn-success">
+                <i class="fas fa-plus-circle"></i> 新增菜色
+            </a>
+        </div>
+        {% endif %}
+
         <div class="card mb-4">
             <div class="card-body">
                 <form method="get" class="row g-3">
