@@ -46,19 +46,6 @@ git clone https://github.com/AlHIO/Cloud-Native-NYCU-FinalProject.git
 cd Cloud-Native-NYCU-FinalProject
 ```
 
-### 2. Environment variables
-
-Copy `.env.example` to `.env` and fill in values:
-
-```
-DB_NAME=project_db
-DB_USER=AlHIO
-DB_PASSWORD=postgre
-DB_HOST=localhost      # or 'db' when using Docker
-DB_PORT=5432
-SECRET_KEY=your_secret_key
-DEBUG=True
-```
 
 ### 3. Local development (without Docker)
 
@@ -67,6 +54,7 @@ DEBUG=True
 ```bash
 python -m venv .venv
 # PowerShell:
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 .\.venv\Scripts\Activate.ps1
 # cmd.exe:
 .venv\Scripts\activate.bat
