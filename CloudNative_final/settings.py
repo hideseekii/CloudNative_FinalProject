@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'users',
+    'staff',
     'menu',
     'orders',
     'reviews',

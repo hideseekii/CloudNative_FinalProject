@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}登入 - 美味餐廳{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/account.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <div class="login-logo">
+                <i class="fas fa-utensils"></i>
+            </div>
+            <h1 class="login-title">歡迎回來</h1>
+            <p class="login-subtitle">登入您的帳號以繼續使用</p>
+        </div>
+
+        {% if messages %}
+        <div class="login-messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i class="fas fa-info-circle"></i> {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" class="login-form" novalidate>
+            {% csrf_token %}
+            
+            {% if request.GET.next %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+            {% endif %}
+            
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+                       id="id_username" name="username" placeholder="用戶名" required>
+                <label for="id_username">用戶名</label>
+                {% if form.username.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.username.errors %}
+                    {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control {% if form.password.errors %}is-invalid{% endif %}" 
+                       id="id_password" name="password" placeholder="密碼" required>
+                <label for="id_password">密碼</label>
+                {% if form.password.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.password.errors %}
+                    {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                <i class="fas fa-exclamation-circle"></i> {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="login-actions">
+                <button type="submit" class="btn btn-login">
+                    <i class="fas fa-sign-in-alt"></i> 登入
+                </button>
+            </div>
+        </form>
+        
+        <div class="login-options">
+            <a href="{% url 'password_reset' %}" class="forgot-password">
+                <i class="fas fa-key"></i> 忘記密碼？
+            </a>
+            
+            <div class="login-divider">
+                <span>或者</span>
+            </div>
+            
+            <div class="register-option">
+                <p>還沒有帳號？</p>
+                <a href="{% url 'signup' %}" class="btn btn-register">
+                    <i class="fas fa-user-plus"></i> 立即註冊
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

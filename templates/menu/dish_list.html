@@ -5,42 +5,42 @@
 
 {% block content %}
 <div class="row mb-4">
-    <div class="col-12">
-        <h1 class="mb-4">菜單</h1>
-        
-        {# ← 在搜索表单上方，给 staff 一个「新增菜色」按钮 #}
-        {% if user.is_authenticated and user.role == 'staff' %}
-        <div class="mb-3">
-            <a href="{% url 'menu:dish_add' %}" class="btn btn-success">
-                <i class="fas fa-plus-circle"></i> 新增菜色
-            </a>
-        </div>
-        {% endif %}
+    <div class="col-12 d-flex justify-content-between align-items-center">
+        <h1 class="mb-0">菜單</h1>
 
-        <div class="card mb-4">
-            <div class="card-body">
-                <form method="get" class="row g-3">
-                    <div class="col-md-4">
-                        <label for="q" class="form-label">搜尋</label>
-                        <input type="text" class="form-control" id="q" name="q" value="{{ request.GET.q }}" placeholder="輸入菜名或描述...">
-                    </div>
-                    <div class="col-md-3">
-                        <label for="min_price" class="form-label">最小價格</label>
-                        <input type="number" class="form-control" id="min_price" name="min_price" value="{{ request.GET.min_price }}">
-                    </div>
-                    <div class="col-md-3">
-                        <label for="max_price" class="form-label">最大價格</label>
-                        <input type="number" class="form-control" id="max_price" name="max_price" value="{{ request.GET.max_price }}">
-                    </div>
-                    <div class="col-md-2 d-flex align-items-end">
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary">套用</button>
-                            <a href="{% url 'menu:dish_list' %}" class="btn btn-outline-secondary">重置</a>
-                        </div>
-                    </div>
-                </form>
+        {% if user.is_authenticated and user.role == 'staff' %}
+        <a href="{% url 'menu:dish_add' %}" class="btn btn-success">
+            <i class="fas fa-plus-circle"></i> 新增菜色
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label for="q" class="form-label">搜尋</label>
+                <input type="text" id="q" name="q" class="form-control" placeholder="輸入菜名或描述..."
+                    value="{{ request.GET.q }}">
             </div>
-        </div>
+            <div class="col-md-3">
+                <label for="min_price" class="form-label">最小價格</label>
+                <input type="number" id="min_price" name="min_price" class="form-control"
+                    value="{{ request.GET.min_price }}">
+            </div>
+            <div class="col-md-3">
+                <label for="max_price" class="form-label">最大價格</label>
+                <input type="number" id="max_price" name="max_price" class="form-control"
+                    value="{{ request.GET.max_price }}">
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">套用</button>
+                    <a href="{% url 'menu:dish_list' %}" class="btn btn-outline-secondary">重置</a>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -54,12 +54,25 @@
             {% else %}
             <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top" alt="沒有圖片">
             {% endif %}
-            <div class="card-body">
+            <div class="card-body d-flex flex-column">
                 <h5 class="card-title">{{ dish.name_zh }}</h5>
-                {% if dish.name_en %}<h6 class="card-subtitle mb-2 text-muted">{{ dish.name_en }}</h6>{% endif %}
-                <p class="card-text text-primary fw-bold">NT$ {{ dish.price }}</p>
-                <div class="d-flex justify-content-between">
+                {% if dish.name_en %}
+                <h6 class="card-subtitle mb-2 text-muted">{{ dish.name_en }}</h6>
+                {% endif %}
+                <p class="card-text text-primary fw-bold mb-4">NT$ {{ dish.price }}</p>
+                <div class="mt-auto d-flex justify-content-between">
                     <a href="{% url 'menu:dish_detail' dish.dish_id %}" class="btn btn-outline-secondary">詳情</a>
+
+                    {% if user.is_authenticated and user.role == 'staff' %}
+                    <div class="btn-group">
+                        <a href="{% url 'menu:dish_edit' dish.dish_id %}" class="btn btn-sm btn-warning">
+                            <i class="fas fa-edit"></i> 編輯
+                        </a>
+                        <a href="{% url 'menu:dish_delete' dish.dish_id %}" class="btn btn-sm btn-danger">
+                            <i class="fas fa-trash-alt"></i> 刪除
+                        </a>
+                    </div>
+                    {% else %}
                     {% if user.is_authenticated %}
                     <a href="{% url 'menu:add_to_cart' dish.dish_id %}" class="btn btn-primary">
                         <i class="fas fa-cart-plus"></i> 加入購物車
@@ -69,6 +82,8 @@
                         <i class="fas fa-sign-in-alt"></i> 登入購買
                     </a>
                     {% endif %}
+                    {% endif %}
+
                 </div>
             </div>
         </div>
@@ -80,7 +95,9 @@
     <i class="fas fa-info-circle fa-3x mb-3"></i>
     <h4>沒有找到符合條件的菜品</h4>
     <p>請嘗試調整您的搜索條件，或查看完整菜單。</p>
-    <a href="{% url 'menu:dish_list' %}" class="btn btn-outline-primary mt-3">查看所有菜品</a>
+    <a href="{% url 'menu:dish_list' %}" class="btn btn-outline-primary mt-3">
+        查看所有菜品
+    </a>
 </div>
 {% endif %}
 {% endblock %}

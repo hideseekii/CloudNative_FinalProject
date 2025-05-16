@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}註冊 - 美味餐廳{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/account.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-card signup-card">
+        <div class="login-header">
+            <div class="login-logo">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <h1 class="login-title">建立新帳號</h1>
+            <p class="login-subtitle">加入我們，開始享受美食之旅</p>
+        </div>
+
+        {% if messages %}
+        <div class="login-messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i class="fas fa-info-circle"></i> {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" class="login-form signup-form" novalidate>
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div class="form-floating mb-3">
+                {{ field }}
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                
+                {% if field.errors %}
+                <div class="invalid-feedback">
+                    {% for error in field.errors %}
+                    {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                {% if field.help_text %}
+                <div class="form-text">
+                    <i class="fas fa-info-circle"></i> {{ field.help_text }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <div class="login-actions">
+                <button type="submit" class="btn btn-login">
+                    <i class="fas fa-user-plus"></i> 建立帳號
+                </button>
+            </div>
+        </form>
+        
+        <div class="login-options">
+            <div class="login-divider">
+                <span>或者</span>
+            </div>
+            
+            <div class="register-option">
+                <p>已經有帳號？</p>
+                <a href="{% url 'login' %}" class="btn btn-register">
+                    <i class="fas fa-sign-in-alt"></i> 立即登入
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
