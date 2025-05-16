@@ -63,6 +63,10 @@ class OrderItem(models.Model):
                      max_digits=8, decimal_places=2,
                      validators=[MinValueValidator(0)]
                  )
+    @property
+    def subtotal(self):
+        """小計 = 數量 * 單價"""
+        return self.quantity * self.unit_price
 
     class Meta:
         unique_together = ('order', 'dish')
