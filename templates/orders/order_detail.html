@@ -1,3 +1,4 @@
+<!-- order_detail.html -->
 {% extends "base.html" %}
 {% load static %}
 
@@ -61,7 +62,8 @@
                                     <td>{{ item.dish.name_zh }}</td>
                                     <td>NT$ {{ item.unit_price }}</td>
                                     <td>{{ item.quantity }}</td>
-                                    <td class="text-end">NT$ {{ item.quantity|floatformat:"0" | multiply:item.unit_price }}</td>
+                                    <!-- 直接使用 item.subtotal 屬性 -->
+                                    <td class="text-end">NT$ {{ item.subtotal }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

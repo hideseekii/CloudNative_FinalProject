@@ -1,0 +1,15 @@
+{% extends "menu/base.html" %}
+{% block title %}刪除菜色 – 確認{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>刪除菜色：{{ dish.name_zh }}</h1>
+    <p class="text-danger">你確定要刪除這道菜嗎？此操作無法復原。</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">確認刪除</button>
+        <a href="{% url 'menu:dish_list' %}" class="btn btn-secondary">取消</a>
+    </form>
+</div>
+{% endblock %}
