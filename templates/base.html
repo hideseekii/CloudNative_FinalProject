@@ -1,3 +1,4 @@
+<!-- base.html -->
 {% load static %}
 <!DOCTYPE html>
 <html lang="zh-TW">
@@ -35,6 +36,12 @@
                             {% if request.session.cart %}
                             <span class="badge bg-danger">{{ request.session.cart|length }}</span>
                             {% endif %}
+                        </a>
+                    </li>
+                    <!-- 新增：訂單歷史 -->
+                    <li>
+                        <a class="dropdown-item" href="{% url 'orders:order_history' %}">
+                            <i class="fas fa-history"></i> 訂單歷史
                         </a>
                     </li>
                     <li class="nav-item dropdown">
