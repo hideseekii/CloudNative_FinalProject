@@ -48,21 +48,29 @@
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
     {% for dish in dishes %}
     <div class="col">
-        <div class="card h-100">
+        <div class="card h-100 position-relative">
+            {# 下架遮罩 #}
+            {% if not dish.is_available %}
+            <div class="unavailable-overlay">已下架</div>
+            {% endif %}
+
             {% if dish.image_url %}
             <img src="{{ dish.image_url }}" class="card-img-top" alt="{{ dish.name_zh }}">
             {% else %}
             <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top" alt="沒有圖片">
             {% endif %}
+
             <div class="card-body d-flex flex-column">
                 <h5 class="card-title">{{ dish.name_zh }}</h5>
                 {% if dish.name_en %}
                 <h6 class="card-subtitle mb-2 text-muted">{{ dish.name_en }}</h6>
                 {% endif %}
                 <p class="card-text text-primary fw-bold mb-4">NT$ {{ dish.price }}</p>
+
                 <div class="mt-auto d-flex justify-content-between">
                     <a href="{% url 'menu:dish_detail' dish.dish_id %}" class="btn btn-outline-secondary">詳情</a>
 
+                    {# 員工的編輯/刪除按鈕 #}
                     {% if user.is_authenticated and user.role == 'staff' %}
                     <div class="btn-group">
                         <a href="{% url 'menu:dish_edit' dish.dish_id %}" class="btn btn-sm btn-warning">
@@ -72,6 +80,13 @@
                             <i class="fas fa-trash-alt"></i> 刪除
                         </a>
                     </div>
+
+                    {# 顧客或未登入的顯示邏輯 #}
+                    {% else %}
+                    {% if not dish.is_available %}
+                    <button class="btn btn-secondary" disabled>
+                        <i class="fas fa-ban"></i> 已下架
+                    </button>
                     {% else %}
                     {% if user.is_authenticated %}
                     <a href="{% url 'menu:add_to_cart' dish.dish_id %}" class="btn btn-primary">
@@ -81,6 +96,7 @@
                     <a href="{% url 'login' %}?next={% url 'menu:add_to_cart' dish.dish_id %}" class="btn btn-primary">
                         <i class="fas fa-sign-in-alt"></i> 登入購買
                     </a>
+                    {% endif %}
                     {% endif %}
                     {% endif %}
 
