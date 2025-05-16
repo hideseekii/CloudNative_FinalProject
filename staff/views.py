@@ -15,14 +15,14 @@ class StaffSignUpView(generic.CreateView):
     success_url   = reverse_lazy('staff:login')
 
     def form_valid(self, form):
-        messages.success(self.request, "員工帳號註冊成功！")
+        messages.success(self.request, "staff signup successfully")
         return super().form_valid(form)
 
 class StaffLoginView(LoginView):
     template_name = 'staff/account/login.html'
 
     def form_valid(self, form):
-        messages.success(self.request, f"歡迎，{form.get_user().username}！")
+        messages.success(self.request, f"wellcomes，{form.get_user().username}！")
         return super().form_valid(form)
 
 class StaffLogoutView(LogoutView):
