@@ -77,6 +77,9 @@
                     </div>
                 </div>
                 <div class="card-footer text-end">
+                    <a href="{% url 'add_review' order.order_id %}" class="btn btn-success">
+                        <i class="fas fa-review-dots"></i> 新增評論
+                    </a>
                     <a href="{% url 'orders:order_history' %}" class="btn btn-secondary">
                         <i class="fas fa-list"></i> 訂單歷史
                     </a>
