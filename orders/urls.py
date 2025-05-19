@@ -15,4 +15,7 @@ urlpatterns = [
     path('detail/<int:order_id>/', views.order_detail, name='order_detail'),
     # 歷史訂單列表
     path('history/', views.order_history, name='order_history'),
+
+    # 新增/修改評論後
+    path('order/<int:order_id>/', views.order_detail, name='order_detail')
 ]
