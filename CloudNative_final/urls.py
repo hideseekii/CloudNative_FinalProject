@@ -30,5 +30,6 @@ urlpatterns = [
     path('menu/', include(('menu.urls', 'menu'), namespace='menu')),
     path('', RedirectView.as_view(pattern_name='menu:dish_list'), name='home'),
     path('orders/', include('orders.urls')),
+    path('reviews/', include('reviews.urls')),
     
 ]
