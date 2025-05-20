@@ -16,6 +16,7 @@ from orders.models import Order, OrderItem
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import Dish
 from common.mixins import StaffRequiredMixin
+from django.urls import reverse_lazy
 
 # 公開區域視圖
 class DishListView(ListView):
@@ -180,12 +181,19 @@ def checkout(request):
 class DishListView(ListView):
     model = Dish
     template_name = 'menu/dish_list.html'
+    context_object_name = 'dishes'  
 
 class DishCreateView(StaffRequiredMixin, CreateView):
     model = Dish
     fields = ['name_zh','name_en','description_zh','price','image_url','is_available']
     template_name = 'menu/dish_form.html'
-    success_url = '/menu/dishes/'
+    # success_url = '/menu/dishes/'
+    success_url = reverse_lazy('menu:dish_list')
+
+    def form_invalid(self, form):
+        # 在 console 打印所有字段错误
+        print("Form is invalid:", form.errors.as_json())
+        return super().form_invalid(form)
 
 class DishUpdateView(StaffRequiredMixin, UpdateView):
     model = Dish

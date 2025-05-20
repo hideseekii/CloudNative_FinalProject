@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}新增評論{% endblock %}
+
+{% block content %}
+<h2 class="text-center mb-4">針對訂單 #{{ order.order_id }} 評價菜品</h2>
+<h3>Debug: {{ dish_forms }}</h3>
+<form method="post" class="col-md-6 mx-auto">
+    {% csrf_token %}
+    {{ formset.management_form }}
+
+    {% for item, form in dish_forms %}
+        <div class="card mb-3">
+            <div class="card-header bg-light">
+                <strong>{{ item.dish.name_zh }}</strong>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="{{ form.rating.id_for_label }}" class="form-label">星等評分</label>
+                    {{ form.rating }}
+                </div>
+                <div class="mb-3">
+                    <label for="{{ form.comment.id_for_label }}" class="form-label">文字評價</label>
+                    {{ form.comment }}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary w-100">提交所有評論</button>
+</form>
+{% endblock %}

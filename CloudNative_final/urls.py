@@ -21,7 +21,8 @@ urlpatterns = [
     path('password-change/', PasswordChangeView.as_view(), name='password_change'),
     path('password-change/done/', PasswordChangeDoneView.as_view(), name='password_change_done'),
     
-
+    # Staff URLs
+    path('staff/', include(('staff.urls','staff'), namespace='staff')),
     
     # Original URLs
     path('admin/', admin.site.urls),
@@ -29,5 +30,6 @@ urlpatterns = [
     path('menu/', include(('menu.urls', 'menu'), namespace='menu')),
     path('', RedirectView.as_view(pattern_name='menu:dish_list'), name='home'),
     path('orders/', include('orders.urls')),
+    path('reviews/', include('reviews.urls')),
     
 ]
