@@ -1,4 +1,3 @@
-<!-- order_detail.html -->
 {% extends "base.html" %}
 {% load static %}
 
@@ -62,7 +61,6 @@
                                     <td>{{ item.dish.name_zh }}</td>
                                     <td>NT$ {{ item.unit_price }}</td>
                                     <td>{{ item.quantity }}</td>
-                                    <!-- 直接使用 item.subtotal 屬性 -->
                                     <td class="text-end">NT$ {{ item.subtotal }}</td>
                                 </tr>
                                 {% endfor %}
@@ -77,9 +75,15 @@
                     </div>
                 </div>
                 <div class="card-footer text-end">
+                    <!-- 整筆訂單評論 -->
                     <a href="{% url 'add_review' order.order_id %}" class="btn btn-success">
                         <i class="fas fa-review-dots"></i> 新增評論
                     </a>
+                    <!-- 每道菜品評論 -->
+                    <a href="{% url 'add_dish_review' order.order_id %}" class="btn btn-warning">
+                        <i class="fas fa-star"></i> 每道菜品評論
+                    </a>
+                    <!-- 返回與繼續操作 -->
                     <a href="{% url 'orders:order_history' %}" class="btn btn-secondary">
                         <i class="fas fa-list"></i> 訂單歷史
                     </a>
