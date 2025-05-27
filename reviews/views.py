@@ -30,29 +30,26 @@ from django.forms import formset_factory
 from django.views.generic import ListView
 
 class ReviewListView(ListView):
-    model = Review
-    template_name = 'reviews/review_list.html'
+    model = DishReview
+    template_name = 'reviews/review_list.html'  # 你的 html 檔名
     context_object_name = 'reviews'
 
     def get_queryset(self):
-        queryset = Review.objects.all()
-        dish_name = self.request.GET.get('dish')
+        queryset = super().get_queryset()
+        dish = self.request.GET.get('dish')
         order_id = self.request.GET.get('order_id')
         rating = self.request.GET.get('rating')
         sort = self.request.GET.get('sort')
 
-        if dish_name:
-            queryset = queryset.filter(
-                order__ordercontent__dish__dish_name__icontains=dish_name
-            ).distinct()
+        if dish:
+            queryset = queryset.filter(order_item__dish__name_zh__icontains=dish)
 
-        if order_id:
-            queryset = queryset.filter(order__order_id=order_id)
+        if order_id and order_id.isdigit():
+            queryset = queryset.filter(order_item__order__order_id=int(order_id))
 
-        if rating:
-            queryset = queryset.filter(rating=rating)
+        if rating and rating.isdigit():
+            queryset = queryset.filter(rating=int(rating))
 
-        # 🔽 排序邏輯
         if sort == 'rating_desc':
             queryset = queryset.order_by('-rating')
         elif sort == 'rating_asc':
@@ -62,7 +59,7 @@ class ReviewListView(ListView):
         elif sort == 'time_desc':
             queryset = queryset.order_by('-created')
         else:
-            queryset = queryset.order_by('-created')  # 預設最新在前
+            queryset = queryset.order_by('-created')  # 預設時間新→舊
 
         return queryset
 
@@ -101,7 +98,7 @@ def add_dish_review(request, order_id):
     order = get_object_or_404(Order, order_id=order_id, consumer=request.user)
     order_items = order.items.all()  # related_name='items' 沒錯
 
-    DishReviewFormSet = formset_factory(DishReviewForm, extra=0)
+    DishReviewFormSet = formset_factory(ReviewForm, extra=0)
 
     if request.method == 'POST':
         formset = DishReviewFormSet(request.POST)

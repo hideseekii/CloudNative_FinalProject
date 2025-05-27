@@ -49,12 +49,8 @@
         {% for review in reviews %}
             <tr>
                 <td>{{ review.user.username }}</td>
-                <td>{{ review.order.order_id }}</td>
-                <td>
-                    {% for item in review.order.ordercontent_set.all %}
-                        {{ item.dish.dish_name }}{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
-                </td>
+                <td>{{ review.order_item.order.order_id }}</td>
+                <td>{{ review.order_item.dish.name_zh }}</td>
                 <td>{{ review.rating }}★</td>
                 <td>
                     {% if review.comment %}

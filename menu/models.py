@@ -22,18 +22,10 @@ class Dish(models.Model):
 
     def __str__(self):
         return f"{self.name_zh} (#{self.dish_id})"
-    def average_rating(self): 
-        from reviews.models import Review
-        from orders.models import OrderItem
-
-        # 找出這道菜對應的所有訂單項目 (OrderItem)
-        related_order_ids = OrderItem.objects.filter(dish=self).values_list('order_id', flat=True)
-
-        # 找出這些訂單中所有的評論
-        reviews = Review.objects.filter(order_id__in=related_order_ids)
-
-        # 計算平均評分
+    def average_rating(self):
+        from reviews.models import DishReview 
+        reviews = DishReview.objects.filter(order_item__dish=self)
         if reviews.exists():
-            avg = reviews.aggregate(models.Avg('rating'))['rating__avg']
+            avg = sum(r.rating for r in reviews) / reviews.count()
             return round(avg, 1)
         return None
