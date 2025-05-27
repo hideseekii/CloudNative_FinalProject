@@ -59,7 +59,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 # cmd.exe:
 .venv\Scripts\activate.bat
 # Bash:
-source .venv/Scripts/activate
+source .venv/bin/activate
 ```
 
 #### b. Install dependencies
