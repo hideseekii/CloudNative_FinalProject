@@ -46,7 +46,17 @@
 
 <!-- ✅ 加入評論顯示區塊 -->
 <section class="dish-reviews">
-    <h3>關於此菜色的評論</h3>
+    <h4 class="mt-4">使用者評論</h4>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>使用者</th>
+      <th>評分</th>
+      <th>評論</th>
+      <th>時間</th>
+    </tr>
+  </thead>
+  <tbody>
     {% if related_reviews %}
         <ul style="list-style: none; padding-left: 0;">
             {% for review in related_reviews %}
@@ -65,6 +75,9 @@
     {% else %}
         <p><em>目前尚無此菜色的評論。</em></p>
     {% endif %}
+      </tbody>
+</table>
+
 </section>
 
 {% endblock %}
