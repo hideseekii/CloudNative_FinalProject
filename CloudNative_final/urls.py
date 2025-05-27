@@ -13,16 +13,6 @@ urlpatterns = [
     # Health check endpoint
     path('health/', heath_views.health_check, name='health_check'),
     
-    # Custom password reset views (MUST come before admin URLs and accounts/)
-    path('password-reset/', PasswordResetView.as_view(), name='password_reset'),
-    path('password-reset/done/', PasswordResetDoneView.as_view(), name='password_reset_done'),
-    path('password-reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    path('password-reset/complete/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
-    
-    # Custom password change views
-    path('password-change/', PasswordChangeView.as_view(), name='password_change'),
-    path('password-change/done/', PasswordChangeDoneView.as_view(), name='password_change_done'),
-    
     # Staff URLs
     path('staff/', include(('staff.urls', 'staff'), namespace='staff')),
     
