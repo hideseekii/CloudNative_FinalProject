@@ -17,6 +17,8 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import Dish
 from common.mixins import StaffRequiredMixin
 from django.urls import reverse_lazy
+from reviews.models import Review
+from orders.models import OrderItem
 
 # 公開區域視圖
 class DishListView(ListView):
@@ -47,6 +49,17 @@ class DishDetailView(DetailView):
     template_name = 'menu/dish_detail.html'
     context_object_name = 'dish'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        dish = self.object
+
+        # ✅ 查出與這道菜有關的所有評論
+        related_orders = OrderItem.objects.filter(dish=dish).values_list('order_id', flat=True)
+
+        related_reviews = Review.objects.filter(order_id__in=related_orders).distinct().order_by('-created')
+
+        context['related_reviews'] = related_reviews
+        return context
 # 購物車視圖
 @login_required
 def add_to_cart(request, pk):
