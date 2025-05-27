@@ -65,6 +65,13 @@
                 {% if dish.name_en %}
                 <h6 class="card-subtitle mb-2 text-muted">{{ dish.name_en }}</h6>
                 {% endif %}
+                {% if dish.average_rating %}
+                
+                <p class="mb-1 text-warning">⭐ 平均評分：{{ dish.average_rating }} / 5</p>
+                {% else %}
+                <p class="mb-1 text-muted">⭐ 尚無評分</p>
+                {% endif %}
+
                 <p class="card-text text-primary fw-bold mb-4">NT$ {{ dish.price }}</p>
 
                 <div class="mt-auto d-flex justify-content-between">

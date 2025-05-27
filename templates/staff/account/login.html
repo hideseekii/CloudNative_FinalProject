@@ -77,7 +77,7 @@
         </form>
         
         <div class="login-options">
-            <a href="{% url 'password_reset' %}" class="forgot-password">
+            <a href="{% url 'staff:password_reset' %}" class="forgot-password">
                 <i class="fas fa-key"></i> 忘記密碼？
             </a>
             
@@ -87,7 +87,7 @@
             
             <div class="register-option">
                 <p>還沒有帳號？</p>
-                <a href="{% url 'signup' %}" class="btn btn-register">
+                <a href="{% url 'staff:signup' %}" class="btn btn-register">
                     <i class="fas fa-user-plus"></i> 立即註冊
                 </a>
             </div>

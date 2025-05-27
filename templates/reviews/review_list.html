@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<h1>客戶評論</h1>
+
+<!-- 🔍 搜尋表單 -->
+<form method="get" style="margin-bottom: 20px;">
+    <label>菜名：</label>
+    <input type="text" name="dish" value="{{ request.GET.dish }}">
+
+    <label>訂單編號：</label>
+    <input type="text" name="order_id" value="{{ request.GET.order_id }}">
+
+    <label>星數：</label>
+    <select name="rating">
+        <option value="">-- 全部 --</option>
+        {% for i in "012345" %}
+            <option value="{{ i }}" {% if request.GET.rating == i %}selected{% endif %}>{{ i }}★</option>
+        {% endfor %}
+    </select>
+
+    <label>排序：</label>
+    <select name="sort">
+        <option value="">-- 預設（最新） --</option>
+        <option value="rating_desc" {% if request.GET.sort == 'rating_desc' %}selected{% endif %}>評價高→低</option>
+        <option value="rating_asc" {% if request.GET.sort == 'rating_asc' %}selected{% endif %}>評價低→高</option>
+        <option value="time_asc" {% if request.GET.sort == 'time_asc' %}selected{% endif %}>時間舊→新</option>
+        <option value="time_desc" {% if request.GET.sort == 'time_desc' %}selected{% endif %}>時間新→舊</option>
+    </select>
+
+    <button type="submit">搜尋</button>
+</form>
+
+<!-- 🧾 評論列表表格 -->
+<table border="1" style="width:100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th>顧客</th>
+            <th>訂單編號</th>
+            <th>菜色</th>
+            <th>星等</th>
+            <th>評論內容</th>
+            <th>評論時間</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for review in reviews %}
+            <tr>
+                <td>{{ review.user.username }}</td>
+                <td>{{ review.order.order_id }}</td>
+                <td>
+                    {% for item in review.order.ordercontent_set.all %}
+                        {{ item.dish.dish_name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+                <td>{{ review.rating }}★</td>
+                <td>
+                    {% if review.comment %}
+                        {{ review.comment }}
+                    {% else %}
+                        <em>（無留言）</em>
+                    {% endif %}
+                </td>
+                <td>{{ review.created|date:"Y-m-d H:i" }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="6">目前沒有符合條件的評論。</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

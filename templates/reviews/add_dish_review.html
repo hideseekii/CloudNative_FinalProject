@@ -1,32 +1,35 @@
 {% extends "base.html" %}
-{% load static %}
-
-{% block title %}新增評論{% endblock %}
 
 {% block content %}
-<h2 class="text-center mb-4">針對訂單 #{{ order.order_id }} 評價菜品</h2>
-<h3>Debug: {{ dish_forms }}</h3>
-<form method="post" class="col-md-6 mx-auto">
-    {% csrf_token %}
-    {{ formset.management_form }}
+<div class="container mt-4">
+  <h3>針對每道菜進行評論</h3>
+  <p>訂單編號：#{{ order.order_id }}</p>
 
-    {% for item, form in dish_forms %}
-        <div class="card mb-3">
-            <div class="card-header bg-light">
-                <strong>{{ item.dish.name_zh }}</strong>
-            </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <label for="{{ form.rating.id_for_label }}" class="form-label">星等評分</label>
-                    {{ form.rating }}
-                </div>
-                <div class="mb-3">
-                    <label for="{{ form.comment.id_for_label }}" class="form-label">文字評價</label>
-                    {{ form.comment }}
-                </div>
-            </div>
-        </div>
-    {% endfor %}
-    <button type="submit" class="btn btn-primary w-100">提交所有評論</button>
+  <form method="post">
+  {% csrf_token %}
+  {{ formset.management_form }}  <!-- 🔥 必加這行！ -->
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>菜品</th>
+        <th>星等（0-5）</th>
+        <th>評論</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item, form in dish_forms %}
+      <tr>
+        <td>{{ item.dish.name_zh }}</td>
+        <td>{{ form.rating }}</td>
+        <td>{{ form.comment }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <button type="submit" class="btn btn-success">送出評論</button>
+  <a href="{% url 'orders:order_detail' order_id=order.order_id %}" class="btn btn-secondary">返回訂單</a>
 </form>
+</div>
 {% endblock %}
