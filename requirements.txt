@@ -1,29 +1,5 @@
-# 原有的 Django 依賴
 asgiref==3.8.1
 Django==5.2
 sqlparse==0.5.3
 typing_extensions==4.13.2
 tzdata==2025.2
-
-# 生產環境必要套件
-gunicorn>=21.2.0          # WSGI 服務器
-
-# 資料庫連接器
-psycopg2-binary>=2.9.0    # PostgreSQL
-
-# 靜態檔案服務
-whitenoise>=6.5.0
-
-# 環境變數管理
-python-decouple>=3.8
-
-# HTTP 請求（健康檢查用）
-requests>=2.31.0
-
-# 快取支援（可選，建議生產環境使用）
-# redis>=4.5.0
-# django-redis>=5.2.0
-
-# 其他常用套件（根據需求添加）
-# Pillow>=10.0.0          # 如果需要處理圖片
-# django-cors-headers>=4.0.0  # 如果需要 CORS 支援

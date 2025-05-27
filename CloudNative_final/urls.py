@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
 from django.contrib.auth import views as auth_views
-from . import views as heath_views  # Import your custom views
+
+# Import your custom views
 from users.views import (
     PasswordChangeView, PasswordChangeDoneView,
     PasswordResetView, PasswordResetDoneView,
@@ -10,9 +11,6 @@ from users.views import (
 )
 
 urlpatterns = [
-    # Health check endpoint
-    path('health/', heath_views.health_check, name='health_check'),
-    
     # Custom password reset views (MUST come before admin URLs and accounts/)
     path('password-reset/', PasswordResetView.as_view(), name='password_reset'),
     path('password-reset/done/', PasswordResetDoneView.as_view(), name='password_reset_done'),
@@ -24,7 +22,7 @@ urlpatterns = [
     path('password-change/done/', PasswordChangeDoneView.as_view(), name='password_change_done'),
     
     # Staff URLs
-    path('staff/', include(('staff.urls', 'staff'), namespace='staff')),
+    path('staff/', include(('staff.urls','staff'), namespace='staff')),
     
     # Original URLs
     path('admin/', admin.site.urls),
@@ -33,4 +31,5 @@ urlpatterns = [
     path('', RedirectView.as_view(pattern_name='menu:dish_list'), name='home'),
     path('orders/', include('orders.urls')),
     path('reviews/', include('reviews.urls')),
+    
 ]
