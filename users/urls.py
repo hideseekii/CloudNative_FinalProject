@@ -8,6 +8,7 @@ from .views import (
     ProfileView, ProfileEditView,  # 添加個人資料相關視圖
 )
 
+
 urlpatterns = [
     path('signup/', CustomerSignUpView.as_view(), name='signup'),  # 修改路徑，移除 customer 部分
 

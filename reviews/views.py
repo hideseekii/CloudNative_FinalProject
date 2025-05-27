@@ -27,8 +27,44 @@ from .models import Review, DishReview
 from orders.models import Order, OrderItem
 from django.contrib.auth.decorators import login_required
 from django.forms import formset_factory
+from django.views.generic import ListView
 
+class ReviewListView(ListView):
+    model = Review
+    template_name = 'reviews/review_list.html'
+    context_object_name = 'reviews'
 
+    def get_queryset(self):
+        queryset = Review.objects.all()
+        dish_name = self.request.GET.get('dish')
+        order_id = self.request.GET.get('order_id')
+        rating = self.request.GET.get('rating')
+        sort = self.request.GET.get('sort')
+
+        if dish_name:
+            queryset = queryset.filter(
+                order__ordercontent__dish__dish_name__icontains=dish_name
+            ).distinct()
+
+        if order_id:
+            queryset = queryset.filter(order__order_id=order_id)
+
+        if rating:
+            queryset = queryset.filter(rating=rating)
+
+        # 🔽 排序邏輯
+        if sort == 'rating_desc':
+            queryset = queryset.order_by('-rating')
+        elif sort == 'rating_asc':
+            queryset = queryset.order_by('rating')
+        elif sort == 'time_asc':
+            queryset = queryset.order_by('created')
+        elif sort == 'time_desc':
+            queryset = queryset.order_by('-created')
+        else:
+            queryset = queryset.order_by('-created')  # 預設最新在前
+
+        return queryset
 
 @login_required
 def add_review(request, order_id):
