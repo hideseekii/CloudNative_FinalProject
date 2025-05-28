@@ -58,24 +58,26 @@
   </thead>
   <tbody>
     {% if related_reviews %}
-        <ul style="list-style: none; padding-left: 0;">
-            {% for review in related_reviews %}
-                <li style="margin-bottom: 15px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
-                    <strong>{{ review.user.username }}</strong>
-                    評了 <strong>{{ review.rating }}★</strong>
-                    <small>（{{ review.created|date:"Y-m-d H:i" }}）</small><br>
-                    {% if review.comment %}
-                        <p>{{ review.comment }}</p>
-                    {% else %}
-                        <em>（無文字評論）</em>
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
+        {% for review in related_reviews %}
+        <tr>
+          <td>{{ review.user.username }}</td>
+          <td>{{ review.rating }}★</td>
+          <td>
+            {% if review.comment %}
+              {{ review.comment }}
+            {% else %}
+              <em>（無文字評論）</em>
+            {% endif %}
+          </td>
+          <td>{{ review.created|date:"Y-m-d H:i" }}</td>
+        </tr>
+        {% endfor %}
     {% else %}
-        <p><em>目前尚無此菜色的評論。</em></p>
+        <tr>
+          <td colspan="4"><em>目前尚無此菜色的評論。</em></td>
+        </tr>
     {% endif %}
-      </tbody>
+  </tbody>
 </table>
 
 </section>

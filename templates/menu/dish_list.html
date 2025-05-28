@@ -1,16 +1,16 @@
 {% extends "menu/base.html" %}
 {% load static %}
-
+{% load i18n %}
 {% block title %}菜單 - 美味餐廳{% endblock %}
 
 {% block content %}
 <div class="row mb-4">
     <div class="col-12 d-flex justify-content-between align-items-center">
-        <h1 class="mb-0">菜單</h1>
+        <h1 class="mb-0">{% trans "菜單" %}</h1>
 
         {% if user.is_authenticated and user.role == 'staff' %}
         <a href="{% url 'menu:dish_add' %}" class="btn btn-success">
-            <i class="fas fa-plus-circle"></i> 新增菜色
+            <i class="fas fa-plus-circle"></i> {% trans "新增菜色" %}
         </a>
         {% endif %}
     </div>
@@ -20,29 +20,30 @@
     <div class="card-body">
         <form method="get" class="row g-3">
             <div class="col-md-4">
-                <label for="q" class="form-label">搜尋</label>
-                <input type="text" id="q" name="q" class="form-control" placeholder="輸入菜名或描述..."
+                <label for="q" class="form-label">{% trans "搜尋" %}</label>
+                <input type="text" id="q" name="q" class="form-control" placeholder="{% trans '輸入菜名或描述...' %}"
                     value="{{ request.GET.q }}">
             </div>
             <div class="col-md-3">
-                <label for="min_price" class="form-label">最小價格</label>
+                <label for="min_price" class="form-label">{% trans "最小價格" %}</label>
                 <input type="number" id="min_price" name="min_price" class="form-control"
                     value="{{ request.GET.min_price }}">
             </div>
             <div class="col-md-3">
-                <label for="max_price" class="form-label">最大價格</label>
+                <label for="max_price" class="form-label">{% trans "最大價格" %}</label>
                 <input type="number" id="max_price" name="max_price" class="form-control"
                     value="{{ request.GET.max_price }}">
             </div>
             <div class="col-md-2 d-flex align-items-end">
                 <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary">套用</button>
-                    <a href="{% url 'menu:dish_list' %}" class="btn btn-outline-secondary">重置</a>
+                    <button type="submit" class="btn btn-primary">{% trans "套用" %}</button>
+                    <a href="{% url 'menu:dish_list' %}" class="btn btn-outline-secondary">{% trans "重置" %}</a>
                 </div>
             </div>
         </form>
     </div>
 </div>
+{% get_current_language as LANGUAGE_CODE %}
 
 {% if dishes %}
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
@@ -51,7 +52,7 @@
         <div class="card h-100 position-relative">
             {# 下架遮罩 #}
             {% if not dish.is_available %}
-            <div class="unavailable-overlay">已下架</div>
+            <div class="unavailable-overlay">{% trans "已下架" %}</div>
             {% endif %}
 
             {% if dish.image_url %}
@@ -61,30 +62,37 @@
             {% endif %}
 
             <div class="card-body d-flex flex-column">
-                <h5 class="card-title">{{ dish.name_zh }}</h5>
-                {% if dish.name_en %}
-                <h6 class="card-subtitle mb-2 text-muted">{{ dish.name_en }}</h6>
+                {% if LANGUAGE_CODE == 'zh-hant' %}
+                    <h5 class="card-title">{{ dish.name_zh }}</h5>
+                {% elif LANGUAGE_CODE == 'en' %}
+                    <h5 class="card-title">{{ dish.name_en }}</h5>
+                {% endif %}
+
+                {% if LANGUAGE_CODE == 'zh-hant' %}
+                    {{ dish.description_zh }}
+                {% elif LANGUAGE_CODE == 'en' %}
+                    {{ dish.description_en }}
                 {% endif %}
                 {% if dish.average_rating %}
                 
-                <p class="mb-1 text-warning">⭐ 平均評分：{{ dish.average_rating }} / 5</p>
+                <p class="mb-1 text-warning">{% trans "⭐ 平均評分：" %}{{ dish.average_rating }} / 5</p>
                 {% else %}
-                <p class="mb-1 text-muted">⭐ 尚無評分</p>
+                <p class="mb-1 text-muted">{% trans "⭐ 尚無評分" %}</p>
                 {% endif %}
 
                 <p class="card-text text-primary fw-bold mb-4">NT$ {{ dish.price }}</p>
 
                 <div class="mt-auto d-flex justify-content-between">
-                    <a href="{% url 'menu:dish_detail' dish.dish_id %}" class="btn btn-outline-secondary">詳情</a>
+                    <a href="{% url 'menu:dish_detail' dish.dish_id %}" class="btn btn-outline-secondary">{% trans "詳情" %}</a>
 
                     {# 員工的編輯/刪除按鈕 #}
                     {% if user.is_authenticated and user.role == 'staff' %}
                     <div class="btn-group">
                         <a href="{% url 'menu:dish_edit' dish.dish_id %}" class="btn btn-sm btn-warning">
-                            <i class="fas fa-edit"></i> 編輯
+                            <i class="fas fa-edit"></i> {% trans "編輯" %}
                         </a>
                         <a href="{% url 'menu:dish_delete' dish.dish_id %}" class="btn btn-sm btn-danger">
-                            <i class="fas fa-trash-alt"></i> 刪除
+                            <i class="fas fa-trash-alt"></i> {% trans "刪除" %}
                         </a>
                     </div>
 
@@ -92,16 +100,16 @@
                     {% else %}
                     {% if not dish.is_available %}
                     <button class="btn btn-secondary" disabled>
-                        <i class="fas fa-ban"></i> 已下架
+                        <i class="fas fa-ban"></i> {% trans "已下架" %}
                     </button>
                     {% else %}
                     {% if user.is_authenticated %}
                     <a href="{% url 'menu:add_to_cart' dish.dish_id %}" class="btn btn-primary">
-                        <i class="fas fa-cart-plus"></i> 加入購物車
+                        <i class="fas fa-cart-plus"></i> {% trans "加入購物車" %}
                     </a>
                     {% else %}
                     <a href="{% url 'login' %}?next={% url 'menu:add_to_cart' dish.dish_id %}" class="btn btn-primary">
-                        <i class="fas fa-sign-in-alt"></i> 登入購買
+                        <i class="fas fa-sign-in-alt"></i> {% trans "登入購買" %}
                     </a>
                     {% endif %}
                     {% endif %}
@@ -116,10 +124,10 @@
 {% else %}
 <div class="alert alert-info text-center p-5">
     <i class="fas fa-info-circle fa-3x mb-3"></i>
-    <h4>沒有找到符合條件的菜品</h4>
-    <p>請嘗試調整您的搜索條件，或查看完整菜單。</p>
+    <h4>{% trans "沒有找到符合條件的菜品" %}</h4>
+    <p>{% trans "請嘗試調整您的搜索條件，或查看完整菜單。" %}</p>
     <a href="{% url 'menu:dish_list' %}" class="btn btn-outline-primary mt-3">
-        查看所有菜品
+        {% trans "查看所有菜品" %}
     </a>
 </div>
 {% endif %}
