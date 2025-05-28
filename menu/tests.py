@@ -23,7 +23,9 @@ class DishModelTest(TestCase):
 class MenuViewTests(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user = users.User(username='testuser', password='password')
+        self.user = User.objects.create_user(username='testuser', password='password')
+        self.client.login(username='testuser', password='password')
+
         self.dish = Dish.objects.create(
             name_zh='紅燒牛肉麵',
             name_en='Beef Noodle',
@@ -75,7 +77,11 @@ class MenuViewTests(TestCase):
 class StaffViewsTest(TestCase):
     def setUp(self):
         self.client = Client()
-        self.staff_user = User.objects.create_user(username='staff', password='password', is_staff=True)
+        self.staff_user = User.objects.create_user(
+            username='staff', password='password', is_staff=True
+        )
+        self.client.login(username='staff', password='password')
+
         self.dish = Dish.objects.create(
             name_zh='蔥油餅',
             price=50,
