@@ -28,7 +28,7 @@ class LoginView(auth_views.LoginView):
     
 class LogoutView(View):
     """自定義登出視圖，直接登出並重定向"""
-    next_page = '/'
+    
     def get(self, request):
         if request.user.is_authenticated:
             messages.success(request, "您已成功登出。")
