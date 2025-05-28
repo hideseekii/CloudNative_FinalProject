@@ -7,36 +7,79 @@
     <div class="dish-detail">
         <div class="dish-detail-image">
             {% if dish.image_url %}
-            <img src="{{ dish.image_url }}" alt="{{ dish.name_zh }}">
+                <img src="{{ dish.image_url }}" alt="{{ dish.name_zh }}">
             {% endif %}
         </div>
         <div class="dish-detail-content">
             <h1 class="dish-detail-title">{{ dish.name_zh }}</h1>
-            {% if dish.name_en %}<h2 class="dish-detail-subtitle">{{ dish.name_en }}</h2>{% endif %}
-            
+            {% if dish.name_en %}
+                <h2 class="dish-detail-subtitle">{{ dish.name_en }}</h2>
+            {% endif %}
+
             <div class="dish-detail-price">NT$ {{ dish.price }}</div>
-            
+
             {% if dish.description_zh %}
-            <div class="dish-detail-description">
-                <p>{{ dish.description_zh }}</p>
-            </div>
+                <div class="dish-detail-description">
+                    <p>{{ dish.description_zh }}</p>
+                </div>
             {% endif %}
-            
+
             {% if dish.description_en %}
-            <div class="dish-detail-description">
-                <p>{{ dish.description_en }}</p>
-            </div>
+                <div class="dish-detail-description">
+                    <p>{{ dish.description_en }}</p>
+                </div>
             {% endif %}
-            
+
             <div class="dish-detail-actions">
                 <a href="{% url 'menu:dish_list' %}" class="btn btn-secondary">返回菜單</a>
                 {% if user.is_authenticated %}
-                <a href="{% url 'menu:add_to_cart' dish.dish_id %}" class="btn btn-primary">加入購物車</a>
+                    <a href="{% url 'menu:add_to_cart' dish.dish_id %}" class="btn btn-primary">加入購物車</a>
                 {% else %}
-                <a href="{% url 'login' %}?next={% url 'menu:add_to_cart' dish.dish_id %}" class="btn btn-primary">登入購買</a>
+                    <a href="{% url 'login' %}?next={% url 'menu:add_to_cart' dish.dish_id %}" class="btn btn-primary">登入購買</a>
                 {% endif %}
             </div>
         </div>
     </div>
 </section>
+
+<hr>
+
+<!-- ✅ 加入評論顯示區塊 -->
+<section class="dish-reviews">
+    <h4 class="mt-4">使用者評論</h4>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>使用者</th>
+      <th>評分</th>
+      <th>評論</th>
+      <th>時間</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% if related_reviews %}
+        {% for review in related_reviews %}
+        <tr>
+          <td>{{ review.user.username }}</td>
+          <td>{{ review.rating }}★</td>
+          <td>
+            {% if review.comment %}
+              {{ review.comment }}
+            {% else %}
+              <em>（無文字評論）</em>
+            {% endif %}
+          </td>
+          <td>{{ review.created|date:"Y-m-d H:i" }}</td>
+        </tr>
+        {% endfor %}
+    {% else %}
+        <tr>
+          <td colspan="4"><em>目前尚無此菜色的評論。</em></td>
+        </tr>
+    {% endif %}
+  </tbody>
+</table>
+
+</section>
+
 {% endblock %}

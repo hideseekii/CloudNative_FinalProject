@@ -2,6 +2,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 
+
 class Dish(models.Model):
     dish_id         = models.AutoField(primary_key=True)
     name_zh         = models.CharField('菜名（中文）', max_length=100)
@@ -21,3 +22,10 @@ class Dish(models.Model):
 
     def __str__(self):
         return f"{self.name_zh} (#{self.dish_id})"
+    def average_rating(self):
+        from reviews.models import DishReview 
+        reviews = DishReview.objects.filter(order_item__dish=self)
+        if reviews.exists():
+            avg = sum(r.rating for r in reviews) / reviews.count()
+            return round(avg, 1)
+        return None

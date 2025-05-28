@@ -7,7 +7,8 @@ from django.contrib.auth import views as auth_views
 from .forms import CustomerSignUpForm
 from django.contrib import messages
 from django.contrib.auth import logout
-
+from django.views import View
+from django.shortcuts import redirect 
 # 顧客註冊
 class CustomerSignUpView(generic.CreateView):
     form_class    = CustomerSignUpForm
@@ -27,18 +28,32 @@ class LoginView(auth_views.LoginView):
         messages.success(self.request, f"歡迎回來，{form.get_user().username}！")
         return super().form_valid(form)
 
+    
+class LogoutView(View):
+    """自定義登出視圖，直接登出並重定向"""
+    next_page = '/'
+
+
 class LogoutView(View):
     """自定義登出視圖，直接登出並重定向"""
     
+
     def get(self, request):
         if request.user.is_authenticated:
             messages.success(request, "您已成功登出。")
             logout(request)
+
+        return redirect('/')
+    
+    def post(self, request):
+        return self.get(request)
+
         # 使用命名 URL 而不是硬編碼路徑
         return redirect('home')  # 或者你的首頁 URL 名稱
     
     def post(self, request):
         return self.get(request)
+
 
 
 # 密碼變更

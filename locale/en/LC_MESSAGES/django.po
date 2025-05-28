@@ -1,0 +1,198 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-28 16:05+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\templates\base.html:17 .\templates\menu\base.html:17
+msgid "台積餐廳"
+msgstr "TSMC Restaurant"
+
+#: .\templates\base.html:25 .\templates\menu\base.html:25
+#: .\templates\menu\dish_list.html:9
+msgid "菜單"
+msgstr "Menu"
+
+#: .\templates\base.html:33 .\templates\menu\base.html:33
+msgid "購物車"
+msgstr "Cart"
+
+#: .\templates\base.html:46 .\templates\menu\base.html:46
+msgid "訂單歷史"
+msgstr "Order History"
+
+#: .\templates\base.html:50 .\templates\menu\base.html:50
+msgid "登出"
+msgstr "Logout"
+
+#: .\templates\base.html:55 .\templates\menu\base.html:55
+msgid "登入"
+msgstr "Login"
+
+#: .\templates\base.html:58 .\templates\menu\base.html:58
+msgid "註冊"
+msgstr "Sign up"
+
+#: .\templates\base.html:93 .\templates\menu\base.html:93
+msgid "台積餐廳. 版權所有."
+msgstr "TSMC Restaurant. All rights reserved."
+
+#: .\templates\menu\dish_list.html:13
+msgid "新增菜色"
+msgstr "Add New Dish"
+
+#: .\templates\menu\dish_list.html:23
+msgid "搜尋"
+msgstr "Search"
+
+#: .\templates\menu\dish_list.html:24
+msgid "輸入菜名或描述..."
+msgstr "Enter Dish name or Description"
+
+#: .\templates\menu\dish_list.html:28
+msgid "最小價格"
+msgstr "Minimum Price"
+
+#: .\templates\menu\dish_list.html:33
+msgid "最大價格"
+msgstr "Maximum Price"
+
+#: .\templates\menu\dish_list.html:39
+msgid "套用"
+msgstr "Apply"
+
+#: .\templates\menu\dish_list.html:40
+msgid "重置"
+msgstr "Reset"
+
+#: .\templates\menu\dish_list.html:54 .\templates\menu\dish_list.html:95
+msgid "已下架"
+msgstr "Not Availible"
+
+#: .\templates\menu\dish_list.html:70
+msgid "⭐ 平均評分："
+msgstr "⭐ Average Rating:"
+
+#: .\templates\menu\dish_list.html:72
+msgid "⭐ 尚無評分"
+msgstr "⭐ No Rating Yet"
+
+#: .\templates\menu\dish_list.html:78
+msgid "詳情"
+msgstr "Details"
+
+#: .\templates\menu\dish_list.html:84
+msgid "編輯"
+msgstr "Edit"
+
+#: .\templates\menu\dish_list.html:87
+msgid "刪除"
+msgstr "Delete"
+
+#: .\templates\menu\dish_list.html:100
+msgid "加入購物車"
+msgstr "Add to Cart"
+
+#: .\templates\menu\dish_list.html:104
+msgid "登入購買"
+msgstr "Login to purchase"
+
+#: .\templates\menu\dish_list.html:119
+msgid "沒有找到符合條件的菜品"
+msgstr "No Dish Found"
+
+#: .\templates\menu\dish_list.html:120
+msgid "請嘗試調整您的搜索條件，或查看完整菜單。"
+msgstr "Please try adjusting your search criteria or view the full menu"
+
+#: .\templates\menu\dish_list.html:122
+msgid "查看所有菜品"
+msgstr "Check Full Menu"
+
+#: .\templates\reviews\review_list.html:7
+msgid "Customer Reviews"
+msgstr "Customer Reviews"
+
+#: .\templates\reviews\review_list.html:11
+msgid "Dish Name"
+msgstr "Dish Name"
+
+#: .\templates\reviews\review_list.html:14
+#: .\templates\reviews\review_list.html:42
+msgid "Order ID"
+msgstr "Order ID"
+
+#: .\templates\reviews\review_list.html:17
+#: .\templates\reviews\review_list.html:44
+msgid "Rating"
+msgstr "Rating"
+
+#: .\templates\reviews\review_list.html:19
+msgid "-- All --"
+msgstr "-- All --"
+
+#: .\templates\reviews\review_list.html:25
+msgid "Sort"
+msgstr "Sort"
+
+#: .\templates\reviews\review_list.html:27
+msgid "-- Default (Newest) --"
+msgstr "-- Default (Newest) --"
+
+#: .\templates\reviews\review_list.html:28
+msgid "Rating High → Low"
+msgstr "Rating High → Low"
+
+#: .\templates\reviews\review_list.html:29
+msgid "Rating Low → High"
+msgstr "Rating Low → High"
+
+#: .\templates\reviews\review_list.html:30
+msgid "Oldest First"
+msgstr "Oldest First"
+
+#: .\templates\reviews\review_list.html:31
+msgid "Newest First"
+msgstr "Newest First"
+
+#: .\templates\reviews\review_list.html:34
+msgid "Search"
+msgstr "Search"
+
+#: .\templates\reviews\review_list.html:41
+msgid "Customer"
+msgstr "Customer"
+
+#: .\templates\reviews\review_list.html:43
+msgid "Dish"
+msgstr "Dish"
+
+#: .\templates\reviews\review_list.html:45
+msgid "Comment"
+msgstr "Comment"
+
+#: .\templates\reviews\review_list.html:46
+msgid "Date"
+msgstr "Date"
+
+#: .\templates\reviews\review_list.html:60
+msgid "(No comment)"
+msgstr "(No comment)"
+
+#: .\templates\reviews\review_list.html:66
+msgid "No reviews matching criteria."
+msgstr "No reviews matching criteria."

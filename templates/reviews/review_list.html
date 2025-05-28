@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}  {# ✅ 加這行載入翻譯標籤 #}
+
+{% block content %}
+
+<h1>{% trans "Customer Reviews" %}</h1>
+
+<!-- 🔍 搜尋表單 -->
+<form method="get" style="margin-bottom: 20px;">
+    <label>{% trans "Dish Name" %}：</label>
+    <input type="text" name="dish" value="{{ request.GET.dish }}">
+
+    <label>{% trans "Order ID" %}：</label>
+    <input type="text" name="order_id" value="{{ request.GET.order_id }}">
+
+    <label>{% trans "Rating" %}：</label>
+    <select name="rating">
+        <option value="">{% trans "-- All --" %}</option>
+        {% for i in "012345" %}
+            <option value="{{ i }}" {% if request.GET.rating == i %}selected{% endif %}>{{ i }}★</option>
+        {% endfor %}
+    </select>
+
+    <label>{% trans "Sort" %}：</label>
+    <select name="sort">
+        <option value="">{% trans "-- Default (Newest) --" %}</option>
+        <option value="rating_desc" {% if request.GET.sort == 'rating_desc' %}selected{% endif %}>{% trans "Rating High → Low" %}</option>
+        <option value="rating_asc" {% if request.GET.sort == 'rating_asc' %}selected{% endif %}>{% trans "Rating Low → High" %}</option>
+        <option value="time_asc" {% if request.GET.sort == 'time_asc' %}selected{% endif %}>{% trans "Oldest First" %}</option>
+        <option value="time_desc" {% if request.GET.sort == 'time_desc' %}selected{% endif %}>{% trans "Newest First" %}</option>
+    </select>
+
+    <button type="submit">{% trans "Search" %}</button>
+</form>
+
+<!-- 🧾 評論列表表格 -->
+<table border="1" style="width:100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th>{% trans "Customer" %}</th>
+            <th>{% trans "Order ID" %}</th>
+            <th>{% trans "Dish" %}</th>
+            <th>{% trans "Rating" %}</th>
+            <th>{% trans "Comment" %}</th>
+            <th>{% trans "Date" %}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for review in reviews %}
+            <tr>
+                <td>{{ review.user.username }}</td>
+                <td>{{ review.order_item.order.order_id }}</td>
+                <td>{{ review.order_item.dish.name_zh }}</td>
+                <td>{{ review.rating }}★</td>
+                <td>
+                    {% if review.comment %}
+                        {{ review.comment }}
+                    {% else %}
+                        <em>{% trans "(No comment)" %}</em>
+                    {% endif %}
+                </td>
+                <td>{{ review.created|date:"Y-m-d H:i" }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="6">{% trans "No reviews matching criteria." %}</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

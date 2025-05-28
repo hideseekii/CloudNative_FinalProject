@@ -18,3 +18,7 @@ class StaffSignUpForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+class LoginForm(forms.Form):
+    username = forms.CharField(label="帳號")
+    password = forms.CharField(widget=forms.PasswordInput, label="密碼")
