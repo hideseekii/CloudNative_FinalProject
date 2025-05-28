@@ -1,6 +1,8 @@
 # users/views.py
 from django.urls import reverse_lazy
 from django.views import generic
+from django.views import View
+from django.shortcuts import redirect  
 from django.contrib.auth import views as auth_views
 from .forms import CustomerSignUpForm
 from django.contrib import messages
@@ -32,7 +34,8 @@ class LogoutView(View):
         if request.user.is_authenticated:
             messages.success(request, "您已成功登出。")
             logout(request)
-        return redirect('/')
+        # 使用命名 URL 而不是硬編碼路徑
+        return redirect('home')  # 或者你的首頁 URL 名稱
     
     def post(self, request):
         return self.get(request)
