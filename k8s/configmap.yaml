@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: cloudnative-final
+data:
+  DEBUG: "false"  # 生產環境建議關閉
+  ALLOWED_HOSTS: "localhost,127.0.0.1,django,django.cloudnative-final.svc.cluster.local"
+  CSRF_TRUSTED_ORIGINS: "http://localhost:8080,http://127.0.0.1:8080"
+  DB_NAME: "cloudnative_final"
+  DB_USER: "postgres"
+  DB_HOST: "postgres"
+  DB_PORT: "5432"
