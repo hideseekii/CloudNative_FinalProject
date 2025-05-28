@@ -1,8 +1,10 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from .models import Dish
 from orders.models import Order, OrderItem
+
+User = get_user_model()
 
 class DishModelTest(TestCase):
     def setUp(self):
@@ -21,7 +23,7 @@ class DishModelTest(TestCase):
 class MenuViewTests(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(username='testuser', password='password')
+        self.user = users.User(username='testuser', password='password')
         self.dish = Dish.objects.create(
             name_zh='紅燒牛肉麵',
             name_en='Beef Noodle',
