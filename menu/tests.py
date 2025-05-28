@@ -1,7 +1,8 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from menu.models import Dish, Order
+from menu.models import Dish
+from orders.models import Order
 
 User = get_user_model()
 
