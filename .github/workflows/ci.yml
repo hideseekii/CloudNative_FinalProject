@@ -11,69 +11,97 @@ jobs:
     runs-on: ubuntu-latest
     env:
       COVERAGE_FILE: coverage.xml
+      # 也把資料庫環境變數放這裡，方便 manage.py 連線用
+      DATABASE_NAME: test_db
+      DATABASE_USER: test_user
+      DATABASE_PASSWORD: test_password
+      DATABASE_HOST: localhost
+      DATABASE_PORT: 5432
+
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0  # 方便 git diff 比較
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # 方便 git diff 比較
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10.x'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10.x'
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install coverage
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install coverage psycopg2-binary
 
-    - name: Run tests with coverage
-      run: |
-        coverage run --source='.' manage.py test
-        coverage xml -o coverage.xml
-        coverage report
+      - name: Run tests with coverage
+        env:
+          # 也可在這裡設定資料庫環境變數，確保 manage.py test 能連上 postgres
+          DATABASE_NAME: test_db
+          DATABASE_USER: test_user
+          DATABASE_PASSWORD: test_password
+          DATABASE_HOST: localhost
+          DATABASE_PORT: 5432
+        run: |
+          coverage run --source='.' manage.py test
+          coverage xml -o coverage.xml
+          coverage report
 
-    - name: Upload coverage report artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage-report
-        path: coverage.xml
+      - name: Upload coverage report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
 
-    - name: Compare coverage (basic)
-      run: |
-        echo "TODO: Add advanced coverage comparison logic or integrate codecov/coveralls here"
-        # 這裡可用第三方工具或自定義腳本做覆蓋率門檻判斷
+      - name: Compare coverage (basic)
+        run: |
+          echo "TODO: Add advanced coverage comparison logic or integrate codecov/coveralls here"
+          # 這裡可用第三方工具或自定義腳本做覆蓋率門檻判斷
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-    - name: Install Prettier
-      run: npm install -g prettier
+      - name: Install Prettier
+        run: npm install -g prettier
 
-    - name: Get changed JS files in this commit
-      id: changed-files
-      run: |
-        echo "files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- '*.js')" >> $GITHUB_OUTPUT
+      - name: Get changed JS files in this commit
+        id: changed-files
+        run: |
+          echo "files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- '*.js')" >> $GITHUB_OUTPUT
 
-    - name: Check Prettier formatting
-      if: steps.changed-files.outputs.files != ''
-      run: |
-        prettier --check ${{ steps.changed-files.outputs.files }}
+      - name: Check Prettier formatting
+        if: steps.changed-files.outputs.files != ''
+        run: |
+          prettier --check ${{ steps.changed-files.outputs.files }}
 
-    - name: Format JS files with Prettier
-      if: steps.changed-files.outputs.files != ''
-      run: |
-        prettier --write ${{ steps.changed-files.outputs.files }}
+      - name: Format JS files with Prettier
+        if: steps.changed-files.outputs.files != ''
+        run: |
+          prettier --write ${{ steps.changed-files.outputs.files }}
 
-    - name: Commit formatted JS files
-      if: steps.changed-files.outputs.files != ''
-      run: |
-        git config user.name "github-actions"
-        git config user.email "actions@github.com"
-        git add ${{ steps.changed-files.outputs.files }}
-        # 如果有差異才 commit & push
-        git diff --cached --quiet || (git commit -m "chore: auto-format JS files" && git push)
+      - name: Commit formatted JS files
+        if: steps.changed-files.outputs.files != ''
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add ${{ steps.changed-files.outputs.files }}
+          # 如果有差異才 commit & push
+          git diff --cached --quiet || (git commit -m "chore: auto-format JS files" && git push)
