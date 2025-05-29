@@ -10,7 +10,7 @@ jobs:
   test-and-format:
     runs-on: ubuntu-latest
     env:
-      COVERAGE_FILE: coverage.xml
+      # COVERAGE_FILE: coverage.xml
       DB_NAME: test_db
       DB_USER: test_user
       DB_PASSWORD: test_password
