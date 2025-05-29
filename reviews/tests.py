@@ -15,7 +15,7 @@ class ReviewTests(TestCase):
         self.client.force_login(self.user2)
         self.order = Order.objects.create(order_id=1, consumer=self.user, total_price=100.0)
         # 假設 OrderItem 有 dish 外鍵和 name_zh 欄位
-        self.order_item = OrderItem.objects.create(order=self.order, dish_id=1)  # dish_id 可換成你真實 dish id
+        self.order_item = OrderItem.objects.create(item_id=1, order=self.order, quantity=1, unit_price=50)
 
         self.client = Client()
         self.review_url = reverse('reviews:add_review', kwargs={'order_id': self.order.order_id})
