@@ -63,7 +63,8 @@ jobs:
           coverage erase
           # coverage run --source='menu' manage.py test menu.tests
           # coverage report --fail-under=50
-          coverage run --source='.' manage.py test
+          coverage run --parallel-mode --source='.' manage.py test
+          coverage combine
           coverage report
           coverage xml
 
