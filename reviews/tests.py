@@ -13,7 +13,7 @@ class ReviewTests(TestCase):
         self.user2 = User.objects.create_user(username='otheruser', password='testpass', email='user2@example.com')
         self.client.force_login(self.user)
         self.client.force_login(self.user2)
-        self.order = Order.objects.create(order_id=1, consumer=self.user)
+        self.order = Order.objects.create(order_id=1, consumer=self.user, total_price=100.0)
         # 假設 OrderItem 有 dish 外鍵和 name_zh 欄位
         self.order_item = OrderItem.objects.create(order=self.order, dish_id=1)  # dish_id 可換成你真實 dish id
 
