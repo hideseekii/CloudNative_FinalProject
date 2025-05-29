@@ -15,7 +15,7 @@ class MenuViewTests(TestCase):
         self.dish = Dish.objects.create(name_zh='牛肉麵', price=150, is_available=True)
 
     def test_add_to_cart(self):
-        response = self.client.post(reverse('menu:add_to_cart', args=[self.dish.dish_id))
+        response = self.client.post(reverse('menu:add_to_cart', args=[self.dish.dish_id]))
         self.assertRedirects(response, reverse('menu:dish_list'))
 
     def test_cart_view(self):
