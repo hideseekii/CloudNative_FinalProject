@@ -61,7 +61,7 @@ jobs:
           rm -f .coverage
           coverage run --source='.' manage.py test
           # coverage run --source='menu' manage.py test menu.tests
-          coverage report
+          coverage report --fail-under=50
           coverage xml
 
       - name: Upload coverage report artifact
