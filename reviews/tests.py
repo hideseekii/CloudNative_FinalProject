@@ -9,8 +9,8 @@ User = get_user_model()
 class ReviewTests(TestCase):
     def setUp(self):
         # 建立測試用 user、order、orderitem、dish
-        self.user = User.objects.create_user(username='testuser', password='testpass')
-        self.user2 = User.objects.create_user(username='otheruser', password='testpass')
+        self.user = User.objects.create_user(username='testuser', password='testpass', email='user1@example.com')
+        self.user2 = User.objects.create_user(username='otheruser', password='testpass', email='user2@example.com')
         self.client.force_login(self.user)
         self.client.force_login(self.user2)
         self.order = Order.objects.create(order_id=1, consumer=self.user)
