@@ -46,7 +46,7 @@ class MenuViewTests(TestCase):
 class StaffViewsTest(TestCase):
     def setUp(self):
         self.client = Client()
-        self.staff_user = User.objects.create_user(username='staffuser', password='password', is_staff=True)
+        self.staff_user = User.objects.create_user(username='staffuser', password='password', role=User.Role.STAFF)
         self.client.force_login(self.staff_user)
 
         self.dish = Dish.objects.create(name_zh='炒飯', price=100, is_available=True)
@@ -66,7 +66,10 @@ class StaffViewsTest(TestCase):
     def test_update_dish_view(self):
         response = self.client.post(reverse('menu:dish_edit', args=[self.dish.dish_id]), {
             'name_zh': '改過的炒飯',
+            'name_en': 'Edited Fried Rice',
+            'description_zh': '更新描述',
             'price': 120,
+            'image_url': 'https://as.chdev.tw/club/cw1/CH/club/images/article/201609/article-57e8d40589385.jpg',
             'is_available': True,
         })
         self.assertRedirects(response, reverse('menu:dish_list'))
