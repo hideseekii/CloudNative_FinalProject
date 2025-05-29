@@ -58,10 +58,11 @@ jobs:
           DATABASE_HOST: localhost
           DATABASE_PORT: 5432
         run: |
-          # run 全部測試 # coverage run --source='.' manage.py test
-          coverage run --source='menu' manage.py test menu.tests
-          coverage xml -o coverage.xml
+          rm -f .coverage
+          coverage run --source='.' manage.py test
+          # coverage run --source='menu' manage.py test menu.tests
           coverage report
+          coverage xml
 
       - name: Upload coverage report artifact
         uses: actions/upload-artifact@v4
