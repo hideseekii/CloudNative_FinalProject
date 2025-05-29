@@ -14,6 +14,7 @@ class OrderTestCase(TestCase):
         # 建立一位顧客與餐點
         self.client = Client()
         self.customer = User.objects.create_user(username='customer', password='test123')
+        self.customer.save()
         self.dish1 = Dish.objects.create(name_zh='炒飯', price=100, is_available=True)
         self.dish2 = Dish.objects.create(name_zh='麵線', price=50, is_available=True)
 
