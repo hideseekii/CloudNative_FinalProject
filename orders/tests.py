@@ -19,7 +19,8 @@ class OrderTestCase(TestCase):
 
     def test_checkout_creates_order_and_items(self):
         # 登入
-        self.client.login(username='customer', password='test123')
+        logged_in = self.client.login(username='customer', password='test123')
+        self.assertTrue(logged_in)
         
         # 模擬購物車
         session = self.client.session
@@ -42,7 +43,8 @@ class OrderTestCase(TestCase):
         self.assertEqual(session.get('cart'), {})
 
     def test_checkout_with_empty_cart_redirects(self):
-        self.client.login(username='customer', password='test123')
+        logged_in = self.client.login(username='customer', password='test123')
+        self.assertTrue(logged_in)
 
         session = self.client.session
         session['cart'] = {}
@@ -53,7 +55,8 @@ class OrderTestCase(TestCase):
         self.assertEqual(Order.objects.count(), 0)
 
     def test_order_confirmation_view(self):
-        self.client.login(username='customer', password='test123')
+        logged_in = self.client.login(username='customer', password='test123')
+        self.assertTrue(logged_in)
 
         order = Order.objects.create(
             consumer=self.customer,
@@ -70,7 +73,8 @@ class OrderTestCase(TestCase):
         self.assertContains(response, "炒飯")
 
     def test_order_detail_view(self):
-        self.client.login(username='customer', password='test123')
+        logged_in = self.client.login(username='customer', password='test123')
+        self.assertTrue(logged_in)
 
         order = Order.objects.create(
             consumer=self.customer,
@@ -87,7 +91,9 @@ class OrderTestCase(TestCase):
         self.assertContains(response, "100")
 
     def test_order_history_view(self):
-        self.client.login(username='customer', password='test123')
+        logged_in = self.client.login(username='customer', password='test123')
+        self.assertTrue(logged_in)
+        
         Order.objects.create(consumer=self.customer, total_price=120, datetime=timezone.now())
         Order.objects.create(consumer=self.customer, total_price=80, datetime=timezone.now())
 
