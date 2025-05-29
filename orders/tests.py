@@ -15,15 +15,10 @@ class OrderTestCase(TestCase):
         self.client = Client()
         self.customer = User.objects.create_user(username='customer', password='test123')
         self.client.force_login(self.customer)
-        # self.customer.save()
         self.dish1 = Dish.objects.create(name_zh='炒飯', price=100, is_available=True)
         self.dish2 = Dish.objects.create(name_zh='麵線', price=50, is_available=True)
 
     def test_checkout_creates_order_and_items(self):
-        # 登入
-        logged_in = self.client.login(username='customer', password='test123')
-        self.assertTrue(logged_in)
-        
         # 模擬購物車
         session = self.client.session
         session['cart'] = {str(self.dish1.dish_id): 2, str(self.dish2.dish_id): 3}
@@ -45,9 +40,6 @@ class OrderTestCase(TestCase):
         self.assertEqual(session.get('cart'), {})
 
     def test_checkout_with_empty_cart_redirects(self):
-        logged_in = self.client.login(username='customer', password='test123')
-        self.assertTrue(logged_in)
-
         session = self.client.session
         session['cart'] = {}
         session.save()
@@ -57,9 +49,6 @@ class OrderTestCase(TestCase):
         self.assertEqual(Order.objects.count(), 0)
 
     def test_order_confirmation_view(self):
-        logged_in = self.client.login(username='customer', password='test123')
-        self.assertTrue(logged_in)
-
         order = Order.objects.create(
             consumer=self.customer,
             datetime=timezone.now(),
@@ -75,9 +64,6 @@ class OrderTestCase(TestCase):
         self.assertContains(response, "炒飯")
 
     def test_order_detail_view(self):
-        logged_in = self.client.login(username='customer', password='test123')
-        self.assertTrue(logged_in)
-
         order = Order.objects.create(
             consumer=self.customer,
             datetime=timezone.now(),
@@ -92,10 +78,7 @@ class OrderTestCase(TestCase):
         self.assertContains(response, "炒飯")
         self.assertContains(response, "100")
 
-    def test_order_history_view(self):
-        logged_in = self.client.login(username='customer', password='test123')
-        self.assertTrue(logged_in)
-        
+    def test_order_history_view(self):  
         Order.objects.create(consumer=self.customer, total_price=120, datetime=timezone.now())
         Order.objects.create(consumer=self.customer, total_price=80, datetime=timezone.now())
 
