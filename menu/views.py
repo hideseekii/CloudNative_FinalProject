@@ -56,7 +56,7 @@ class DishDetailView(DetailView):
         # ✅ 查出與這道菜有關的所有評論
         related_orders = OrderItem.objects.filter(dish=dish).values_list('order_id', flat=True)
 
-        related_reviews = DishReview.objects.filter(order_id__in=related_orders).distinct().order_by('-created')
+        related_reviews = DishReview.objects.filter(order_item__dish=dish).distinct().order_by('-created')
 
         context['related_reviews'] = related_reviews
         return context
