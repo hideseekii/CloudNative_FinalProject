@@ -1,140 +1,136 @@
-﻿# Cloud-Native-NYCU-Final_Project
+# 台積電內部餐廳系統
+## 國立陽明交通大學 x 台積電雲原生課程期末專案
 
-## Project Overview
+本專案為國立陽明交通大學與台灣積體電路製造股份有限公司（台積電）合作開設的雲原生課程期末作業。系統設計為台積電內部員工專用的餐廳點餐平台，提供便利的用餐服務管理。
 
-Cloud-Native-NYCU-FinalProject is a Django-based backend service for a restaurant ordering system. It demonstrates a cloud-native architecture with containerization, a RESTful API, and PostgreSQL for persistent storage.
+## 專案概述
 
-## Features
+台積電內部餐廳系統是基於 Django 的雲原生後端服務，讓員工能夠瀏覽菜單、下訂單並管理用餐體驗。本系統展現了現代雲原生架構原則，包含容器化、Kubernetes 部署和微服務設計。
 
-* **User Management**: Registration, login, and profile editing (via `users/` app).
-* **Menu Management**: CRUD operations for dishes, including support for images and descriptions (`menu/` app).
-* **Order Processing**: Create and track customer orders (`orders/` app).
-* **Dish Reviews**: Customers can leave reviews and ratings for dishes (`reviews/` app).
-* **Admin Interface**: Manage all models through Django Admin.
+## 核心功能
 
-## Repository Structure
+* **員工身分驗證**：台積電內部使用者安全登入系統
+* **菜單管理**：瀏覽餐廳菜品，包含圖片、描述和價格
+* **訂單處理**：下訂單並即時追蹤訂單狀態
+* **評論系統**：對餐點評分和評論，協助其他員工選擇餐點
+* **管理後台**：餐廳人員可管理菜單、訂單和客戶回饋
+* **雲原生架構**：完全容器化並支援 Kubernetes 部署
+
+## 系統架構
+
+系統遵循雲原生原則：
+- **容器化**：使用 Docker 容器確保一致性部署
+- **編排管理**：Kubernetes (K3d) 進行容器管理
+- **資料庫**：PostgreSQL 提供可靠的資料持久化
+- **API 優先設計**：RESTful API 支援前後端通訊
+- **可擴展性**：設計支援台積電內部使用者規模
+
+## 快速部署
+
+### 系統需求
+
+部署前請確認已安裝以下工具：
+
+- **Docker**：容器執行環境
+- **K3d**：輕量級 Kubernetes 發行版
+- **kubectl**：Kubernetes 命令列工具
+
+### 一鍵部署
+
+系統提供自動化部署腳本，快速建置環境：
+
+```bash
+# 克隆專案
+git clone https://github.com/AlHIO/Cloud-Native-NYCU-FinalProject.git
+cd Cloud-Native-NYCU-FinalProject
+
+# 執行部署腳本
+./deploy.sh
+```
+
+### 存取應用程式
+
+部署完成後，透過以下方式存取餐廳系統：
+
+```bash
+# 設定端口轉發以存取應用程式
+kubectl port-forward svc/django 8080:80 -n cloudnative-final
+
+# 在瀏覽器開啟 http://localhost:8080
+```
+
+## 專案結構
 
 ```
 Cloud-Native-NYCU-FinalProject/
-├── CloudNative_final/    # Django project settings, wsgi, URLs
-├── menu/                 # Menu app (models, views, templates)
-├── orders/               # Orders app
-├── reviews/              # Reviews app
-├── users/                # User profile & auth extensions
-├── static/               # Global static assets
-├── templates/            # Base templates
-├── Dockerfile
-├── docker-compose.yml
-├── manage.py
-├── requirements.txt
-├── .env.example          # Example environment variables
+├── CloudNative_final/    # Django 專案設定
+├── menu/                 # 菜單管理應用程式
+├── orders/               # 訂單處理應用程式  
+├── reviews/              # 評論評分系統
+├── users/                # 員工身分驗證
+├── static/               # 靜態資源 (CSS, JS, 圖片)
+├── templates/            # HTML 樣板
+├── k8s/                  # Kubernetes 部署檔案
+├── deploy.sh             # 自動化部署腳本
+├── Dockerfile            # 容器設定檔
+├── docker-compose.yml    # 本地開發環境設定
+├── requirements.txt      # Python 相依套件
 └── README.md
 ```
 
-## Prerequisites
+## 開發環境設定
 
-* Python 3.10+ or 3.12
-* pip
-* Docker & Docker Compose (optional, for containerized setup)
+本地開發環境（不使用 Kubernetes）：
 
-## Getting Started
-
-### 1. Clone the repository
-
+### 1. 環境設定
 ```bash
-git clone https://github.com/AlHIO/Cloud-Native-NYCU-FinalProject.git
-cd Cloud-Native-NYCU-FinalProject
-```
-
-
-### 3. Local development (without Docker)
-
-#### a. Create a virtual environment
-
-```bash
+# 建立虛擬環境
 python -m venv .venv
-# PowerShell:
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# 啟動虛擬環境
+# Windows PowerShell:
 .\.venv\Scripts\Activate.ps1
-# cmd.exe:
-.venv\Scripts\activate.bat
-# Bash:
+# Windows CMD:
+.venv\Scripts\activate.bat  
+# Linux/macOS:
 source .venv/bin/activate
 ```
 
-#### b. Install dependencies
-
+### 2. 安裝相依套件
 ```bash
 pip install -r requirements.txt
 ```
 
-#### c. Run database migrations
-
+### 3. 資料庫設定
 ```bash
+# 執行資料庫遷移
 python manage.py migrate
-```
 
-#### d. Create a superuser
-
-```bash
+# 建立管理員帳號
 python manage.py createsuperuser
 ```
 
-#### e. Start the development server
-
+### 4. 啟動開發伺服器
 ```bash
 python manage.py runserver
 ```
 
-Open `http://127.0.0.1:8000/` in your browser; admin at `http://127.0.0.1:8000/admin/`.
+在瀏覽器開啟 `http://127.0.0.1:8000/` 存取應用程式
 
-### 4. Containerized setup (Docker) !!!還沒做
+## API 文件
 
-Ensure Docker & Docker Compose are installed.
+| 端點              | HTTP 方法        | 描述                    |
+|-------------------|------------------|------------------------|
+| `/api/auth/`      | POST, GET        | 員工身分驗證            |
+| `/api/menu/`      | GET, POST        | 菜單項目管理            |
+| `/api/menu/<id>/` | GET, PUT, DELETE | 個別餐點操作            |
+| `/api/orders/`    | GET, POST        | 建立訂單和追蹤          |
+| `/api/reviews/`   | GET, POST        | 餐點評論和評分          |
 
-```bash
-# Build and start services
-docker-compose up --build -d
+## 測試
 
-# Apply migrations
-docker-compose exec web python manage.py migrate
-
-# Create superuser
-docker-compose exec web python manage.py createsuperuser
-```
-
-Access the app at `http://localhost:8000/`.
-
-## API Endpoints
-
-| Path              | Methods          | Description                   |
-| ----------------- | ---------------- | ----------------------------- |
-| `/api/auth/`      | POST, GET        | Login, logout, register       |
-| `/api/menu/`      | GET, POST        | List & create dishes          |
-| `/api/menu/<id>/` | GET, PUT, DELETE | Retrieve, update, delete dish |
-| `/api/orders/`    | GET, POST        | List & create orders          |
-| `/api/reviews/`   | GET, POST        | List & create reviews         |
-
-*(Enable DRF browsable API or Swagger if configured.)*
-
-## Running Tests
+執行測試套件確保系統可靠性：
 
 ```bash
 python manage.py test
 ```
-
-## Contributing
-
-1. Fork this repository
-2. Create a branch: `git checkout -b feature/YourFeature`
-3. Commit changes: `git commit -m "Add feature"`
-4. Push: `git push origin feature/YourFeature`
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
-
----
-
-*Happy coding!*
