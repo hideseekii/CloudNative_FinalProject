@@ -117,20 +117,3 @@ python manage.py runserver
 
 在瀏覽器開啟 `http://127.0.0.1:8000/` 存取應用程式
 
-## API 文件
-
-| 端點              | HTTP 方法        | 描述                    |
-|-------------------|------------------|------------------------|
-| `/api/auth/`      | POST, GET        | 員工身分驗證            |
-| `/api/menu/`      | GET, POST        | 菜單項目管理            |
-| `/api/menu/<id>/` | GET, PUT, DELETE | 個別餐點操作            |
-| `/api/orders/`    | GET, POST        | 建立訂單和追蹤          |
-| `/api/reviews/`   | GET, POST        | 餐點評論和評分          |
-
-## 測試
-
-執行測試套件確保系統可靠性：
-
-```bash
-python manage.py test
-```
