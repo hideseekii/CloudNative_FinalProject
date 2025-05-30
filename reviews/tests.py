@@ -11,9 +11,9 @@ User = get_user_model()
 class ReviewTests(TestCase):
     def setUp(self):
         # 建立使用者
-        self.user = User.objects.create_user(username='testuser', password='testpass')
         self.client = Client()
-        self.client.login(username='testuser', password='testpass')
+        self.user = User.objects.create_user(username='testuser', password='testpass')
+        self.client.force_login(self.user)
 
         # 建立訂單與訂單項目
         self.dish = Dish.objects.create(name_zh='牛肉麵', price=150, is_available=True)
