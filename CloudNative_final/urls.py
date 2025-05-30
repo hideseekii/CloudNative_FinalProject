@@ -17,7 +17,6 @@ from users.views import (
 )
 
 urlpatterns = [
-
     # Health check endpoint
     path('health/', heath_views.health_check, name='health_check'),
 

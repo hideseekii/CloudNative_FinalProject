@@ -43,6 +43,7 @@
 git clone https://github.com/AlHIO/Cloud-Native-NYCU-FinalProject.git
 cd Cloud-Native-NYCU-FinalProject
 
+
 # 執行部署腳本
 ./deploy.sh
 ```
@@ -52,6 +53,75 @@ cd Cloud-Native-NYCU-FinalProject
 部署完成後，透過以下方式存取餐廳系統：
 
 ```bash
+# 設定端口轉發以存取應用程式
+kubectl port-forward svc/django 8080:80 -n cloudnative-final
+
+# 在瀏覽器開啟 http://localhost:8080
+```
+
+## 專案結構
+
+```
+Cloud-Native-NYCU-FinalProject/
+├── CloudNative_final/    # Django 專案設定
+├── menu/                 # 菜單管理應用程式
+├── orders/               # 訂單處理應用程式  
+├── reviews/              # 評論評分系統
+├── users/                # 員工身分驗證
+├── static/               # 靜態資源 (CSS, JS, 圖片)
+├── templates/            # HTML 樣板
+├── k8s/                  # Kubernetes 部署檔案
+├── deploy.sh             # 自動化部署腳本
+├── Dockerfile            # 容器設定檔
+├── docker-compose.yml    # 本地開發環境設定
+├── requirements.txt      # Python 相依套件
+└── README.md
+```
+
+## 開發環境設定
+
+本地開發環境（不使用 Kubernetes）：
+
+# 執行部署腳本
+./deploy.sh
+```
+
+### 存取應用程式
+
+部署完成後，透過以下方式存取餐廳系統：
+
+
+### 1. 環境設定
+```bash
+
+# 建立虛擬環境
+python -m venv .venv
+
+# 啟動虛擬環境
+# Windows PowerShell:
+.\.venv\Scripts\Activate.ps1
+# Windows CMD:
+.venv\Scripts\activate.bat  
+# Linux/macOS:
+source .venv/bin/activate
+```
+
+### 2. 安裝相依套件
+```bash
+pip install -r requirements.txt
+```
+
+### 3. 資料庫設定
+```bash
+# 執行資料庫遷移
+python manage.py migrate
+
+# 建立管理員帳號
+python manage.py createsuperuser
+```
+
+### 4. 啟動開發伺服器
+
 # 設定端口轉發以存取應用程式
 kubectl port-forward svc/django 8080:80 -n cloudnative-final
 
@@ -96,9 +166,15 @@ source .venv/bin/activate
 ```
 
 ### 2. 安裝相依套件
+
 ```bash
 pip install -r requirements.txt
 ```
+
+在瀏覽器開啟 `http://127.0.0.1:8000/` 存取應用程式
+
+執行測試套件確保系統可靠性：
+
 
 ### 3. 資料庫設定
 ```bash
@@ -110,14 +186,11 @@ python manage.py createsuperuser
 ```
 
 ### 4. 啟動開發伺服器
+
 ```bash
 python manage.py runserver
 ```
 
 在瀏覽器開啟 `http://127.0.0.1:8000/` 存取應用程式
 
-執行測試套件確保系統可靠性：
 
-```bash
-python manage.py test
-```

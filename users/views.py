@@ -28,16 +28,9 @@ class LoginView(auth_views.LoginView):
         messages.success(self.request, f"歡迎回來，{form.get_user().username}！")
         return super().form_valid(form)
 
-    
-class LogoutView(View):
-    """自定義登出視圖，直接登出並重定向"""
-    next_page = '/'
-
 
 class LogoutView(View):
     """自定義登出視圖，直接登出並重定向"""
-    
-
     def get(self, request):
         if request.user.is_authenticated:
             messages.success(request, "您已成功登出。")
