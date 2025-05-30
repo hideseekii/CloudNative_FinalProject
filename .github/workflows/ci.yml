@@ -70,7 +70,7 @@ jobs:
           coverage xml        # 輸出 coverage.xml 給其他工具使用（如 codecov）
           coverage html       # 輸出 HTML 報告到 htmlcov/
           
-          coverage-lcov coverage.xml > lcov.info
+          coverage-lcov --input-file coverage.xml > lcov.info
           genhtml lcov.info --output-directory lcov-report
 
       - name: Upload coverage report artifact
