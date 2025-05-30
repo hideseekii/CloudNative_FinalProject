@@ -49,10 +49,10 @@ jobs:
           pip install -r requirements.txt
           # pip install coverage psycopg2-binary
           pip install coverage==7.4.4
-
+          
       - name: Run tests with coverage
         env:
-          # 也可在這裡設定資料庫環境變數，確保 manage.py test 能連上 postgres
+          # 設定資料庫環境變數，確保 manage.py test 能連上 postgres
           DATABASE_NAME: test_db
           DATABASE_USER: test_user
           DATABASE_PASSWORD: test_password
@@ -61,19 +61,20 @@ jobs:
         run: |
           rm -f .coverage
           coverage erase
-          # coverage run --source='menu' manage.py test menu.tests
-          # coverage report --fail-under=50
           coverage run --parallel-mode --source='.' manage.py test
           coverage combine
           coverage report
-          coverage xml
+          coverage xml        # 輸出 coverage.xml 給其他工具使用（如 codecov）
+          coverage html       # 輸出 HTML 報告到 htmlcov/
 
       - name: Upload coverage report artifact
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: coverage.xml
-
+          path: |
+            coverage.xml
+            htmlcov/
+        
       - name: Compare coverage (basic)
         run: |
           echo "TODO: Add advanced coverage comparison logic or integrate codecov/coveralls here"
