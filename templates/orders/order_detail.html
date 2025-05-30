@@ -76,11 +76,11 @@
                 </div>
                 <div class="card-footer text-end">
                     <!-- 整筆訂單評論 -->
-                    <a href="{% url 'add_review' order.order_id %}" class="btn btn-success">
+                    <a href="{% url 'reviews:add_review' order.order_id %}" class="btn btn-success">
                         <i class="fas fa-review-dots"></i> 新增評論
                     </a>
                     <!-- 每道菜品評論 -->
-                    <a href="{% url 'add_dish_review' order.order_id %}" class="btn btn-warning">
+                    <a href="{% url 'reviews:add_dish_review' order.order_id %}" class="btn btn-warning">
                         <i class="fas fa-star"></i> 每道菜品評論
                     </a>
                     <!-- 返回與繼續操作 -->
