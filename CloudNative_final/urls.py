@@ -30,7 +30,7 @@ urlpatterns = [
     path('menu/', include(('menu.urls', 'menu'), namespace='menu')),
     path('', RedirectView.as_view(pattern_name='menu:dish_list'), name='home'),
     path('orders/', include('orders.urls')),
-    path('reviews/', include('reviews.urls')),
+    path('reviews/', include('reviews.urls', namespace='reviews')),
 
     
     path('i18n/setlang/', set_language, name='set_language'),
