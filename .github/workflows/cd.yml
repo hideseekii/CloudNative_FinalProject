@@ -1,0 +1,37 @@
+name: Django CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  deploy:
+    name: Run deploy.sh (Local CD)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Install k3d, kubectl and dependencies
+        run: |
+          curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
+
+          # Create k3d cluster
+          k3d cluster create mycluster --wait
+
+      - name: Run deploy.sh
+        run: |
+          chmod +x deploy.sh
+          ./deploy.sh
+
+      - name: Show all resources
+        run: kubectl get all -n cloudnative-final
