@@ -7,7 +7,14 @@ data:
   DEBUG: "false"  # 生產環境建議關閉
   ALLOWED_HOSTS: "localhost,127.0.0.1,django,django.cloudnative-final.svc.cluster.local"
   CSRF_TRUSTED_ORIGINS: "http://localhost:8080,http://127.0.0.1:8080"
+  
+  # PostgreSQL 設定
   DB_NAME: "cloudnative_final"
   DB_USER: "postgres"
   DB_HOST: "postgres"
   DB_PORT: "5432"
+  
+  # Redis 設定
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  REDIS_DB: "0"

@@ -59,7 +59,34 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'  
 AUTH_USER_MODEL = 'users.User'
 
+# Redis 設定
+REDIS_HOST = config('REDIS_HOST', default='localhost')
+REDIS_PORT = config('REDIS_PORT', default='6379', cast=int)
+REDIS_DB = config('REDIS_DB', default='0', cast=int)
+
+# Cache 設定 - 使用 Redis
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': f'redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'CONNECTION_POOL_KWARGS': {
+                'max_connections': 50,
+                'retry_on_timeout': True,
+            },
+        },
+        'KEY_PREFIX': 'cloudnative_final',
+        'VERSION': 1,
+    }
+}
+
+# Session 設定 - 使用 Redis 儲存
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
+
 MIDDLEWARE = [
+    'django.middleware.cache.UpdateCacheMiddleware',  # 加在最前面（全站快取）
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # 靜態檔案服務
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -69,7 +96,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',  # 加在最後面（全站快取）
 ]
+
+# 全站快取設定（可選，比較激進）
+CACHE_MIDDLEWARE_ALIAS = 'default'
+CACHE_MIDDLEWARE_SECONDS = 300  # 快取 5 分鐘
+CACHE_MIDDLEWARE_KEY_PREFIX = 'site_cache'
 
 ROOT_URLCONF = 'CloudNative_final.urls'
 
@@ -204,6 +237,12 @@ LOGGING = {
         'django': {
             'handlers': ['console'],
             'level': config('DJANGO_LOG_LEVEL', default='INFO'),
+            'propagate': False,
+        },
+        # Redis 日誌（可選）
+        'django_redis': {
+            'handlers': ['console'],
+            'level': 'INFO',
             'propagate': False,
         },
     },
