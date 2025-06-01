@@ -38,7 +38,7 @@
             <div class="form-floating mb-3">
                 <input type="text" class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
                        id="id_username" name="username" placeholder="用戶名" required>
-                <label for="id_username">用戶名</label>
+                <label for="id_username">電子郵件</label>
                 {% if form.username.errors %}
                 <div class="invalid-feedback">
                     {% for error in form.username.errors %}

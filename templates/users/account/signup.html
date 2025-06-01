@@ -31,39 +31,103 @@
         <form method="post" class="login-form signup-form" novalidate>
             {% csrf_token %}
             
-            {% for field in form %}
+            <!-- 電子郵件欄位 -->
             <div class="form-floating mb-3">
-                {{ field }}
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                
-                {% if field.errors %}
+                <input type="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+                       id="id_email" name="email" placeholder="電子郵件" required>
+                <label for="id_email">電子郵件</label>
+                {% if form.email.errors %}
                 <div class="invalid-feedback">
-                    {% for error in field.errors %}
+                    {% for error in form.email.errors %}
                     {{ error }}
                     {% endfor %}
                 </div>
                 {% endif %}
-                
-                {% if field.help_text %}
+                {% if form.email.help_text %}
                 <div class="form-text">
-                    <i class="fas fa-info-circle"></i> {{ field.help_text }}
+                    <i class="fas fa-info-circle"></i> {{ form.email.help_text }}
                 </div>
                 {% endif %}
             </div>
-            {% endfor %}
-            
+
+            <!-- 使用者名稱欄位 -->
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+                       id="id_username" name="username" placeholder="使用者名稱" required>
+                <label for="id_username">使用者名稱</label>
+                {% if form.username.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.username.errors %}
+                    {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if form.username.help_text %}
+                <div class="form-text">
+                    <i class="fas fa-info-circle"></i> {{ form.username.help_text }}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- 聯絡電話欄位 -->
+            <div class="form-floating mb-3">
+                <input type="tel" class="form-control {% if form.phone.errors %}is-invalid{% endif %}"
+                       id="id_phone" name="phone" placeholder="聯絡電話" required>
+                <label for="id_phone">聯絡電話</label>
+                {% if form.phone.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.phone.errors %}
+                    {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if form.phone.help_text %}
+                <div class="form-text">
+                    <i class="fas fa-info-circle"></i> {{ form.phone.help_text }}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- 密碼欄位 -->
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control {% if form.password.errors %}is-invalid{% endif %}"
+                       id="id_password" name="password" placeholder="密碼" required>
+                <label for="id_password">密碼</label>
+                {% if form.password.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.password.errors %}
+                    {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if form.password.help_text %}
+                <div class="form-text">
+                    <i class="fas fa-info-circle"></i> {{ form.password.help_text }}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- 顯示非欄位錯誤 -->
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                <i class="fas fa-exclamation-circle"></i> {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+
             <div class="login-actions">
                 <button type="submit" class="btn btn-login">
                     <i class="fas fa-user-plus"></i> 建立帳號
                 </button>
             </div>
         </form>
-        
+
         <div class="login-options">
             <div class="login-divider">
                 <span>或者</span>
             </div>
-            
+
             <div class="register-option">
                 <p>已經有帳號？</p>
                 <a href="{% url 'login' %}" class="btn btn-register">
