@@ -1,3 +1,6 @@
+# 將映像推送到 Docker Hub 或部署到雲端 Kubernetes
+# 需要設定 secrets.DOCKER_USERNAME 或 secrets.DOCKER_PASSWORD
+
 name: Django CD Pipeline
 
 on:
