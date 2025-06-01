@@ -7,10 +7,10 @@ on:
   pull_request:
   
   # 這裡用 workflow_run，等 CI 完成 main 分支的工作才部署
-  workflow_run:
-    workflows: ["Django CI Pipeline"]
-    types:
-      - completed
+  # workflow_run:
+    # workflows: ["Django CI Pipeline"]
+    # types:
+      # - completed
 
 jobs:
   deploy:
