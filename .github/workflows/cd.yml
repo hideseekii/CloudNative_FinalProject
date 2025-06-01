@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy:
-    name: Run deploy.sh (Local CD)
+    name: Deploy with deploy.sh & Validate App
     runs-on: ubuntu-latest
 
     steps:
@@ -18,20 +18,47 @@ jobs:
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
 
-      - name: Install k3d, kubectl and dependencies
+      - name: Install k3d, kubectl, and dependencies
         run: |
+          echo "📦 安裝 k3d 和 kubectl..."
           curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin/
-
-          # Create k3d cluster
+          
+          echo "🛠️ 建立本地 k3d cluster..."
           k3d cluster create mycluster --wait
 
-      - name: Run deploy.sh
+      - name: Run deploy.sh (local CD)
         run: |
           chmod +x deploy.sh
           ./deploy.sh
 
-      - name: Show all resources
+      - name: Show all Kubernetes resources
         run: kubectl get all -n cloudnative-final
+
+      - name: Show Pod status
+        run: kubectl get pods -n cloudnative-final -o wide
+
+      - name: Show Django logs (last 20 lines)
+        run: kubectl logs deploy/django -n cloudnative-final | tail -n 20
+
+      - name: Run Django tests in Pod
+        run: |
+          echo "🧪 執行 manage.py test"
+          kubectl exec deploy/django -n cloudnative-final -- python manage.py test || exit 1
+
+      - name: Health check - /health/
+        run: |
+          echo "🔍 啟動 port-forward 並執行健康檢查 /health/"
+          kubectl port-forward svc/django 8080:80 -n cloudnative-final &
+          sleep 10
+          curl --fail -s http://localhost:8080/health/ | grep '"status": "ok"'
+
+      - name: Homepage check - /
+        run: |
+          echo "🔍 首頁標題檢查"
+          curl --fail -s http://localhost:8080/ | grep -i "<title" || echo "⚠️ 無首頁標題"
+
+      - name: Final status summary
+        run: echo "✅ 部署與驗證全部完成成功 🎉"
