@@ -4,36 +4,65 @@ on:
   push:
     branches:
       - main
+  pull_request:
 
 jobs:
-  build-and-deploy:
+  deploy:
+    name: Deploy with deploy.sh & Validate App
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout source code
+        uses: actions/checkout@v3
 
-    - name: Log in to GitHub Container Registry
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
 
-    - name: Build and push Docker image
-      run: |
-        IMAGE_NAME=ghcr.io/${{ github.repository }}/cloudnative-final:latest
-        docker build -t $IMAGE_NAME .
-        docker push $IMAGE_NAME
+      - name: Install k3d, kubectl, and dependencies
+        run: |
+          echo "📦 安裝 k3d 和 kubectl..."
+          curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
+          
+          echo "🛠️ 建立本地 k3d cluster..."
+          k3d cluster create mycluster --wait
 
-    - name: Deploy to server via SSH
-      uses: appleboy/ssh-action@v0.1.10
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.SERVER_SSH_KEY }}
-        script: |
-          cd ~/CloudNative_final
-          git pull origin main
-          chmod +x fresh-deploy.sh
-          ./fresh-deploy.sh
+      - name: Run deploy.sh (local CD)
+        run: |
+          chmod +x deploy.sh
+          ./deploy.sh
+
+      - name: Show all Kubernetes resources
+        run: kubectl get all -n cloudnative-final
+
+      - name: Show Pod status
+        run: kubectl get pods -n cloudnative-final -o wide
+
+      - name: Show Django logs (last 20 lines)
+        run: kubectl logs deploy/django -n cloudnative-final | tail -n 20
+
+      - name: Health check - /health/
+        run: |
+          echo "🔍 啟動 port-forward 並執行健康檢查 /health/"
+          kubectl port-forward svc/django 8080:80 -n cloudnative-final > /dev/null 2>&1 &
+          PF_PID=$!
+          
+          # 最多重試 10 次，每次間隔 3 秒
+          for i in {1..10}; do
+            echo "🔁 嘗試第 $i 次 curl /health/"
+            if curl -s http://localhost:8080/health/ | grep '"status": "healthy"'; then
+              echo "✅ /health/ 檢查成功"
+              kill $PF_PID
+              exit 0
+            fi
+            sleep 3
+          done
+          
+          echo "❌ /health/ 檢查失敗"
+          kill $PF_PID
+          exit 1
+
+      - name: Final status summary
+        run: echo "✅ 部署與驗證全部完成成功 🎉"
