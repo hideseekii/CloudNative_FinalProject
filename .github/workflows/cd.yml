@@ -52,7 +52,7 @@ jobs:
           # 最多重試 10 次，每次間隔 3 秒
           for i in {1..10}; do
             echo "🔁 嘗試第 $i 次 curl /health/"
-            if curl -s http://localhost:8080/health/ | grep '"status": "ok"'; then
+            if curl -s http://localhost:8080/health/ | grep '"status": "healthy"'; then
               echo "✅ /health/ 檢查成功"
               kill $PF_PID
               exit 0
