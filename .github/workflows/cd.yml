@@ -1,14 +1,16 @@
 name: Django CD Pipeline
 
+# 這裡用 workflow_run，等 CI 完成 main 分支的工作才部署
 on:
-  push:
-    branches:
-      - main
-  pull_request:
+  workflow_run:
+    workflows: ["Django CI Pipeline"]
+    types:
+      - completed
 
 jobs:
   deploy:
     name: Deploy with deploy.sh & Validate App
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}  # 只在 CI 成功時部署
     runs-on: ubuntu-latest
 
     steps:
@@ -43,22 +45,26 @@ jobs:
       - name: Show Django logs (last 20 lines)
         run: kubectl logs deploy/django -n cloudnative-final | tail -n 20
 
-      - name: Run Django tests in Pod
-        run: |
-          echo "🧪 執行 manage.py test"
-          kubectl exec deploy/django -n cloudnative-final -- python manage.py test || exit 1
-
       - name: Health check - /health/
         run: |
           echo "🔍 啟動 port-forward 並執行健康檢查 /health/"
-          kubectl port-forward svc/django 8080:80 -n cloudnative-final &
-          sleep 10
-          curl --fail -s http://localhost:8080/health/ | grep '"status": "ok"'
-
-      - name: Homepage check - /
-        run: |
-          echo "🔍 首頁標題檢查"
-          curl --fail -s http://localhost:8080/ | grep -i "<title" || echo "⚠️ 無首頁標題"
+          kubectl port-forward svc/django 8080:80 -n cloudnative-final > /dev/null 2>&1 &
+          PF_PID=$!
+          
+          # 最多重試 10 次，每次間隔 3 秒
+          for i in {1..10}; do
+            echo "🔁 嘗試第 $i 次 curl /health/"
+            if curl -s http://localhost:8080/health/ | grep '"status": "ok"'; then
+              echo "✅ /health/ 檢查成功"
+              kill $PF_PID
+              exit 0
+            fi
+            sleep 3
+          done
+          
+          echo "❌ /health/ 檢查失敗"
+          kill $PF_PID
+          exit 1
 
       - name: Final status summary
         run: echo "✅ 部署與驗證全部完成成功 🎉"
