@@ -46,6 +46,21 @@
                                     <i class="fas fa-history"></i> {% trans "訂單歷史" %}
                                 </a>
                             </li>
+                            
+                            {% if request.session.is_staff|default_if_none:False %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'reviews:review_list' %}">
+                                    <i class="fas fa-star"></i> 查看評價
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                            <a class="dropdown-item" href="{% url 'orders:generate_monthly_report' %}">
+                                <i class="fas fa-file-invoice-dollar"></i> 產生顧客月帳單
+                            </a>
+                            </li>
+                            {% endif %}
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> {% trans "登出" %}</a></li>
                         </ul>

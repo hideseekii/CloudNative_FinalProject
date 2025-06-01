@@ -8,10 +8,33 @@ from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-
+from django.views.decorators.http import require_POST
 from menu.models import Dish
 from .models import Order, OrderItem
 
+from django.utils.timezone import now
+from django.db.models import Sum
+from datetime import datetime
+
+
+def generate_monthly_report(request):
+    now = timezone.now()
+    start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    if now.month == 12:
+        end = start.replace(year=now.year+1, month=1)
+    else:
+        end = start.replace(month=now.month+1)
+
+    orders = Order.objects.filter(
+        datetime__range=(start, end)
+    )
+
+    total = sum(o.total_price for o in orders)
+    return render(request, 'orders/monthly_report.html', {
+        'orders': orders,
+        'total': total,
+        'month': now.strftime('%Y年%m月')
+    })
 
 @method_decorator(login_required, name='dispatch')
 class CheckoutView(View):
@@ -27,12 +50,25 @@ class CheckoutView(View):
             messages.error(request, "購物車是空的，無法結帳。")
             return redirect('menu:cart')
 
+        pickup_time_str = request.POST.get("pickup_time")
+        try:
+            if pickup_time_str == "立即取餐":
+                pickup_time = timezone.now()
+            else:
+                today = timezone.now().date()
+                pickup_time = timezone.make_aware(
+                    datetime.strptime(f"{today} {pickup_time_str}", "%Y-%m-%d %H:%M")
+                )
+        except Exception as e:
+            messages.error(request, f"取餐時間格式錯誤：{e}")
+            return redirect('menu:cart')
         # 建立 Order
         order = Order.objects.create(
             consumer=request.user,
             datetime=timezone.now(),
             state=Order.State.UNFINISHED,
-            total_price=0
+            total_price=0,
+            pickup_time=pickup_time
         )
 
         total = 0
