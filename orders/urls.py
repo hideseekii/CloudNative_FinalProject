@@ -17,5 +17,8 @@ urlpatterns = [
     path('history/', views.order_history, name='order_history'),
 
     # 新增/修改評論後
-    path('order/<int:order_id>/', views.order_detail, name='order_detail')
+    path('order/<int:order_id>/', views.order_detail, name='order_detail'),
+
+    path('generate-monthly-report/', views.generate_monthly_report, name='generate_monthly_report'),
+    
 ]

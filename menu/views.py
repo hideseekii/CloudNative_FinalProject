@@ -9,6 +9,7 @@ from decimal import Decimal
 
 
 from .models import Dish
+from .utils import get_pickup_times
 from orders.models import Order, OrderItem
 
 
@@ -108,12 +109,10 @@ def remove_from_cart(request, pk):
 
 @login_required
 def cart_view(request):
-    # 獲取購物車內容
     cart = request.session.get('cart', {})
     cart_items = []
     total_price = 0
-    
-    # 如果購物車不為空，獲取菜品詳情
+
     if cart:
         for dish_id, quantity in cart.items():
             try:
@@ -126,15 +125,18 @@ def cart_view(request):
                     'subtotal': subtotal
                 })
             except Dish.DoesNotExist:
-                # 如果菜品已被刪除，從購物車中移除
                 del cart[dish_id]
                 request.session['cart'] = cart
-    
+
+    # 加入 pickup_times
+    pickup_times = get_pickup_times()
+
     context = {
         'cart_items': cart_items,
-        'total_price': total_price
+        'total_price': total_price,
+        'pickup_times': pickup_times,  # 加這行
     }
-    
+
     return render(request, 'menu/cart.html', context)
 
 

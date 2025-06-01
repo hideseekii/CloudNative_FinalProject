@@ -29,7 +29,7 @@ class Order(models.Model):
                       max_digits=10, decimal_places=2,
                       validators=[MinValueValidator(0)]
                   )
-
+    pickup_time = models.DateTimeField('取餐時間', null=True, blank=True)
     class Meta:
         ordering = ['-datetime']
         constraints = [
