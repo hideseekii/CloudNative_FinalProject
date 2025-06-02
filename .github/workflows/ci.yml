@@ -49,7 +49,19 @@ jobs:
           pip install -r requirements.txt
           pip install coverage==7.4.4
 
-      - name: Migrate database
+      - name: Check for missing migrations
+        id: check_migrations
+        run: |
+          python manage.py makemigrations --check --dry-run
+        continue-on-error: true
+
+      - name: Generate missing migrations (if any)
+        if: steps.check_migrations.outcome == 'failure'
+        run: |
+          echo "⚠️ Migrations are missing. Generating now..."
+          python manage.py makemigrations
+
+      - name: Apply migrations
         run: python manage.py migrate
           
       - name: Run tests with coverage
