@@ -76,7 +76,7 @@ jobs:
           rm -f .coverage
           coverage erase
           # coverage run --parallel-mode --source='.' manage.py test
-          coverage run --parallel-mode --source='.' manage.py test menu.tests
+          coverage run --parallel-mode --source='.' manage.py test menu orders
           coverage combine
           coverage report
           coverage xml        # 輸出 coverage.xml 給其他工具使用（如 codecov）
@@ -94,35 +94,3 @@ jobs:
         run: |
           echo "TODO: Add advanced coverage comparison logic or integrate codecov/coveralls here"
           # 這裡可用第三方工具或自定義腳本做覆蓋率門檻判斷
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install Prettier
-        run: npm install -g prettier
-
-      - name: Get changed JS files in this commit
-        id: changed-files
-        run: |
-          echo "files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- '*.js')" >> $GITHUB_OUTPUT
-
-      - name: Check Prettier formatting
-        if: steps.changed-files.outputs.files != ''
-        run: |
-          prettier --check ${{ steps.changed-files.outputs.files }}
-
-      - name: Format JS files with Prettier
-        if: steps.changed-files.outputs.files != ''
-        run: |
-          prettier --write ${{ steps.changed-files.outputs.files }}
-
-      - name: Commit formatted JS files
-        if: steps.changed-files.outputs.files != ''
-        run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add ${{ steps.changed-files.outputs.files }}
-          # 如果有差異才 commit & push
-          git diff --cached --quiet || (git commit -m "chore: auto-format JS files" && git push)
