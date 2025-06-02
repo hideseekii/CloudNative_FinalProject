@@ -13,6 +13,30 @@ spec:
       labels:
         app: django
     spec:
+      # 加入 Init Container 確保 Redis 和 PostgreSQL 先啟動
+      initContainers:
+      - name: wait-for-postgres
+        image: busybox:1.35
+        command: ['sh', '-c']
+        args:
+        - |
+          echo "等待 PostgreSQL 啟動..."
+          until nc -z postgres 5432; do
+            echo "PostgreSQL 尚未準備就緒，等待中..."
+            sleep 2
+          done
+          echo "PostgreSQL 已準備就緒"
+      - name: wait-for-redis
+        image: busybox:1.35
+        command: ['sh', '-c']
+        args:
+        - |
+          echo "等待 Redis 啟動..."
+          until nc -z redis 6379; do
+            echo "Redis 尚未準備就緒，等待中..."
+            sleep 2
+          done
+          echo "Redis 已準備就緒"
       containers:
       - name: django
         image: cloudnative-final:latest
