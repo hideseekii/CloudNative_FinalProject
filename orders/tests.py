@@ -20,6 +20,12 @@ class OrderTestCase(TestCase):
         self.dish1 = Dish.objects.create(name_zh='炒飯', price=100, is_available=True)
         self.dish2 = Dish.objects.create(name_zh='麵線', price=50, is_available=True)
 
+        self.order = Order.objects.create(
+            consumer=self.customer,
+            total_price=150
+        )
+        # self.order = Order.objects.create(order_id=1, consumer=self.user, total_price=150.0)
+
     def test_checkout_creates_order_and_items(self):
         # 模擬購物車
         session = self.client.session
@@ -84,8 +90,8 @@ class OrderTestCase(TestCase):
         self.assertContains(response, "100")
 
     def test_order_history_view(self):  
-        Order.objects.create(consumer=self.customer, total_price=120, datetime=timezone.now())
-        Order.objects.create(consumer=self.customer, total_price=80, datetime=timezone.now())
+        Order.objects.create(consumer=self.customer, total_price=120)
+        Order.objects.create(consumer=self.customer, total_price=80)
 
         response = self.client.get(reverse('orders:order_history'))
         self.assertEqual(response.status_code, 200)
