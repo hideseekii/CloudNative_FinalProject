@@ -103,3 +103,16 @@ jobs:
         run: |
           echo "TODO: Add advanced coverage comparison logic or integrate codecov/coveralls here"
           # 這裡可用第三方工具或自定義腳本做覆蓋率門檻判斷
+      
+      - name: Create Pull Request for migrations
+        if: steps.check_migrations.outcome == 'failure'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: "🔁 Auto-generate missing migrations"
+          title: "🔁 Auto-generated missing migrations"
+          body: |
+            This pull request was automatically created to add missing Django migrations detected during CI.
+            Please review and merge.
+          branch: auto/migrations-update
+          base: main
+          delete-branch: true
