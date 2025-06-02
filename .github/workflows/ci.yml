@@ -71,19 +71,6 @@ jobs:
           echo "⚠️ Migrations are missing. Generating now..."
           python manage.py makemigrations
 
-      - name: Create Pull Request for migrations
-        if: steps.check_migrations.outcome == 'failure'
-        uses: peter-evans/create-pull-request@v5
-        with:
-          commit-message: "🔁 Auto-generate missing migrations"
-          title: "🔁 Auto-generated missing migrations"
-          body: |
-            This pull request was automatically created to add missing Django migrations detected during CI.
-            Please review and merge.
-          branch: auto/migrations-update
-          base: main
-          delete-branch: true
-
       - name: Apply migrations
         run: python manage.py migrate
           
