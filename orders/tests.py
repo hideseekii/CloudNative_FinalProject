@@ -13,7 +13,7 @@ User = get_user_model()
 class OrderTestCase(TestCase):
     def setUp(self):
         # 建立一位顧客與餐點
-        active('zh-hant')
+        activate('zh-hant')
         self.client = Client()
         self.customer = User.objects.create_user(username='customer', password='test123')
         self.client.force_login(self.customer)
