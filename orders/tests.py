@@ -61,7 +61,7 @@ class OrderTestCase(TestCase):
             OrderItem.objects.create(order=order, dish=self.dish1, quantity=2, unit_price=100)
 
             url = reverse('orders:confirmation', args=[order.pk])
-            response = self.client.get(url)
+            response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='zh-Hant')
             self.assertEqual(response.status_code, 200)
             self.assertContains(response, "訂單")
             self.assertContains(response, "炒飯")
@@ -76,7 +76,7 @@ class OrderTestCase(TestCase):
         OrderItem.objects.create(order=order, dish=self.dish1, quantity=1, unit_price=100)
 
         url = reverse('orders:order_detail', args=[order.order_id])
-        response = self.client.get(url)
+        response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='zh-Hant')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "炒飯")
         self.assertContains(response, "100")
