@@ -2,7 +2,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from django.utils import timezone
+from django.utils import timezone, translation
 from django.utils.translation import activate
 
 from menu.models import Dish
