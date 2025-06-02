@@ -2,8 +2,8 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from django.utils import timezone, translation
-from django.utils.translation import activate
+from django.utils import timezone, active, translation
+from django.utils.translation import override
 
 from menu.models import Dish
 from orders.models import Order, OrderItem
@@ -13,17 +13,14 @@ User = get_user_model()
 class OrderTestCase(TestCase):
     def setUp(self):
         # 建立一位顧客與餐點
-        activate('zh-hant')
+        active('zh-hant')
         self.client = Client()
         self.customer = User.objects.create_user(username='customer', password='test123')
         self.client.force_login(self.customer)
         self.dish1 = Dish.objects.create(name_zh='炒飯', price=100, is_available=True)
         self.dish2 = Dish.objects.create(name_zh='麵線', price=50, is_available=True)
 
-        self.order = Order.objects.create(
-            consumer=self.customer,
-            total_price=150
-        )
+        # self.order = Order.objects.create(consumer=self.customer, total_price=150)
         # self.order = Order.objects.create(order_id=1, consumer=self.user, total_price=150.0)
 
     def test_checkout_creates_order_and_items(self):
