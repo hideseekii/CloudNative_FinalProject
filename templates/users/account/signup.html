@@ -35,8 +35,13 @@
             <!-- 電子郵件欄位 -->
             <div class="form-floating mb-3">
                 <input type="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+
                        id="id_email" name="email" placeholder="{% trans '電子郵件' %}" required>
+
                 <label for="id_email">{% trans "電子郵件" %}</label>
+
+                <label for="id_email">電子郵件</label>
+
                 {% if form.email.errors %}
                 <div class="invalid-feedback">
                     {% for error in form.email.errors %}
@@ -55,7 +60,11 @@
             <div class="form-floating mb-3">
                 <input type="text" class="form-control {% if form.username.errors %}is-invalid{% endif %}"
                        id="id_username" name="username" placeholder="使用者名稱" required>
+
                 <label for="id_username">{% trans "使用者名稱" %}</label>
+
+                <label for="id_username">使用者名稱</label>
+
                 {% if form.username.errors %}
                 <div class="invalid-feedback">
                     {% for error in form.username.errors %}
@@ -74,7 +83,11 @@
             <div class="form-floating mb-3">
                 <input type="tel" class="form-control {% if form.phone.errors %}is-invalid{% endif %}"
                        id="id_phone" name="phone" placeholder="聯絡電話" required>
+
                 <label for="id_phone">{% trans "聯絡電話" %}</label>
+
+                <label for="id_phone">聯絡電話</label>
+
                 {% if form.phone.errors %}
                 <div class="invalid-feedback">
                     {% for error in form.phone.errors %}
@@ -93,7 +106,11 @@
             <div class="form-floating mb-3">
                 <input type="password" class="form-control {% if form.password.errors %}is-invalid{% endif %}"
                        id="id_password" name="password" placeholder="密碼" required>
+
                 <label for="id_password">{% trans "密碼" %}</label>
+
+                <label for="id_password">密碼</label>
+
                 {% if form.password.errors %}
                 <div class="invalid-feedback">
                     {% for error in form.password.errors %}
