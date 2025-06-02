@@ -85,7 +85,7 @@ class OrderTestCase(TestCase):
         Order.objects.create(consumer=self.customer, total_price=120)
         Order.objects.create(consumer=self.customer, total_price=80)
 
-        response = self.client.get(reverse('orders:order_history'))
+        response = self.client.get(reverse('orders:order_history'), HTTP_ACCEPT_LANGUAGE='zh-Hant')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "訂單")
         self.assertContains(response, "120")
