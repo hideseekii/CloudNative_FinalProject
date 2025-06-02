@@ -2,8 +2,8 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from django.utils import timezone, active, translation
-from django.utils.translation import override
+from django.utils import timezone, translation
+from django.utils.translation import acitve, override
 
 from menu.models import Dish
 from orders.models import Order, OrderItem
