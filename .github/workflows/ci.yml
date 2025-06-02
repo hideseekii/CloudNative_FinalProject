@@ -81,6 +81,7 @@ jobs:
             This pull request was automatically created to add missing Django migrations detected during CI.
             Please review and merge.
           branch: auto/migrations-update
+          base: main
           delete-branch: true
 
       - name: Apply migrations
