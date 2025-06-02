@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-02 17:09+0800\n"
+"POT-Creation-Date: 2025-06-02 22:34+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,24 +47,29 @@ msgstr "訂單歷史"
 msgid "查看評價"
 msgstr "查看評價"
 
-#: templates/base.html:60 templates/menu/base.html:61
+#: templates/base.html:60 templates/menu/base.html:60
+#: templates/orders/order_detail.html:31 templates/orders/order_history.html:25
+msgid "訂單狀態"
+msgstr "訂單狀態"
+
+#: templates/base.html:66 templates/menu/base.html:66
 msgid "產生顧客月帳單"
 msgstr "產生顧客月帳單"
 
-#: templates/base.html:65 templates/menu/base.html:68
+#: templates/base.html:71 templates/menu/base.html:73
 msgid "登出"
 msgstr "登出"
 
-#: templates/base.html:70 templates/menu/base.html:73
+#: templates/base.html:76 templates/menu/base.html:78
 #: templates/staff/account/login.html:75 templates/users/account/login.html:75
 msgid "登入"
 msgstr "登入"
 
-#: templates/base.html:73 templates/menu/base.html:76
+#: templates/base.html:79 templates/menu/base.html:81
 msgid "註冊"
 msgstr "註冊"
 
-#: templates/base.html:120 templates/menu/base.html:124
+#: templates/base.html:126 templates/menu/base.html:129
 msgid "台積餐廳. 版權所有."
 msgstr "台積餐廳. 版權所有."
 
@@ -344,10 +349,6 @@ msgstr "訂單資訊"
 msgid "訂單時間"
 msgstr "訂單時間"
 
-#: templates/orders/order_detail.html:31 templates/orders/order_history.html:25
-msgid "訂單狀態"
-msgstr "訂單狀態"
-
 #: templates/orders/order_detail.html:46
 msgid "訂單品項"
 msgstr "訂單品項"
@@ -485,11 +486,13 @@ msgstr "歡迎回來"
 msgid "登入您的帳號以繼續使用"
 msgstr "登入您的帳號以繼續使用"
 
-#: templates/staff/account/login.html:42
+#: templates/staff/account/login.html:41 templates/staff/account/login.html:42
+#: templates/users/account/login.html:41
 msgid "用戶名"
 msgstr "用戶名"
 
-#: templates/staff/account/login.html:55 templates/users/account/login.html:55
+#: templates/staff/account/login.html:54 templates/staff/account/login.html:55
+#: templates/users/account/login.html:54 templates/users/account/login.html:55
 #: templates/users/account/signup.html:96
 msgid "密碼"
 msgstr "密碼"
@@ -552,7 +555,9 @@ msgstr "重設密碼"
 msgid "找回您的帳號密碼"
 msgstr "找回您的帳號密碼"
 
+#: templates/staff/account/password_change_form.html:36
 #: templates/staff/account/password_change_form.html:37
+#: templates/users/account/password_change_form.html:36
 #: templates/users/account/password_change_form.html:37
 msgid "電子郵件地址"
 msgstr "電子郵件地址"
@@ -708,7 +713,8 @@ msgstr "已經有帳號？"
 msgid "立即登入"
 msgstr "立即登入"
 
-#: templates/users/account/login.html:42 templates/users/account/signup.html:39
+#: templates/users/account/login.html:42 templates/users/account/signup.html:38
+#: templates/users/account/signup.html:39
 msgid "電子郵件"
 msgstr "電子郵件"
 
