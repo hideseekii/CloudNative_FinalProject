@@ -157,7 +157,8 @@ for i in {1..12}; do
         echo "✅ 使用 Pod: $DJANGO_POD 執行遷移"
         
         # 執行遷移
-        if kubectl exec "$DJANGO_POD" -n cloudnative-final -- python manage.py migrate; then
+        if kubectl exec "$DJANGO_POD" -n cloudnative-final -- python manage.py makemigrations && \
+                kubectl exec "$DJANGO_POD" -n cloudnative-final -- python manage.py migrate; then
             echo "✅ 資料庫遷移完成"
             break
         else
