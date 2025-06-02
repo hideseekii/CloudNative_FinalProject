@@ -15,6 +15,7 @@ RUN apt-get update \
         gcc \
         libpq-dev \
         netcat-traditional \
+        gettext \
     && rm -rf /var/lib/apt/lists/*
 
 # 複製 requirements.txt 並安裝 Python 依賴
