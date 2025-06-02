@@ -134,7 +134,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'zh-hant'
+LANGUAGE_CODE = 'en'
 
 TIME_ZONE = config('TIME_ZONE', default='Asia/Taipei')
 
@@ -151,7 +151,7 @@ LANGUAGES = [
 ]
 
 LOCALE_PATHS = [
-    BASE_DIR / 'locale',
+    os.path.join(BASE_DIR, "locale")
 ]
 
 # Static files (CSS, JavaScript, Images)

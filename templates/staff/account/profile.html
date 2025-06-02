@@ -1,51 +1,52 @@
 {% extends "users/account/account_base.html" %}
-
-{% block auth_title %}個人資料{% endblock %}
+{% load static %}
+{% load i18n %}
+{% block auth_title %}{% trans "個人資料" %}{% endblock %}
 
 {% block auth_content %}
 <div class="profile-container">
     <div class="user-info">
         <div class="info-group">
-            <label>用戶名稱：</label>
+            <label>{% trans "用戶名稱：" %}</label>
             <span>{{ user.username }}</span>
         </div>
         
         <div class="info-group">
-            <label>電子郵件：</label>
+            <label>{% trans "電子郵件：</label>
             <span>{{ user.email }}</span>
         </div>
         
         {% if user.first_name or user.last_name %}
         <div class="info-group">
-            <label>姓名：</label>
+            <label>{% trans "姓名：" %}</label>
             <span>{{ user.first_name }} {{ user.last_name }}</span>
         </div>
         {% endif %}
         
         <div class="info-group">
-            <label>帳號類型：</label>
+            <label>{% trans "帳號類型：" %}</label>
             <span>
                 {% if user.is_staff %}
-                    餐廳員工
+                    {% trans "餐廳員工" %}
                 {% else %}
-                    顧客
+                    {% trans "顧客' %}
                 {% endif %}
             </span>
         </div>
         
         <div class="info-group">
-            <label>註冊時間：</label>
+            <label>{% trans "註冊時間：' %}</label>
             <span>{{ user.date_joined|date:"Y-m-d H:i" }}</span>
         </div>
     </div>
     
     <div class="profile-actions">
-        <a href="{% url 'profile_edit' %}" class="btn btn-primary">編輯個人資料</a>
-        <a href="{% url 'password_change' %}" class="btn btn-secondary">變更密碼</a>
+        <a href="{% url 'profile_edit' %}" class="btn btn-primary">{% trans "編輯個人資料" %}</a>
+        <a href="{% url 'password_change' %}" class="btn btn-secondary">{% trans "變更密碼" %}</a>
     </div>
 </div>
 
 <div class="auth-links mt-4">
-    <p><a href="/">返回首頁</a></p>
+    <p><a href="/">{% trans "返回首頁" %}</a></p>
 </div>
 {% endblock %}

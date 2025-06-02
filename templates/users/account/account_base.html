@@ -1,9 +1,10 @@
 {% extends "base.html" %}
-
+{% load static %}
+{% load i18n %}
 {% block content %}
 <div class="auth-container">
     <div class="auth-box">
-        <h2 class="auth-title">{% block auth_title %}帳號操作{% endblock %}</h2>
+        <h2 class="auth-title">{% block auth_title %}{% trans "帳號操作" %}{% endblock %}</h2>
         
         {% if messages %}
         <div class="messages">

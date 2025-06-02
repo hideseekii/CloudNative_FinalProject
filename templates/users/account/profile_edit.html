@@ -1,6 +1,7 @@
 {% extends "users/account/account_base.html" %}
-
-{% block auth_title %}編輯個人資料{% endblock %}
+{% load static %}
+{% load i18n %}
+{% block auth_title %}{% trans "編輯個人資料" %}{% endblock %}
 
 {% block auth_content %}
 <form method="post" novalidate>
@@ -24,8 +25,8 @@
     {% endfor %}
     
     <div class="form-actions">
-        <button type="submit" class="btn btn-primary">保存變更</button>
-        <a href="{% url 'profile' %}" class="btn btn-secondary">取消</a>
+        <button type="submit" class="btn btn-primary">{% trans "保存變更" %}</button>
+        <a href="{% url 'profile' %}" class="btn btn-secondary">{% trans "取消" %}</a>
     </div>
 </form>
 {% endblock %}

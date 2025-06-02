@@ -1,9 +1,10 @@
 {% extends "base.html" %}
-
+{% load static %}
+{% load i18n %}
 {% block content %}
 <div class="container mt-4">
-  <h3>針對每道菜進行評論</h3>
-  <p>訂單編號：#{{ order.order_id }}</p>
+  <h3>{% trans "針對每道菜進行評論" %}</h3>
+  <p>{% trans "訂單編號" %}：#{{ order.order_id }}</p>
 
   <form method="post">
   {% csrf_token %}
@@ -12,9 +13,9 @@
   <table class="table">
     <thead>
       <tr>
-        <th>菜品</th>
-        <th>星等（0-5）</th>
-        <th>評論</th>
+        <th>{% trans "菜品" %}</th>
+        <th>{% trans "星等" %}（0-5）</th>
+        <th>{% trans "評論" %}</th>
       </tr>
     </thead>
     <tbody>
@@ -28,8 +29,8 @@
     </tbody>
   </table>
 
-  <button type="submit" class="btn btn-success">送出評論</button>
-  <a href="{% url 'orders:order_detail' order_id=order.order_id %}" class="btn btn-secondary">返回訂單</a>
+  <button type="submit" class="btn btn-success">{% trans "送出評論" %}</button>
+  <a href="{% url 'orders:order_detail' order_id=order.order_id %}" class="btn btn-secondary">{% trans "返回訂單" %}</a>
 </form>
 </div>
 {% endblock %}

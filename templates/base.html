@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}美味餐廳{% endblock %}</title>
+    <title>{% block title %}{% trans "美味餐廳" %}{% endblock %}</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'menu/css/base.css' %}">
@@ -51,13 +51,13 @@
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <a class="dropdown-item" href="{% url 'reviews:review_list' %}">
-                                    <i class="fas fa-star"></i> 查看評價
+                                    <i class="fas fa-star"></i> {% trans "查看評價" %}
                                 </a>
                             </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                             <a class="dropdown-item" href="{% url 'orders:generate_monthly_report' %}">
-                                <i class="fas fa-file-invoice-dollar"></i> 產生顧客月帳單
+                                <i class="fas fa-file-invoice-dollar"></i> {% trans "產生顧客月帳單" %}
                             </a>
                             </li>
                             {% endif %}
@@ -75,17 +75,29 @@
                     {% endif %}
 
                     <!-- 語言切換下拉選單 -->
-                    <li class="nav-item">
-                        <form action="{% url 'set_language' %}" method="post" style="display:inline-block; margin-left: 10px;">
-                            {% csrf_token %}
-                            <select name="language" onchange="this.form.submit()" class="form-select form-select-sm">
-                                <option value="zh-hant" {% if LANGUAGE_CODE == 'zh-hant' %}selected{% endif %}>中文</option>
-                                <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>English</option>
-                            </select>
-                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                        </form>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            🌐
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+                            <li>
+                                <form action="{% url 'set_language' %}" method="post" class="px-3 py-1">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                    <input type="hidden" name="language" value="zh-hant">
+                                    <button type="submit" class="dropdown-item {% if LANGUAGE_CODE == 'zh-hant' %}active{% endif %}">中文</button>
+                                </form>
+                            </li>
+                            <li>
+                                <form action="{% url 'set_language' %}" method="post" class="px-3 py-1">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                    <input type="hidden" name="language" value="en">
+                                    <button type="submit" class="dropdown-item {% if LANGUAGE_CODE == 'en' %}active{% endif %}">English</button>
+                                </form>
+                            </li>
+                        </ul>
                     </li>
-                </ul>
             </div>
         </div>
     </nav>
