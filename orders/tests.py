@@ -51,19 +51,22 @@ class OrderTestCase(TestCase):
         self.assertEqual(Order.objects.count(), 0)
 
     def test_order_confirmation_view(self):
-        order = Order.objects.create(
-            consumer=self.customer,
-            datetime=timezone.now(),
-            state=Order.State.UNFINISHED,
-            total_price=200
-        )
-        OrderItem.objects.create(order=order, dish=self.dish1, quantity=2, unit_price=100)
+        with translation.override('zh-hant'):
+            response = self.client.get(reverse('orders:confirmation', args=[self.order.pk]))
+            
+            order = Order.objects.create(
+                consumer=self.customer,
+                datetime=timezone.now(),
+                state=Order.State.UNFINISHED,
+                total_price=200
+            )
+            OrderItem.objects.create(order=order, dish=self.dish1, quantity=2, unit_price=100)
 
-        url = reverse('orders:confirmation', args=[order.pk])
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "訂單")
-        self.assertContains(response, "炒飯")
+            url = reverse('orders:confirmation', args=[order.pk])
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200)
+            self.assertContains(response, "訂單")
+            self.assertContains(response, "炒飯")
 
     def test_order_detail_view(self):
         order = Order.objects.create(
