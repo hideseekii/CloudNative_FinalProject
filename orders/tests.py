@@ -13,15 +13,12 @@ User = get_user_model()
 class OrderTestCase(TestCase):
     def setUp(self):
         # 建立一位顧客與餐點
-        activate('zh-hant')
+        activate('zh-Hant')
         self.client = Client()
         self.customer = User.objects.create_user(username='customer', password='test123')
         self.client.force_login(self.customer)
         self.dish1 = Dish.objects.create(name_zh='炒飯', price=100, is_available=True)
         self.dish2 = Dish.objects.create(name_zh='麵線', price=50, is_available=True)
-
-        # self.order = Order.objects.create(consumer=self.customer, total_price=150)
-        # self.order = Order.objects.create(order_id=1, consumer=self.user, total_price=150.0)
 
     def test_checkout_creates_order_and_items(self):
         # 模擬購物車
@@ -54,9 +51,7 @@ class OrderTestCase(TestCase):
         self.assertEqual(Order.objects.count(), 0)
 
     def test_order_confirmation_view(self):
-        with translation.override('zh-hant'):
-            response = self.client.get(reverse('orders:confirmation', args=[self.order.pk]))
-            
+        with translation.override('zh-Hant'):            
             order = Order.objects.create(
                 consumer=self.customer,
                 datetime=timezone.now(),
