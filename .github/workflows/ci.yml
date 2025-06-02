@@ -75,8 +75,7 @@ jobs:
         run: |
           rm -f .coverage
           coverage erase
-          # coverage run --parallel-mode --source='.' manage.py test
-          coverage run --parallel-mode --source='.' manage.py test menu orders reviews
+          coverage run --parallel-mode --source='.' manage.py test
           coverage combine
           coverage report
           coverage xml        # 輸出 coverage.xml 給其他工具使用（如 codecov）
