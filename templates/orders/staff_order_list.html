@@ -1,0 +1,32 @@
+<!-- templates/orders/staff_order_list.html -->
+{% extends "base.html" %}
+{% block content %}
+<h2>未完成訂單</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>訂單編號</th>
+            <th>建立時間</th>
+            <th>狀態</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.order_id }}</td>
+            <td>{{ order.datetime }}</td>
+            <td>{{ order.get_state_display }}</td>
+            <td>
+                <form method="post" action="{% url 'orders:mark_order_complete' order.order_id %}">
+                    {% csrf_token %}
+                    <button class="btn btn-success btn-sm" type="submit">標記為完成</button>
+                </form>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">目前沒有未完成的訂單</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

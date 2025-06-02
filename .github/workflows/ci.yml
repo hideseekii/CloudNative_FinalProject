@@ -31,6 +31,16 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+          
+      redis:
+        image: redis:6
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout code
@@ -75,7 +85,7 @@ jobs:
         run: |
           rm -f .coverage
           coverage erase
-          coverage run --parallel-mode --source='.' manage.py test
+          coverage run --parallel-mode --source='.' manage.py test          
           coverage combine
           coverage report
           coverage xml        # 輸出 coverage.xml 給其他工具使用（如 codecov）

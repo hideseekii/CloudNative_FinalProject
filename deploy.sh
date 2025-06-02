@@ -234,9 +234,6 @@ for i in {1..12}; do
         
         # 執行遷移
 
-        if kubectl exec "$DJANGO_POD" -n cloudnative-final -- python manage.py makemigrations && \
-                kubectl exec "$DJANGO_POD" -n cloudnative-final -- python manage.py migrate; then
-
         if kubectl exec "$DJANGO_POD" -n cloudnative-final -- python manage.py migrate; then
 
             echo "✅ 資料庫遷移完成"
@@ -253,6 +250,7 @@ done
 # 如果沒有找到可用的 Pod，使用 deployment 方式
 if [ -z "$DJANGO_POD" ]; then
     echo "⚠️  嘗試使用 deployment 執行遷移..."
+    kubectl exec deployment/django -n cloudnative-final -- python manage.py makemigrations
     kubectl exec deployment/django -n cloudnative-final -- python manage.py migrate || {
         echo "❌ 遷移失敗，請手動執行:"
         echo "kubectl exec -it deployment/django -n cloudnative-final -- python manage.py migrate"

@@ -16,6 +16,15 @@ from django.utils.timezone import now
 from django.db.models import Sum
 from datetime import datetime
 
+def staff_order_list(request):
+    orders = Order.objects.filter(state=Order.State.UNFINISHED).order_by('-datetime')
+    return render(request, 'orders/staff_order_list.html', {'orders': orders})
+
+def mark_order_complete(request, order_id):
+    order = get_object_or_404(Order, pk=order_id)
+    order.state = Order.State.FINISHED
+    order.save()
+    return redirect('orders:staff_order_list')
 
 def generate_monthly_report(request):
     now = timezone.now()
@@ -127,7 +136,7 @@ def order_detail(request, order_id):
             items_data = []
             for item in order_items:
                 items_data.append({
-                    'id': item.id,
+                    'id': item.pk,
                     'quantity': item.quantity,
                     'unit_price': float(item.unit_price),
                     'dish_name_zh': item.dish.name_zh,
