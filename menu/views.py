@@ -1,4 +1,4 @@
-# menu/views.py
+# menu/views.py - Redis 優化版本
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView
 from django.contrib import messages
@@ -6,14 +6,12 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from decimal import Decimal
-
+from django.core.cache import cache  # 新增 Redis 快取
+import hashlib  # 用於生成快取鍵
 
 from .models import Dish
 from .utils import get_pickup_times
 from orders.models import Order, OrderItem
-
-
-# for staff import
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import Dish
 from common.mixins import StaffRequiredMixin
@@ -21,29 +19,67 @@ from django.urls import reverse_lazy
 from reviews.models import DishReview
 from orders.models import OrderItem
 
-# 公開區域視圖
 class DishListView(ListView):
     model = Dish
     template_name = 'menu/dish_list.html'
     context_object_name = 'dishes'
 
     def get_queryset(self):
-        qs = Dish.objects.filter(is_available=True)
+        # 取得查詢參數
         q = self.request.GET.get('q', '').strip()
         min_price = self.request.GET.get('min_price')
         max_price = self.request.GET.get('max_price')
-        if q:
-            qs = qs.filter(
-                Q(name_zh__icontains=q) |
-                Q(name_en__icontains=q) |
-                Q(description_zh__icontains=q) |
-                Q(description_en__icontains=q)
-            )
-        if min_price:
-            qs = qs.filter(price__gte=min_price)
-        if max_price:
-            qs = qs.filter(price__lte=max_price)
-        return qs
+        
+        # 如果沒有搜尋參數，使用快取
+        if not q and not min_price and not max_price:
+            cache_key = 'dish_list_all_available'
+            dishes = cache.get(cache_key)
+            
+            if dishes is None:
+                print("🔴 Cache MISS: 從資料庫查詢菜單列表")
+                dishes = list(Dish.objects.filter(is_available=True).values(
+                    'dish_id', 'name_zh', 'name_en', 'description_zh', 
+                    'price', 'image_url', 'is_available'
+                ))
+                # 快取 15 分鐘
+                cache.set(cache_key, dishes, 900)
+            else:
+                print("🟢 Cache HIT: 從快取取得菜單列表")
+            
+            # 轉換回 QuerySet 格式（如果需要）
+            dish_ids = [dish['dish_id'] for dish in dishes]
+            return Dish.objects.filter(dish_id__in=dish_ids)
+        
+        # 有搜尋參數時，先嘗試快取搜尋結果
+        else:
+            # 為搜尋參數生成唯一快取鍵
+            search_params = f"{q}_{min_price}_{max_price}"
+            cache_key = f"dish_search_{hashlib.md5(search_params.encode()).hexdigest()}"
+            
+            dishes = cache.get(cache_key)
+            if dishes is None:
+                print(f"🔴 Cache MISS: 搜尋查詢 {search_params}")
+                qs = Dish.objects.filter(is_available=True)
+                
+                if q:
+                    qs = qs.filter(
+                        Q(name_zh__icontains=q) |
+                        Q(name_en__icontains=q) |
+                        Q(description_zh__icontains=q) |
+                        Q(description_en__icontains=q)
+                    )
+                if min_price:
+                    qs = qs.filter(price__gte=min_price)
+                if max_price:
+                    qs = qs.filter(price__lte=max_price)
+                
+                dishes = list(qs.values_list('dish_id', flat=True))
+                # 搜尋結果快取 5 分鐘
+                cache.set(cache_key, dishes, 300)
+            else:
+                print(f"🟢 Cache HIT: 搜尋查詢 {search_params}")
+            
+            return Dish.objects.filter(dish_id__in=dishes)
 
 class DishDetailView(DetailView):
     model = Dish
@@ -53,15 +89,152 @@ class DishDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         dish = self.object
-
-        # ✅ 查出與這道菜有關的所有評論
-        related_orders = OrderItem.objects.filter(dish=dish).values_list('order_id', flat=True)
-
-        related_reviews = DishReview.objects.filter(order_item__dish=dish).distinct().order_by('-created')
-
+        
+        # 快取菜品評論
+        cache_key = f'dish_reviews_{dish.dish_id}'
+        related_reviews = cache.get(cache_key)
+        
+        if related_reviews is None:
+            print(f"🔴 Cache MISS: 菜品 {dish.dish_id} 的評論")
+            related_reviews = list(
+                DishReview.objects.filter(order_item__dish=dish)
+                .distinct()
+                .order_by('-created')
+                .values(
+                    'id', 'rating', 'comment', 'created',
+                    'order_item__order__consumer__username'
+                )
+            )
+            # 快取 10 分鐘
+            cache.set(cache_key, related_reviews, 600)
+        else:
+            print(f"🟢 Cache HIT: 菜品 {dish.dish_id} 的評論")
+        
         context['related_reviews'] = related_reviews
         return context
-# 購物車視圖
+
+@login_required
+def cart_view(request):
+    cart = request.session.get('cart', {})
+    cart_items = []
+    total_price = 0
+    
+    if cart:
+        # 批次查詢所有需要的菜品（減少資料庫查詢次數）
+        dish_ids = [int(dish_id) for dish_id in cart.keys()]
+        
+        # 嘗試從快取取得菜品資訊
+        cached_dishes = {}
+        cache_keys = [f'dish_info_{dish_id}' for dish_id in dish_ids]
+        cached_data = cache.get_many(cache_keys)
+        
+        # 整理已快取的菜品
+        for cache_key, dish_data in cached_data.items():
+            dish_id = int(cache_key.split('_')[-1])
+            cached_dishes[dish_id] = dish_data
+        
+        # 查詢未快取的菜品
+        uncached_dish_ids = [dish_id for dish_id in dish_ids if dish_id not in cached_dishes]
+        
+        if uncached_dish_ids:
+            print(f"🔴 Cache MISS: 查詢菜品 {uncached_dish_ids}")
+            uncached_dishes = Dish.objects.filter(dish_id__in=uncached_dish_ids).values(
+                'dish_id', 'name_zh', 'price', 'is_available'
+            )
+            
+            # 將新查詢的菜品加入快取
+            cache_data = {}
+            for dish in uncached_dishes:
+                cache_key = f"dish_info_{dish['dish_id']}"
+                cache_data[cache_key] = dish
+                cached_dishes[dish['dish_id']] = dish
+            
+            # 批次設定快取（10分鐘）
+            cache.set_many(cache_data, 600)
+        else:
+            print("🟢 Cache HIT: 所有購物車菜品都有快取")
+        
+        # 計算購物車項目
+        for dish_id, quantity in cart.items():
+            dish_id = int(dish_id)
+            if dish_id in cached_dishes:
+                dish_data = cached_dishes[dish_id]
+                if dish_data['is_available']:  # 確保菜品仍然可用
+                    subtotal = dish_data['price'] * quantity
+                    total_price += subtotal
+                    cart_items.append({
+                        'dish': dish_data,  # 使用快取的資料
+                        'quantity': quantity,
+                        'subtotal': subtotal
+                    })
+            else:
+                # 菜品已被刪除，從購物車移除
+                del cart[str(dish_id)]
+                request.session['cart'] = cart
+    
+    context = {
+        'cart_items': cart_items,
+        'total_price': total_price
+    }
+    
+    return render(request, 'menu/cart.html', context)
+
+# === 快取失效處理 ===
+# 在 Staff 的 Create/Update/Delete Views 中加入快取清除
+
+class DishCreateView(StaffRequiredMixin, CreateView):
+    model = Dish
+    fields = ['name_zh','name_en','description_zh','price','image_url','is_available']
+    template_name = 'menu/dish_form.html'
+    success_url = reverse_lazy('menu:dish_list')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        # 清除相關快取
+        self._clear_dish_cache()
+        return response
+    
+    def _clear_dish_cache(self):
+        """清除菜品相關的快取"""
+        cache.delete('dish_list_all_available')
+        # 清除所有搜尋快取（使用模式匹配）
+        cache.delete_pattern('dish_search_*')
+        print("🧹 已清除菜品列表快取")
+
+class DishUpdateView(StaffRequiredMixin, UpdateView):
+    model = Dish
+    fields = ['name_zh','name_en','description_zh','price','image_url','is_available']
+    template_name = 'menu/dish_form.html'
+    success_url = '/menu/dishes/'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        # 清除相關快取
+        dish_id = self.object.dish_id
+        cache.delete(f'dish_info_{dish_id}')
+        cache.delete(f'dish_reviews_{dish_id}')
+        cache.delete('dish_list_all_available')
+        cache.delete_pattern('dish_search_*')
+        print(f"🧹 已清除菜品 {dish_id} 相關快取")
+        return response
+
+class DishDeleteView(StaffRequiredMixin, DeleteView):
+    model = Dish
+    template_name = 'menu/dish_confirm_delete.html'
+    success_url = '/menu/dishes/'
+
+    def delete(self, request, *args, **kwargs):
+        dish_id = self.get_object().dish_id
+        response = super().delete(request, *args, **kwargs)
+        # 清除相關快取
+        cache.delete(f'dish_info_{dish_id}')
+        cache.delete(f'dish_reviews_{dish_id}')
+        cache.delete('dish_list_all_available')
+        cache.delete_pattern('dish_search_*')
+        print(f"🧹 已清除已刪除菜品 {dish_id} 相關快取")
+        return response
+
+# === 其他不變的 views ===
 @login_required
 def add_to_cart(request, pk):
     dish = get_object_or_404(Dish, pk=pk)
@@ -108,6 +281,7 @@ def remove_from_cart(request, pk):
     return redirect('menu:cart')
 
 @login_required
+
 def cart_view(request):
     cart = request.session.get('cart', {})
     cart_items = []
@@ -141,6 +315,8 @@ def cart_view(request):
 
 
 @login_required
+
+
 @transaction.atomic
 def checkout(request):
     # Get cart contents
@@ -190,33 +366,3 @@ def checkout(request):
     
     messages.success(request, f"訂單已成功創建，訂單編號: #{order.order_id}")
     return redirect('orders:order_detail', order_id=order.order_id)
-
-
-# 給staff 的新增刪除
-class DishListView(ListView):
-    model = Dish
-    template_name = 'menu/dish_list.html'
-    context_object_name = 'dishes'  
-
-class DishCreateView(StaffRequiredMixin, CreateView):
-    model = Dish
-    fields = ['name_zh','name_en','description_zh','price','image_url','is_available']
-    template_name = 'menu/dish_form.html'
-    # success_url = '/menu/dishes/'
-    success_url = reverse_lazy('menu:dish_list')
-
-    def form_invalid(self, form):
-        # 在 console 打印所有字段错误
-        print("Form is invalid:", form.errors.as_json())
-        return super().form_invalid(form)
-
-class DishUpdateView(StaffRequiredMixin, UpdateView):
-    model = Dish
-    fields = ['name_zh','name_en','description_zh','price','image_url','is_available']
-    template_name = 'menu/dish_form.html'
-    success_url = '/menu/dishes/'
-
-class DishDeleteView(StaffRequiredMixin, DeleteView):
-    model = Dish
-    template_name = 'menu/dish_confirm_delete.html'
-    success_url = '/menu/dishes/'
