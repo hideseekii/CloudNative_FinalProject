@@ -24,7 +24,7 @@ class OrderTestCase(TestCase):
         session['cart'] = {str(self.dish1.dish_id): 2, str(self.dish2.dish_id): 3}
         session.save()
 
-        response = self.client.post(reverse('orders:checkout'))
+        response = self.client.post(reverse('orders:checkout'), {'pickup_time': '立即取餐'})
 
         # 測試是否建立成功並重導
         self.assertEqual(response.status_code, 302)
