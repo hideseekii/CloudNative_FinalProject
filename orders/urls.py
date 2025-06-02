@@ -20,5 +20,8 @@ urlpatterns = [
     path('order/<int:order_id>/', views.order_detail, name='order_detail'),
 
     path('generate-monthly-report/', views.generate_monthly_report, name='generate_monthly_report'),
+
+    path('staff/order/', views.staff_order_list, name='staff_order_list'),
+    path('staff/order/<int:order_id>/complete/', views.mark_order_complete, name='mark_order_complete'),
     
 ]
