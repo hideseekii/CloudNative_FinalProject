@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-28 16:05+0800\n"
+"POT-Creation-Date: 2025-06-02 17:09+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,181 +18,720 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\templates\base.html:17 .\templates\menu\base.html:17
+#: templates/base.html:8 templates/menu/base.html:8
+#: templates/menu/dish_detail.html:5
+msgid "美味餐廳"
+msgstr "TSMC Restaurant"
+
+#: templates/base.html:17 templates/menu/base.html:17
 msgid "台積餐廳"
 msgstr "TSMC Restaurant"
 
-#: .\templates\base.html:25 .\templates\menu\base.html:25
-#: .\templates\menu\dish_list.html:9
+#: templates/base.html:25 templates/menu/base.html:25
+#: templates/menu/dish_list.html:9
 msgid "菜單"
 msgstr "Menu"
 
-#: .\templates\base.html:33 .\templates\menu\base.html:33
+#: templates/base.html:33 templates/menu/base.html:33
+#: templates/menu/cart.html:8
 msgid "購物車"
 msgstr "Cart"
 
-#: .\templates\base.html:46 .\templates\menu\base.html:46
+#: templates/base.html:46 templates/menu/base.html:46
+#: templates/orders/order_detail.html:15 templates/orders/order_detail.html:89
+#: templates/orders/order_history.html:6 templates/orders/order_history.html:12
 msgid "訂單歷史"
 msgstr "Order History"
 
-#: .\templates\base.html:50 .\templates\menu\base.html:50
+#: templates/base.html:54 templates/menu/base.html:54
+msgid "查看評價"
+msgstr "View Reviews"
+
+#: templates/base.html:60 templates/menu/base.html:61
+msgid "產生顧客月帳單"
+msgstr "Generate Customer Monthly Bill"
+
+#: templates/base.html:65 templates/menu/base.html:68
 msgid "登出"
 msgstr "Logout"
 
-#: .\templates\base.html:55 .\templates\menu\base.html:55
+#: templates/base.html:70 templates/menu/base.html:73
+#: templates/staff/account/login.html:75 templates/users/account/login.html:75
 msgid "登入"
 msgstr "Login"
 
-#: .\templates\base.html:58 .\templates\menu\base.html:58
+#: templates/base.html:73 templates/menu/base.html:76
 msgid "註冊"
-msgstr "Sign up"
+msgstr "Sign Up"
 
-#: .\templates\base.html:93 .\templates\menu\base.html:93
+#: templates/base.html:120 templates/menu/base.html:124
 msgid "台積餐廳. 版權所有."
 msgstr "TSMC Restaurant. All rights reserved."
 
-#: .\templates\menu\dish_list.html:13
-msgid "新增菜色"
-msgstr "Add New Dish"
+#: templates/menu/cart.html:5
+msgid "購物車 - 美味餐廳"
+msgstr "Cart - TSMC Restaurant"
 
-#: .\templates\menu\dish_list.html:23
-msgid "搜尋"
-msgstr "Search"
+#: templates/menu/cart.html:19 templates/orders/order_detail.html:53
+#: templates/reviews/add_dish_review.html:16
+msgid "菜品"
+msgstr "Dish"
 
-#: .\templates\menu\dish_list.html:24
-msgid "輸入菜名或描述..."
-msgstr "Enter Dish name or Description"
+#: templates/menu/cart.html:20 templates/orders/order_detail.html:54
+msgid "單價"
+msgstr "Unit Price"
 
-#: .\templates\menu\dish_list.html:28
-msgid "最小價格"
-msgstr "Minimum Price"
+#: templates/menu/cart.html:21 templates/orders/order_detail.html:55
+msgid "數量"
+msgstr "Quantity"
 
-#: .\templates\menu\dish_list.html:33
-msgid "最大價格"
-msgstr "Maximum Price"
+#: templates/menu/cart.html:22 templates/orders/order_detail.html:56
+msgid "小計"
+msgstr "Subtotal"
 
-#: .\templates\menu\dish_list.html:39
-msgid "套用"
-msgstr "Apply"
+#: templates/menu/cart.html:23 templates/orders/order_history.html:27
+msgid "操作"
+msgstr "Action"
 
-#: .\templates\menu\dish_list.html:40
-msgid "重置"
-msgstr "Reset"
+#: templates/menu/cart.html:49
+msgid "移除"
+msgstr "Remove"
 
-#: .\templates\menu\dish_list.html:54 .\templates\menu\dish_list.html:95
-msgid "已下架"
-msgstr "Not Availible"
+#: templates/menu/cart.html:57 templates/orders/order_detail.html:71
+msgid "總計"
+msgstr "Total"
 
-#: .\templates\menu\dish_list.html:70
-msgid "⭐ 平均評分："
-msgstr "⭐ Average Rating:"
+#: templates/menu/cart.html:66
+msgid "選擇取餐時間"
+msgstr "Choose Pickup Time"
 
-#: .\templates\menu\dish_list.html:72
-msgid "⭐ 尚無評分"
-msgstr "⭐ No Rating Yet"
+#: templates/menu/cart.html:78 templates/orders/order_detail.html:92
+msgid "繼續購物"
+msgstr "Continue Shopping"
 
-#: .\templates\menu\dish_list.html:78
-msgid "詳情"
-msgstr "Details"
+#: templates/menu/cart.html:81
+msgid "結帳"
+msgstr "Checkout"
 
-#: .\templates\menu\dish_list.html:84
-msgid "編輯"
-msgstr "Edit"
+#: templates/menu/cart.html:90
+msgid "您的購物車是空的"
+msgstr "Your cart is empty"
 
-#: .\templates\menu\dish_list.html:87
-msgid "刪除"
-msgstr "Delete"
+#: templates/menu/cart.html:91
+msgid "您還沒有選購任何美食。快去選購美味的餐點吧！"
+msgstr "You haven't selected any dishes yet. Go pick something delicious!"
 
-#: .\templates\menu\dish_list.html:100
+#: templates/menu/cart.html:93 templates/orders/order_history.html:60
+msgid "瀏覽菜單"
+msgstr "Browse Menu"
+
+#: templates/menu/dish_confirm_delete.html:4
+msgid "刪除菜色 – 確認"
+msgstr "Delete Dish – Confirmation"
+
+#: templates/menu/dish_confirm_delete.html:8
+msgid "刪除菜色："
+msgstr "Delete Dish:"
+
+#: templates/menu/dish_confirm_delete.html:9
+msgid "你確定要刪除這道菜嗎？此操作無法復原。"
+msgstr ""
+"Are you sure you want to delete this dish? This action cannot be undone."
+
+#: templates/menu/dish_confirm_delete.html:13
+msgid "確認刪除"
+msgstr "Confirm Deletion"
+
+#: templates/menu/dish_confirm_delete.html:14 templates/menu/dish_form.html:48
+#: templates/staff/account/profile_edit.html:29
+#: templates/users/account/profile_edit.html:29
+msgid "取消"
+msgstr "Cancel"
+
+#: templates/menu/dish_detail.html:36
+msgid "返回菜單"
+msgstr "Back to Menu"
+
+#: templates/menu/dish_detail.html:38 templates/menu/dish_list.html:108
 msgid "加入購物車"
 msgstr "Add to Cart"
 
-#: .\templates\menu\dish_list.html:104
+#: templates/menu/dish_detail.html:40 templates/menu/dish_list.html:112
 msgid "登入購買"
-msgstr "Login to purchase"
+msgstr "Login to Purchase"
 
-#: .\templates\menu\dish_list.html:119
+#: templates/menu/dish_detail.html:51
+msgid "使用者評論"
+msgstr "User Reviews"
+
+#: templates/menu/dish_detail.html:55
+msgid "使用者"
+msgstr "User"
+
+#: templates/menu/dish_detail.html:56
+msgid "評分"
+msgstr "Rating"
+
+#: templates/menu/dish_detail.html:57 templates/reviews/add_dish_review.html:18
+msgid "評論"
+msgstr "Comment"
+
+#: templates/menu/dish_detail.html:58
+msgid "時間"
+msgstr "Time"
+
+#: templates/menu/dish_detail.html:71
+msgid "（無文字評論）"
+msgstr "(No written comment)"
+
+#: templates/menu/dish_detail.html:79
+msgid "目前尚無此菜色的評論。"
+msgstr "There are currently no reviews for this dish."
+
+#: templates/menu/dish_form.html:5
+msgid "新增／編輯菜色"
+msgstr "Add/Edit Dish"
+
+#: templates/menu/dish_form.html:10
+msgid "編輯菜色"
+msgstr "Edit Dish"
+
+#: templates/menu/dish_form.html:10 templates/menu/dish_list.html:13
+msgid "新增菜色"
+msgstr "Add Dish"
+
+#: templates/menu/dish_list.html:4
+msgid "菜單 - 美味餐廳"
+msgstr "Menu - TSMC Restaurant"
+
+#: templates/menu/dish_list.html:23
+msgid "搜尋"
+msgstr "Search"
+
+#: templates/menu/dish_list.html:24
+msgid "輸入菜名或描述..."
+msgstr "Enter dish name or description..."
+
+#: templates/menu/dish_list.html:28
+msgid "最小價格"
+msgstr "Minimum Price"
+
+#: templates/menu/dish_list.html:33
+msgid "最大價格"
+msgstr "Maximum Price"
+
+#: templates/menu/dish_list.html:39
+msgid "套用"
+msgstr "Apply"
+
+#: templates/menu/dish_list.html:40
+msgid "重置"
+msgstr "Reset"
+
+#: templates/menu/dish_list.html:55 templates/menu/dish_list.html:103
+msgid "已下架"
+msgstr "Unavailable"
+
+#: templates/menu/dish_list.html:78
+msgid "⭐ 平均評分："
+msgstr "⭐ Average Rating:"
+
+#: templates/menu/dish_list.html:80
+msgid "⭐ 尚無評分"
+msgstr "⭐ No Ratings Yet"
+
+#: templates/menu/dish_list.html:86
+msgid "詳情"
+msgstr "Details"
+
+#: templates/menu/dish_list.html:92
+msgid "編輯"
+msgstr "Edit"
+
+#: templates/menu/dish_list.html:95
+msgid "刪除"
+msgstr "Delete"
+
+#: templates/menu/dish_list.html:127
 msgid "沒有找到符合條件的菜品"
-msgstr "No Dish Found"
+msgstr "No matching dishes found"
 
-#: .\templates\menu\dish_list.html:120
+#: templates/menu/dish_list.html:128
 msgid "請嘗試調整您的搜索條件，或查看完整菜單。"
-msgstr "Please try adjusting your search criteria or view the full menu"
+msgstr "Please try adjusting your search filters or view the full menu."
 
-#: .\templates\menu\dish_list.html:122
+#: templates/menu/dish_list.html:130
 msgid "查看所有菜品"
-msgstr "Check Full Menu"
+msgstr "View All Dishes"
 
-#: .\templates\reviews\review_list.html:7
+#: templates/orders/confirmation.html:4 templates/orders/confirmation.html:8
+msgid "訂單確認"
+msgstr "Order Confirmation"
+
+#: templates/orders/confirmation.html:9
+msgid "感謝您的購買！以下為訂單明細："
+msgstr "Thank you for your purchase! Here are your order details:"
+
+#: templates/orders/confirmation.html:12
+#: templates/orders/monthly_report.html:11
+#: templates/orders/order_detail.html:29 templates/orders/order_history.html:23
+#: templates/reviews/add_dish_review.html:7
+msgid "訂單編號"
+msgstr "Order ID"
+
+#: templates/orders/confirmation.html:14
+#: templates/orders/monthly_report.html:13
+msgid "下單時間"
+msgstr "Order Time"
+
+#: templates/orders/confirmation.html:16 templates/orders/order_detail.html:36
+#: templates/orders/order_history.html:26
+msgid "總金額"
+msgstr "Total Amount"
+
+#: templates/orders/confirmation.html:20
+msgid "品項列表"
+msgstr "Item List"
+
+#: templates/orders/confirmation.html:31
+msgid "繼續選購"
+msgstr "Continue Shopping"
+
+#: templates/orders/confirmation.html:34
+msgid "查看歷史訂單"
+msgstr "View Order History"
+
+#: templates/orders/monthly_report.html:4
+msgid "本月顧客帳單"
+msgstr "This Month's Customer Bill"
+
+#: templates/orders/monthly_report.html:7
+msgid "顧客帳單"
+msgstr "Customer Bill"
+
+#: templates/orders/monthly_report.html:12
+msgid "顧客帳號"
+msgstr "Customer Account"
+
+#: templates/orders/monthly_report.html:14
+msgid "消費金額 (NT$)"
+msgstr "Amount Spent (NT$)"
+
+#: templates/orders/monthly_report.html:26
+msgid "本月尚無訂單"
+msgstr "No orders this month"
+
+#: templates/orders/monthly_report.html:31
+msgid "本月總金額"
+msgstr "Total This Month"
+
+#: templates/orders/order_detail.html:5 templates/orders/order_detail.html:11
+msgid "訂單詳情"
+msgstr "Order Details"
+
+#: templates/orders/order_detail.html:14
+msgid "首頁"
+msgstr "Home"
+
+#: templates/orders/order_detail.html:16
+msgid "訂單"
+msgstr "Order"
+
+#: templates/orders/order_detail.html:26
+msgid "訂單資訊"
+msgstr "Order Information"
+
+#: templates/orders/order_detail.html:30 templates/orders/order_history.html:24
+msgid "訂單時間"
+msgstr "Order Time"
+
+#: templates/orders/order_detail.html:31 templates/orders/order_history.html:25
+msgid "訂單狀態"
+msgstr "Order Status"
+
+#: templates/orders/order_detail.html:46
+msgid "訂單品項"
+msgstr "Order Items"
+
+#: templates/orders/order_detail.html:81 templates/reviews/add_review.html:8
+msgid "新增評論"
+msgstr "Add Review"
+
+#: templates/orders/order_detail.html:85
+msgid "每道菜品評論"
+msgstr "Review Each Dish"
+
+#: templates/orders/order_history.html:43
+msgid "查看詳情"
+msgstr "View Details"
+
+#: templates/orders/order_history.html:57
+msgid "您還沒有任何訂單"
+msgstr "You don't have any orders yet"
+
+#: templates/orders/order_history.html:58
+msgid "開始選購您喜愛的美食，享受美味餐點！"
+msgstr "Start selecting your favorite dishes and enjoy a delicious meal!"
+
+#: templates/reviews/add_dish_review.html:6
+msgid "針對每道菜進行評論"
+msgstr "Review each dish"
+
+#: templates/reviews/add_dish_review.html:17
+msgid "星等"
+msgstr "Rating"
+
+#: templates/reviews/add_dish_review.html:32
+msgid "送出評論"
+msgstr "Submit Review"
+
+#: templates/reviews/add_dish_review.html:33
+msgid "返回訂單"
+msgstr "Back to Order"
+
+#: templates/reviews/add_review.html:5
+msgid "新增評論 - 台積餐廳"
+msgstr "Add Review - TSMC Restaurant"
+
+#: templates/reviews/add_review.html:14
+msgid "提交評論"
+msgstr "Submit Comment"
+
+#: templates/reviews/review_list.html:7
 msgid "Customer Reviews"
 msgstr "Customer Reviews"
 
-#: .\templates\reviews\review_list.html:11
+#: templates/reviews/review_list.html:11
 msgid "Dish Name"
 msgstr "Dish Name"
 
-#: .\templates\reviews\review_list.html:14
-#: .\templates\reviews\review_list.html:42
+#: templates/reviews/review_list.html:14 templates/reviews/review_list.html:42
 msgid "Order ID"
 msgstr "Order ID"
 
-#: .\templates\reviews\review_list.html:17
-#: .\templates\reviews\review_list.html:44
+#: templates/reviews/review_list.html:17 templates/reviews/review_list.html:44
 msgid "Rating"
 msgstr "Rating"
 
-#: .\templates\reviews\review_list.html:19
+#: templates/reviews/review_list.html:19
 msgid "-- All --"
 msgstr "-- All --"
 
-#: .\templates\reviews\review_list.html:25
+#: templates/reviews/review_list.html:25
 msgid "Sort"
 msgstr "Sort"
 
-#: .\templates\reviews\review_list.html:27
+#: templates/reviews/review_list.html:27
 msgid "-- Default (Newest) --"
 msgstr "-- Default (Newest) --"
 
-#: .\templates\reviews\review_list.html:28
+#: templates/reviews/review_list.html:28
 msgid "Rating High → Low"
 msgstr "Rating High → Low"
 
-#: .\templates\reviews\review_list.html:29
+#: templates/reviews/review_list.html:29
 msgid "Rating Low → High"
 msgstr "Rating Low → High"
 
-#: .\templates\reviews\review_list.html:30
+#: templates/reviews/review_list.html:30
 msgid "Oldest First"
 msgstr "Oldest First"
 
-#: .\templates\reviews\review_list.html:31
+#: templates/reviews/review_list.html:31
 msgid "Newest First"
 msgstr "Newest First"
 
-#: .\templates\reviews\review_list.html:34
+#: templates/reviews/review_list.html:34
 msgid "Search"
 msgstr "Search"
 
-#: .\templates\reviews\review_list.html:41
+#: templates/reviews/review_list.html:41
 msgid "Customer"
 msgstr "Customer"
 
-#: .\templates\reviews\review_list.html:43
+#: templates/reviews/review_list.html:43
 msgid "Dish"
 msgstr "Dish"
 
-#: .\templates\reviews\review_list.html:45
+#: templates/reviews/review_list.html:45
 msgid "Comment"
 msgstr "Comment"
 
-#: .\templates\reviews\review_list.html:46
+#: templates/reviews/review_list.html:46
 msgid "Date"
 msgstr "Date"
 
-#: .\templates\reviews\review_list.html:60
+#: templates/reviews/review_list.html:60
 msgid "(No comment)"
 msgstr "(No comment)"
 
-#: .\templates\reviews\review_list.html:66
+#: templates/reviews/review_list.html:66
 msgid "No reviews matching criteria."
 msgstr "No reviews matching criteria."
+
+#: templates/staff/account/account_base.html:7
+#: templates/users/account/account_base.html:7
+msgid "帳號操作"
+msgstr "Account Actions"
+
+#: templates/staff/account/login.html:5 templates/users/account/login.html:5
+msgid "登入 - 美味餐廳"
+msgstr "Login - TSMC  Restaurant"
+
+#: templates/staff/account/login.html:18 templates/users/account/login.html:18
+msgid "歡迎回來"
+msgstr "Welcome Back"
+
+#: templates/staff/account/login.html:19 templates/users/account/login.html:19
+msgid "登入您的帳號以繼續使用"
+msgstr "Log in to continue"
+
+#: templates/staff/account/login.html:42
+msgid "用戶名"
+msgstr "Username"
+
+#: templates/staff/account/login.html:55 templates/users/account/login.html:55
+#: templates/users/account/signup.html:96
+msgid "密碼"
+msgstr "Password"
+
+#: templates/staff/account/login.html:82 templates/users/account/login.html:82
+msgid "忘記密碼？"
+msgstr "Forgot Password?"
+
+#: templates/staff/account/login.html:86
+#: templates/staff/account/password_change_form.html:58
+#: templates/staff/account/signup.html:65 templates/users/account/login.html:86
+#: templates/users/account/password_change_form.html:58
+#: templates/users/account/signup.html:129
+msgid "或者"
+msgstr "Or"
+
+#: templates/staff/account/login.html:90 templates/users/account/login.html:90
+msgid "還沒有帳號？"
+msgstr "Don't have an account?"
+
+#: templates/staff/account/login.html:92 templates/users/account/login.html:92
+msgid "立即註冊"
+msgstr "Sign Up Now"
+
+#: templates/staff/account/password_change_done.html:4
+#: templates/users/account/password_change_done.html:4
+msgid "密碼變更成功"
+msgstr "Password Changed Successfully"
+
+#: templates/staff/account/password_change_done.html:8
+#: templates/users/account/password_change_done.html:8
+msgid "您的密碼已成功變更！"
+msgstr "Your password has been changed successfully!"
+
+#: templates/staff/account/password_change_done.html:12
+#: templates/staff/account/password_change_form.html:63
+#: templates/staff/account/password_reset_done.html:13
+#: templates/staff/account/password_reset_form.html:35
+#: templates/users/account/password_change_done.html:12
+#: templates/users/account/password_change_form.html:63
+#: templates/users/account/password_reset_done.html:13
+#: templates/users/account/password_reset_form.html:35
+msgid "返回登入頁面"
+msgstr "Back to Login Page"
+
+#: templates/staff/account/password_change_form.html:4
+#: templates/users/account/password_change_form.html:4
+msgid "重設密碼 - 美味餐廳"
+msgstr "Reset Password - Tasty Restaurant"
+
+#: templates/staff/account/password_change_form.html:17
+#: templates/staff/account/password_reset_form.html:9
+#: templates/users/account/password_change_form.html:17
+#: templates/users/account/password_reset_form.html:9
+msgid "重設密碼"
+msgstr "Reset Password"
+
+#: templates/staff/account/password_change_form.html:18
+#: templates/users/account/password_change_form.html:18
+msgid "找回您的帳號密碼"
+msgstr "Recover Your Account Password"
+
+#: templates/staff/account/password_change_form.html:37
+#: templates/users/account/password_change_form.html:37
+msgid "電子郵件地址"
+msgstr "Email Address"
+
+#: templates/staff/account/password_change_form.html:47
+#: templates/staff/account/password_reset_form.html:12
+#: templates/users/account/password_change_form.html:47
+#: templates/users/account/password_reset_form.html:12
+msgid "忘記密碼了嗎？請輸入您的電子郵件地址，我們將發送重設密碼的連結給您。"
+msgstr ""
+"Forgot your password? Please enter your email address and we’ll send you a "
+"reset link."
+
+#: templates/staff/account/password_change_form.html:51
+#: templates/staff/account/password_reset_form.html:31
+#: templates/users/account/password_change_form.html:51
+#: templates/users/account/password_reset_form.html:31
+msgid "發送重設連結"
+msgstr "Send Reset Link"
+
+#: templates/staff/account/password_reset_confirm.html:4
+#: templates/staff/account/password_reset_confirm.html:30
+#: templates/users/account/password_reset_confirm.html:4
+#: templates/users/account/password_reset_confirm.html:30
+msgid "設定新密碼"
+msgstr "Set New Password"
+
+#: templates/staff/account/password_reset_confirm.html:8
+#: templates/users/account/password_reset_confirm.html:8
+msgid "請為您的帳號設定新密碼。"
+msgstr "Please set a new password for your account."
+
+#: templates/staff/account/password_reset_confirm.html:34
+#: templates/users/account/password_reset_confirm.html:34
+msgid "密碼重設連結無效，可能是因為它已經被使用過或已過期。"
+msgstr ""
+"The password reset link is invalid. It may have already been used or expired."
+
+#: templates/staff/account/password_reset_confirm.html:35
+#: templates/users/account/password_reset_confirm.html:35
+msgid "請重新請求一個新的密碼重設連結。"
+msgstr "Please request a new password reset link."
+
+#: templates/staff/account/password_reset_confirm.html:39
+#: templates/users/account/password_reset_confirm.html:39
+msgid "重新請求密碼重設"
+msgstr "Request Password Reset Again"
+
+#: templates/staff/account/password_reset_confirm.html:47
+#: templates/users/account/password_reset_confirm.html:47
+msgid "密碼重設完成"
+msgstr "Password Reset Complete"
+
+#: templates/staff/account/password_reset_confirm.html:51
+#: templates/users/account/password_reset_confirm.html:51
+msgid "您的密碼已成功重設！"
+msgstr "Your password has been successfully reset!"
+
+#: templates/staff/account/password_reset_confirm.html:55
+#: templates/users/account/password_reset_confirm.html:55
+msgid "現在您可以登入"
+msgstr "You can now log in"
+
+#: templates/staff/account/password_reset_done.html:4
+#: templates/users/account/password_reset_done.html:4
+msgid "重設密碼郵件已發送"
+msgstr "Password Reset Email Sent"
+
+#: templates/staff/account/password_reset_done.html:8
+#: templates/users/account/password_reset_done.html:8
+msgid "我們已經發送了重設密碼的郵件到您提供的電子郵件地址。"
+msgstr "We have sent a password reset email to the address you provided."
+
+#: templates/staff/account/password_reset_done.html:9
+#: templates/users/account/password_reset_done.html:9
+msgid ""
+"如果您沒有收到郵件，請確認您輸入的是註冊時使用的電子郵件地址，並檢查您的垃圾"
+"郵件資料夾。"
+msgstr ""
+"If you haven't received the email, make sure you entered the email address "
+"used during registration and check your spam folder."
+
+#: templates/staff/account/profile.html:4
+#: templates/users/account/profile.html:4
+msgid "個人資料"
+msgstr "Profile"
+
+#: templates/staff/account/profile.html:10
+#: templates/users/account/profile.html:10
+msgid "用戶名稱："
+msgstr "Username:"
+
+#: templates/staff/account/profile.html:21
+#: templates/users/account/profile.html:21
+msgid "姓名："
+msgstr "Full Name:"
+
+#: templates/staff/account/profile.html:27
+#: templates/users/account/profile.html:27
+msgid "帳號類型："
+msgstr "Account Type:"
+
+#: templates/staff/account/profile.html:30
+#: templates/users/account/profile.html:30
+msgid "餐廳員工"
+msgstr "Restaurant Staff"
+
+#: templates/staff/account/profile.html:44
+#: templates/staff/account/profile_edit.html:4
+#: templates/users/account/profile.html:44
+#: templates/users/account/profile_edit.html:4
+msgid "編輯個人資料"
+msgstr "Edit Profile"
+
+#: templates/staff/account/profile.html:45
+#: templates/users/account/profile.html:45
+msgid "變更密碼"
+msgstr "Change Password"
+
+#: templates/staff/account/profile.html:50
+#: templates/users/account/profile.html:50
+msgid "返回首頁"
+msgstr "Back to Home"
+
+#: templates/staff/account/profile_edit.html:28
+#: templates/users/account/profile_edit.html:28
+msgid "保存變更"
+msgstr "Save Changes"
+
+#: templates/staff/account/signup.html:5 templates/users/account/signup.html:5
+msgid "註冊 - 美味餐廳"
+msgstr "Sign Up - TSMC Restaurant"
+
+#: templates/staff/account/signup.html:18
+#: templates/users/account/signup.html:18
+msgid "建立新帳號"
+msgstr "Create New Account"
+
+#: templates/staff/account/signup.html:19
+#: templates/users/account/signup.html:19
+msgid "加入我們，開始享受美食之旅"
+msgstr "Join us and start your delicious journey"
+
+#: templates/staff/account/signup.html:58
+#: templates/users/account/signup.html:122
+msgid "建立帳號"
+msgstr "Create Account"
+
+#: templates/staff/account/signup.html:69
+#: templates/users/account/signup.html:133
+msgid "已經有帳號？"
+msgstr "Already have an account?"
+
+#: templates/staff/account/signup.html:71
+#: templates/users/account/signup.html:135
+msgid "立即登入"
+msgstr "Log In Now"
+
+#: templates/users/account/login.html:42 templates/users/account/signup.html:39
+msgid "電子郵件"
+msgstr "Email"
+
+#: templates/users/account/profile.html:15
+msgid "電子郵件："
+msgstr "Email:"
+
+#: templates/users/account/profile.html:32
+msgid "顧客"
+msgstr "Customer"
+
+#: templates/users/account/profile.html:38
+msgid "註冊時間："
+msgstr "Registration Time:"
+
+#: templates/users/account/signup.html:58
+msgid "使用者名稱"
+msgstr "Username"
+
+#: templates/users/account/signup.html:77
+msgid "聯絡電話"
+msgstr "Contact Number"

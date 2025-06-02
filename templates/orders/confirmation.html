@@ -1,21 +1,23 @@
 {% extends "menu/base.html" %}
-{% block title %}訂單確認 #{{ order.order_id }}{% endblock %}
+{% load static %}
+{% load i18n %}
+{% block title %}{% trans "訂單確認" %} #{{ order.order_id }}{% endblock %}
 
 {% block content %}
 <div class="container py-4">
-    <h1 class="h2">訂單確認</h1>
-    <p class="mb-4">感謝您的購買！以下為訂單明細：</p>
+    <h1 class="h2">{% trans "訂單確認" %}</h1>
+    <p class="mb-4">{% trans "感謝您的購買！以下為訂單明細：" %}</p>
 
     <dl class="row">
-        <dt class="col-sm-3">訂單編號</dt>
+        <dt class="col-sm-3">{% trans "訂單編號" %}</dt>
         <dd class="col-sm-9">#{{ order.order_id }}</dd>
-        <dt class="col-sm-3">下單時間</dt>
+        <dt class="col-sm-3">{% trans "下單時間" %}</dt>
         <dd class="col-sm-9">{{ order.datetime|date:"Y-m-d H:i" }}</dd>
-        <dt class="col-sm-3">總金額</dt>
+        <dt class="col-sm-3">{% trans "總金額" %}</dt>
         <dd class="col-sm-9 text-primary fw-bold">NT$ {{ order.total_price }}</dd>
     </dl>
 
-    <h2 class="h5 mt-4">品項列表</h2>
+    <h2 class="h5 mt-4">{% trans "品項列表" %}</h2>
     <ul class="list-group mb-4">
         {% for item in order.items.all %}
         <li class="list-group-item d-flex justify-content-between">
@@ -26,10 +28,10 @@
     </ul>
 
     <a href="{% url 'menu:dish_list' %}" class="btn btn-primary">
-        <i class="fas fa-utensils"></i> 繼續選購
+        <i class="fas fa-utensils"></i> {% trans "繼續選購" %}
     </a>
     <a href="{% url 'orders:order_history' %}" class="btn btn-secondary ms-2">
-        <i class="fas fa-list"></i> 查看歷史訂單
+        <i class="fas fa-list"></i> {% trans "查看歷史訂單" %}
     </a>
 </div>
 {% endblock %}

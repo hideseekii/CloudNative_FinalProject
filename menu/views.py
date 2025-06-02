@@ -10,6 +10,7 @@ from django.core.cache import cache  # 新增 Redis 快取
 import hashlib  # 用於生成快取鍵
 
 from .models import Dish
+from .utils import get_pickup_times
 from orders.models import Order, OrderItem
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import Dish
@@ -280,6 +281,42 @@ def remove_from_cart(request, pk):
     return redirect('menu:cart')
 
 @login_required
+
+def cart_view(request):
+    cart = request.session.get('cart', {})
+    cart_items = []
+    total_price = 0
+
+    if cart:
+        for dish_id, quantity in cart.items():
+            try:
+                dish = Dish.objects.get(dish_id=int(dish_id))
+                subtotal = dish.price * quantity
+                total_price += subtotal
+                cart_items.append({
+                    'dish': dish,
+                    'quantity': quantity,
+                    'subtotal': subtotal
+                })
+            except Dish.DoesNotExist:
+                del cart[dish_id]
+                request.session['cart'] = cart
+
+    # 加入 pickup_times
+    pickup_times = get_pickup_times()
+
+    context = {
+        'cart_items': cart_items,
+        'total_price': total_price,
+        'pickup_times': pickup_times,  # 加這行
+    }
+
+    return render(request, 'menu/cart.html', context)
+
+
+@login_required
+
+
 @transaction.atomic
 def checkout(request):
     # Get cart contents

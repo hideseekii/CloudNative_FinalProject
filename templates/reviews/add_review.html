@@ -1,15 +1,16 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}新增評論 - 台積餐廳{% endblock %}
+{% block title %}{% trans "新增評論 - 台積餐廳" %}{% endblock %}
 
 {% block content %}
-    <h2 class="text-center mb-4">新增評論</h2>
+    <h2 class="text-center mb-4">{% trans "新增評論" %}</h2>
     <form method="POST" class="col-md-6 mx-auto">
         {% csrf_token %}
         <div class="mb-3">
             {{ form.as_p }}
         </div>
-        <button type="submit" class="btn btn-primary w-100">提交評論</button>
+        <button type="submit" class="btn btn-primary w-100">{% trans "提交評論" %}</button>
     </form>
 {% endblock %}
