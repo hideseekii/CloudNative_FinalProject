@@ -3,6 +3,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from django.utils.translation import activate
 
 from menu.models import Dish
 from orders.models import Order, OrderItem
@@ -12,6 +13,7 @@ User = get_user_model()
 class OrderTestCase(TestCase):
     def setUp(self):
         # 建立一位顧客與餐點
+        activate('zh-hant')
         self.client = Client()
         self.customer = User.objects.create_user(username='customer', password='test123')
         self.client.force_login(self.customer)
@@ -87,3 +89,11 @@ class OrderTestCase(TestCase):
         self.assertContains(response, "訂單")
         self.assertContains(response, "120")
         self.assertContains(response, "80")
+
+
+    def test_language_switch(self):
+        response = self.client.post('/i18n/setlang/', {
+            'language': 'zh-hant',
+            'next': reverse('orders:order_history')
+        }, follow=True)
+        self.assertEqual(response.status_code, 200)
