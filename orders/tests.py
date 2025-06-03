@@ -93,19 +93,21 @@ class OrderTestCoverage(TestCase):
         self.assertContains(response2, f"#{order.order_id}")
 
     def test_staff_order_list_and_complete(self):
-        self.login_customer()
-        order = Order.objects.create(consumer=self.customer, total_price=200)
-        self.client.logout()
+        """測試員工能否查看未完成訂單並標記為完成"""
+        self.login_staff()  # 直接以 staff 用戶登入
 
-        self.login_staff()
-        # 確認訂單在列表中
+        # 創建一個狀態為 UNFINISHED 的訂單
+        order = Order.objects.create(consumer=self.customer, total_price=200, state=Order.State.UNFINISHED)
+
+        # 確認訂單顯示在列表中
         response = self.client.get(reverse('orders:staff_order_list'))
-        self.assertContains(response, f"#{order.order_id}")
+        self.assertContains(response, f"#{order.order_id}")  # 確認訂單號碼顯示
 
-        # 標記完成
+        # 標記為完成
         response = self.client.post(reverse('orders:mark_order_complete', args=[order.order_id]), follow=True)
-        self.assertRedirects(response, reverse('orders:staff_order_list'))
+        self.assertRedirects(response, reverse('orders:staff_order_list'))  # 應重定向回訂單列表
 
+        # 確認訂單狀態已變更為 FINISHED
         order.refresh_from_db()
         self.assertEqual(order.state, Order.State.FINISHED)
 
@@ -148,10 +150,14 @@ class OrderTestCoverage(TestCase):
     def test_staff_order_list_view(self):
         """測試 staff_order_list 的正常回傳與內容"""
         self.login_staff()
-        order = Order.objects.create(consumer=self.customer, total_price=100)
+
+        # 創建一個狀態為 UNFINISHED 的訂單
+        order = Order.objects.create(consumer=self.customer, total_price=100, state=Order.State.UNFINISHED)
+
+        # 測試訂單是否在列表中
         response = self.client.get(reverse('orders:staff_order_list'))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, f"#{order.order_id}")
+        self.assertContains(response, f"#{order.order_id}")  # 確保訂單顯示
 
     def test_mark_order_complete_post(self):
         """測試標記訂單為完成"""
