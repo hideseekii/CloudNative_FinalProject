@@ -13,7 +13,7 @@ class ReviewTests(TestCase):
         self.client = Client()
         self.user = User.objects.create_user(username='testuser', password='testpassword')
         self.client.force_login(self.user)
-        self.order = Order.objects.create(order_id=123, consumer=self.user, created_at=timezone.now())
+        self.order = Order.objects.create(order_id=123, consumer=self.user)
         self.dish = OrderItem.objects.create(order=self.order, dish_name='Test Dish', quantity=2, price=20)
 
     def test_add_review(self):
