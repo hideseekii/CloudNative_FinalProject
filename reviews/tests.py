@@ -128,7 +128,7 @@ class ReviewTests(TestCase):
             'form-MIN_NUM_FORMS': '0',
             'form-MAX_NUM_FORMS': '1000',
 
-            'form-0-order_item': str(self.dish.id),
+            'form-0-order_item': str(self.dish.pk),
             'form-0-rating': 4,
             'form-0-comment': 'Tasty!'
         }
