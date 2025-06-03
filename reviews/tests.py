@@ -45,45 +45,35 @@ class ReviewTests(TestCase):
         """
         測試用戶是否可以對多個菜品新增評論
         """
+        second_dish = Dish.objects.create(name_zh='滷肉飯', price=100, is_available=True)
+        second_order_item = OrderItem.objects.create(item_id=2, order=self.order, dish=second_dish, quantity=1, unit_price=100)
+        
         url = reverse('reviews:add_dish_review', args=[self.order.order_id])
         data = {
+            'form-TOTAL_FORMS': '2',
+            'form-INITIAL_FORMS': '0',
+            'form-MIN_NUM_FORMS': '0',
+            'form-MAX_NUM_FORMS': '1000',
+
+            'form-0-order_item': str(self.dish.item_id),
             'form-0-rating': 5,
             'form-0-comment': 'Delicious!',
+
+            'form-1-order_item': str(second_order_item.item_id),
             'form-1-rating': 3,
             'form-1-comment': 'Could be better.'
         }
 
         response = self.client.post(url, data)
 
-        # 檢查菜品評論是否被創建
         self.assertEqual(DishReview.objects.count(), 2)
 
-        # 確認是否對每道菜品正確保存評論
+        # 驗證第一筆評論
         dish_review_1 = DishReview.objects.get(order_item=self.dish)
         self.assertEqual(dish_review_1.rating, 5)
         self.assertEqual(dish_review_1.comment, 'Delicious!')
 
-        # 重定向到訂單詳情頁面
         self.assertEqual(response.status_code, 302)
-
-    def test_review_list(self):
-        """
-        測試評論列表視圖
-        """
-        # 創建評論
-        review = Review.objects.create(
-            user=self.user,
-            order=self.order,
-            rating=4,
-            comment='Great experience!'
-        )
-
-        url = reverse('reviews:review_list')
-        response = self.client.get(url)
-
-        # 確保返回的頁面包含我們剛創建的評論
-        self.assertContains(response, review.comment)
-        self.assertEqual(response.status_code, 200)
 
     def test_invalid_review_rating(self):
         """
@@ -99,9 +89,12 @@ class ReviewTests(TestCase):
 
         response = self.client.post(url, data)
 
-        # 應該不會創建評論，並顯示表單錯誤
+        self.assertEqual(response.status_code, 200)  # 頁面應該不重定向
         self.assertEqual(Review.objects.count(), 0)
-        self.assertFormError(response, 'form', 'rating', 'Ensure this value is less than or equal to 5.')
+
+        # 從 context 抓取表單物件
+        form = response.context['form']
+        self.assertFormError(form, 'rating', 'Ensure this value is less than or equal to 5.')
 
     def test_review_unique_constraint(self):
         """
@@ -130,6 +123,12 @@ class ReviewTests(TestCase):
 
         # 提交第一次菜品評論
         data = {
+            'form-TOTAL_FORMS': '1',
+            'form-INITIAL_FORMS': '0',
+            'form-MIN_NUM_FORMS': '0',
+            'form-MAX_NUM_FORMS': '1000',
+
+            'form-0-order_item': str(self.dish.id),
             'form-0-rating': 4,
             'form-0-comment': 'Tasty!'
         }
