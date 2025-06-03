@@ -1,0 +1,26 @@
+[run]
+# 指定要測試的原始碼範圍
+source =
+    .
+
+# 排除這些檔案和資料夾
+omit =
+    */migrations/*
+    */__init__.py
+    */admin.py
+    CloudNative_final/asgi.py
+    CloudNative_final/urls.py
+    CloudNative_final/wsgi.py
+    common/mixins.py
+    manage.py
+    staff/models.py
+    staff/tests.py
+
+[report]
+# 可選：排除條件式（如 if __name__ == "__main__"）
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:
+
+# 可選：在報告中忽略未執行的空函式或類別
+ignore_errors = True
