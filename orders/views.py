@@ -7,24 +7,26 @@ from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-
+from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
 from menu.models import Dish
 from .models import Order, OrderItem
-
+from django.views.decorators.cache import never_cache
 from django.utils.timezone import now
 from django.db.models import Sum
 from datetime import datetime
 
+@never_cache
 def staff_order_list(request):
     orders = Order.objects.filter(state=Order.State.UNFINISHED).order_by('-datetime')
     return render(request, 'orders/staff_order_list.html', {'orders': orders})
 
+@require_POST
 def mark_order_complete(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     order.state = Order.State.FINISHED
     order.save()
-    return redirect('orders:staff_order_list')
+    return redirect(reverse_lazy('orders:staff_order_list'))
 
 def generate_monthly_report(request):
     now = timezone.now()
@@ -52,7 +54,7 @@ from django.http import JsonResponse
 from menu.models import Dish
 from .models import Order, OrderItem
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator([login_required,never_cache], name='dispatch')
 class CheckoutView(View):
     def post(self, request):
         cart = request.session.get('cart', {})
@@ -118,25 +120,18 @@ class OrderConfirmationView(DetailView):
 # === 修復後的訂單詳情 ===
 @login_required
 def order_detail(request, order_id):
-    """修復版本：更安全的快取實作"""
     try:
-        # 先從資料庫獲取訂單（確保用戶有權限查看）
         order = get_object_or_404(Order, order_id=order_id, consumer=request.user)
-        
-        # 嘗試從快取獲取訂單項目
         cache_key = f'order_items_{order_id}'
-        cached_items = cache.get(cache_key)
-        
-        if cached_items is None:
+        items_data = cache.get(cache_key)
+
+        if items_data is None:
             print(f"🔴 Cache MISS: 訂單項目 {order_id}")
-            # 獲取訂單項目
             order_items = order.items.select_related('dish').all()
-            
-            # 序列化為可快取的格式
+
             items_data = []
             for item in order_items:
                 items_data.append({
-                    'id': item.id,
                     'quantity': item.quantity,
                     'unit_price': float(item.unit_price),
                     'dish_name_zh': item.dish.name_zh,
@@ -144,30 +139,20 @@ def order_detail(request, order_id):
                     'dish_image_url': item.dish.image_url,
                     'subtotal': float(item.quantity * item.unit_price)
                 })
-            
-            # 快取 2 分鐘
+
             cache.set(cache_key, items_data, 120)
-            
-            context = {
-                'order': order,
-                'order_items': order_items,  # 使用原始 QuerySet
-            }
-        else:
-            print(f"🟢 Cache HIT: 訂單項目 {order_id}")
-            # 從快取重建顯示資料
-            context = {
-                'order': order,
-                'order_items': cached_items,  # 使用快取的資料
-                'use_cached_items': True,  # 標記使用快取資料
-            }
-        
+
+        context = {
+            'order': order,
+            'order_items': items_data,  # ✅ 無論有沒有快取，都用 dict
+        }
         return render(request, 'orders/order_detail.html', context)
-        
+
     except Exception as e:
-        # 如果出錯，記錄錯誤並回到訂單歷史
         print(f"❌ 訂單詳情錯誤: {e}")
         messages.error(request, "載入訂單詳情時發生錯誤")
         return redirect('orders:order_history')
+
 
 # === 修復後的訂單歷史 ===
 @login_required
