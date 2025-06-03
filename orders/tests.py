@@ -7,7 +7,9 @@ from menu.models import Dish
 from orders.models import Order, OrderItem
 from datetime import timedelta
 from unittest.mock import patch
-from django.http import JsonResponse
+from django.http import 
+from orders.templatetags.order_tags import multiply
+from decimal import Decimal
 
 User = get_user_model()
 @override_settings(
@@ -210,3 +212,19 @@ class OrderTestCoverage(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, f"#{order.order_id}")
 
+class MultiplyFilterTests(TestCase):
+    def test_multiply_integers(self):
+        self.assertEqual(multiply(2, 3), Decimal('6'))
+
+    def test_multiply_strings(self):
+        self.assertEqual(multiply("2", "4"), Decimal('8'))
+
+    def test_multiply_decimal(self):
+        self.assertEqual(multiply(Decimal("1.5"), Decimal("2.0")), Decimal('3.0'))
+
+    def test_multiply_with_zero(self):
+        self.assertEqual(multiply(5, 0), Decimal('0'))
+
+    def test_multiply_invalid_input(self):
+        with self.assertRaises(Exception):
+            multiply("abc", 2)
