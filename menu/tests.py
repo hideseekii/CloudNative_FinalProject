@@ -1,79 +1,107 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from menu.models import Dish
-from orders.models import Order
+from orders.models import Order, OrderItem
 
-User = get_user_model()
+class DishModelTest(TestCase):
+    def test_dish_creation_and_str(self):
+        dish = Dish.objects.create(name_zh="滷肉飯", price=50)
+        self.assertEqual(str(dish), f"滷肉飯 (#{dish.dish_id})")
+        self.assertEqual(dish.price, 50)
 
-class MenuViewTests(TestCase):
+class DishViewsTest(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(username='testuser', password='password')
-        self.client.force_login(self.user)
+        self.dish = Dish.objects.create(name_zh="滷肉飯", price=50)
 
-        self.dish = Dish.objects.create(name_zh='牛肉麵', price=150, is_available=True)
+    def test_dish_list_view(self):
+        response = self.client.get(reverse('menu:dish_list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "滷肉飯")
+
+    def test_dish_detail_view(self):
+        response = self.client.get(reverse('menu:dish_detail', args=[self.dish.dish_id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.dish.name_zh)
+
+class CartFunctionTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username="testuser", password="password")
+        self.dish = Dish.objects.create(name_zh="雞排飯", price=80)
 
     def test_add_to_cart(self):
-        response = self.client.post(reverse('menu:add_to_cart', args=[self.dish.dish_id]))
+        self.client.login(username="testuser", password="password")
+        response = self.client.get(reverse('menu:add_to_cart', args=[self.dish.dish_id]))
         self.assertRedirects(response, reverse('menu:dish_list'))
-
-    def test_cart_view(self):
         session = self.client.session
-        session['cart'] = {str(self.dish.dish_id): 1}
-        session.save()
-
-        response = self.client.get(reverse('menu:cart'))
-        self.assertEqual(response.status_code, 200)
+        self.assertIn(str(self.dish.dish_id), session.get('cart', {}))
 
     def test_remove_from_cart(self):
+        self.client.login(username="testuser", password="password")
         session = self.client.session
-        session['cart'] = {str(self.dish.dish_id): 1}
+        session['cart'] = {str(self.dish.dish_id): 2}
         session.save()
-
-        response = self.client.post(reverse('menu:remove_from_cart', args=[self.dish.dish_id]))
+        response = self.client.get(reverse('menu:remove_from_cart', args=[self.dish.dish_id]))
         self.assertRedirects(response, reverse('menu:cart'))
+        session = self.client.session
+        self.assertEqual(session['cart'][str(self.dish.dish_id)], 1)
 
-    def test_checkout(self):
+    def test_cart_view(self):
+        self.client.login(username="testuser", password="password")
         session = self.client.session
         session['cart'] = {str(self.dish.dish_id): 1}
         session.save()
+        response = self.client.get(reverse('menu:cart'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.dish.name_zh)
 
-        response = self.client.post(reverse('menu:checkout'))
-        self.assertEqual(Order.objects.count(), 1)
-
-
-class StaffViewsTest(TestCase):
+class CheckoutTest(TestCase):
     def setUp(self):
         self.client = Client()
-        self.staff_user = User.objects.create_user(username='staffuser', password='password', role=User.Role.STAFF)
-        self.client.force_login(self.staff_user)
+        self.user = User.objects.create_user(username="testuser", password="password")
+        self.client.login(username="testuser", password="password")
+        self.dish = Dish.objects.create(name_zh="牛肉麵", price=120)
 
-        self.dish = Dish.objects.create(name_zh='炒飯', price=100, is_available=True)
-        self.dish.refresh_from_db()
+    def test_checkout_process(self):
+        session = self.client.session
+        session['cart'] = {str(self.dish.dish_id): 2}
+        session.save()
+        response = self.client.post(reverse('menu:checkout'))
+        self.assertRedirects(response, reverse('orders:order_detail', args=[1]))
+        self.assertEqual(Order.objects.count(), 1)
+        self.assertEqual(OrderItem.objects.count(), 1)
+        order = Order.objects.first()
+        self.assertEqual(order.total_price, 240)
 
-    def test_create_dish_view(self):
+class DishCRUDTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.staff_user = User.objects.create_user(username="staff", password="password", is_staff=True)
+        self.client.login(username="staff", password="password")
+        self.dish = Dish.objects.create(name_zh="炸醬麵", price=70)
+
+    def test_create_dish(self):
         response = self.client.post(reverse('menu:dish_add'), {
-            'name_zh': '新菜',
-            'name_en': 'New Dish',
-            'description_zh': '這是一道好菜',
-            'price': 200,
-            'image_url': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShd8TUTO_NJVwtZfU41VYhJox8-72OH60YMw&s',
-            'is_available': True,
-        })
-        self.assertEqual(response.status_code, 302)
-
-    def test_update_dish_view(self):
-        response = self.client.post(reverse('menu:dish_edit', args=[self.dish.dish_id]), {
-            'name_zh': '改過的炒飯',
-            'name_en': 'Edited Fried Rice',
-            'description_zh': '更新描述',
-            'price': 120,
-            'image_url': 'https://as.chdev.tw/club/cw1/CH/club/images/article/201609/article-57e8d40589385.jpg',
-            'is_available': True,
+            'name_zh': '水餃',
+            'price': 60,
+            'is_available': True
         })
         self.assertRedirects(response, reverse('menu:dish_list'))
+        self.assertEqual(Dish.objects.filter(name_zh="水餃").count(), 1)
 
-    def test_delete_dish_view(self):
+    def test_update_dish(self):
+        response = self.client.post(reverse('menu:dish_edit', args=[self.dish.dish_id]), {
+            'name_zh': '炸醬麵升級版',
+            'price': 90,
+            'is_available': True
+        })
+        self.assertRedirects(response, reverse('menu:dish_list'))
+        self.dish.refresh_from_db()
+        self.assertEqual(self.dish.name_zh, '炸醬麵升級版')
+
+    def test_delete_dish(self):
         response = self.client.post(reverse('menu:dish_delete', args=[self.dish.dish_id]))
         self.assertRedirects(response, reverse('menu:dish_list'))
+        self.assertFalse(Dish.objects.filter(dish_id=self.dish.dish_id).exists())
