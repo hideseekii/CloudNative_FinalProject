@@ -41,7 +41,9 @@ class DishListView(ListView):
             if dishes is None:
                 print("🔴 Cache MISS: 全部菜單")
                 dishes = list(Dish.objects.all())
+
                 cache.set(cache_key, dishes, 1)  # 快取 15 分鐘
+
             else:
                 print("🟢 Cache HIT: 全部菜單")
 
@@ -70,7 +72,9 @@ class DishListView(ListView):
                     qs = qs.filter(price__lte=max_price)
 
                 dish_ids = list(qs.values_list('dish_id', flat=True))
+
                 cache.set(cache_key, dish_ids, 1)  # 快取 5 分鐘
+
             else:
                 print(f"🟢 Cache HIT: 搜尋 {search_params}")
 
@@ -227,6 +231,8 @@ class DishDeleteView(StaffRequiredMixin, DeleteView):
         cache.delete(f'dish_info_{dish_id}')
         cache.delete(f'dish_reviews_{dish_id}')
         cache.delete('dish_list_all_available')
+
+
 
         from django_redis import get_redis_connection
         redis_conn = get_redis_connection("default")
