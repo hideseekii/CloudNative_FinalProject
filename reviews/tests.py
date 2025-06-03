@@ -44,7 +44,6 @@ class ReviewTests(TestCase):
         測試用戶是否可以對多個菜品新增評論
         """
         url = reverse('reviews:add_dish_review', args=[self.order.order_id])
-
         data = {
             'form-0-rating': 5,
             'form-0-comment': 'Delicious!',
