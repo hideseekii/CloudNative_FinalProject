@@ -7,7 +7,7 @@ from menu.models import Dish
 from orders.models import Order, OrderItem
 from datetime import timedelta
 from unittest.mock import patch
-from django.http import 
+from django.http import JsonResponse
 from orders.templatetags.order_tags import multiply
 from decimal import Decimal
 
