@@ -85,13 +85,7 @@ jobs:
         run: |
           rm -f .coverage
           coverage erase
-          # coverage run --parallel-mode --source='.' manage.py test
-          coverage run --parallel-mode --source='.'\
-            --omit='*/migrations/*, */__init__.py, */admin.py,\
-            CloudNative_final/asgi.py, CloudNative_final/urls.py, CloudNative_final/wsgi.py,\
-            common/mixins.py, manage.py, staff/models.py, staff/tests.py'\
-            manage.py test
-            
+          coverage run --parallel-mode --source='.' manage.py test  
           coverage combine
           coverage report
           coverage xml        # 輸出 coverage.xml 給其他工具使用（如 codecov）
