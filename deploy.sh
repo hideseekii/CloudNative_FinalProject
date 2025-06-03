@@ -281,7 +281,8 @@ else
     echo "如需安裝 metrics-server，執行："
     echo "kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml"
 fi
-
+kubectl exec deployment/django -n cloudnative-final -- python manage.py makemigrations
+kubectl exec deployment/django -n cloudnative-final -- python manage.py migrate
 echo ""
 echo "✅ 部署完成！"
 kubectl get all -n cloudnative-final

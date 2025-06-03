@@ -6,9 +6,9 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from decimal import Decimal
-from django.core.cache import cache  # 新增 Redis 快取
+from django.core.cache import cache,caches  # 新增 Redis 快取
 import hashlib  # 用於生成快取鍵
-
+from django.views.decorators.cache import never_cache
 from .models import Dish
 from .utils import get_pickup_times
 from orders.models import Order, OrderItem
@@ -18,7 +18,9 @@ from common.mixins import StaffRequiredMixin
 from django.urls import reverse_lazy
 from reviews.models import DishReview
 from orders.models import OrderItem
+from django.utils.decorators import method_decorator
 
+@method_decorator(never_cache, name='dispatch')
 class DishListView(ListView):
     model = Dish
     template_name = 'menu/dish_list.html'
@@ -29,38 +31,31 @@ class DishListView(ListView):
         q = self.request.GET.get('q', '').strip()
         min_price = self.request.GET.get('min_price')
         max_price = self.request.GET.get('max_price')
-        
-        # 如果沒有搜尋參數，使用快取
+
+        # ✅ 無搜尋參數：回傳所有菜品（含下架）快取
         if not q and not min_price and not max_price:
-            cache_key = 'dish_list_all_available'
+            cache_key = 'dish_list_all'
             dishes = cache.get(cache_key)
-            
+
             if dishes is None:
-                print("🔴 Cache MISS: 從資料庫查詢菜單列表")
-                dishes = list(Dish.objects.filter(is_available=True).values(
-                    'dish_id', 'name_zh', 'name_en', 'description_zh', 
-                    'price', 'image_url', 'is_available'
-                ))
-                # 快取 15 分鐘
-                cache.set(cache_key, dishes, 900)
+                print("🔴 Cache MISS: 全部菜單")
+                dishes = list(Dish.objects.all())
+                cache.set(cache_key, dishes, 900)  # 快取 15 分鐘
             else:
-                print("🟢 Cache HIT: 從快取取得菜單列表")
-            
-            # 轉換回 QuerySet 格式（如果需要）
-            dish_ids = [dish['dish_id'] for dish in dishes]
-            return Dish.objects.filter(dish_id__in=dish_ids)
-        
-        # 有搜尋參數時，先嘗試快取搜尋結果
+                print("🟢 Cache HIT: 全部菜單")
+
+            return dishes  # ✅ 已是 Dish instance，可直接回傳
+
+        # ✅ 有搜尋參數：查詢篩選結果（可視需求保留 is_available 條件）
         else:
-            # 為搜尋參數生成唯一快取鍵
             search_params = f"{q}_{min_price}_{max_price}"
             cache_key = f"dish_search_{hashlib.md5(search_params.encode()).hexdigest()}"
-            
-            dishes = cache.get(cache_key)
-            if dishes is None:
-                print(f"🔴 Cache MISS: 搜尋查詢 {search_params}")
-                qs = Dish.objects.filter(is_available=True)
-                
+            dish_ids = cache.get(cache_key)
+
+            if dish_ids is None:
+                print(f"🔴 Cache MISS: 搜尋 {search_params}")
+                qs = Dish.objects.all()  # ✅ 包含所有菜，若想要僅上架改這行
+
                 if q:
                     qs = qs.filter(
                         Q(name_zh__icontains=q) |
@@ -72,14 +67,13 @@ class DishListView(ListView):
                     qs = qs.filter(price__gte=min_price)
                 if max_price:
                     qs = qs.filter(price__lte=max_price)
-                
-                dishes = list(qs.values_list('dish_id', flat=True))
-                # 搜尋結果快取 5 分鐘
-                cache.set(cache_key, dishes, 300)
+
+                dish_ids = list(qs.values_list('dish_id', flat=True))
+                cache.set(cache_key, dish_ids, 300)  # 快取 5 分鐘
             else:
-                print(f"🟢 Cache HIT: 搜尋查詢 {search_params}")
-            
-            return Dish.objects.filter(dish_id__in=dishes)
+                print(f"🟢 Cache HIT: 搜尋 {search_params}")
+
+            return Dish.objects.filter(dish_id__in=dish_ids)
 
 class DishDetailView(DetailView):
     model = Dish
@@ -101,8 +95,7 @@ class DishDetailView(DetailView):
                 .distinct()
                 .order_by('-created')
                 .values(
-                    'id', 'rating', 'comment', 'created',
-                    'order_item__order__consumer__username'
+                    'order_item__dish__dish_id', 'rating', 'comment', 'created'
                 )
             )
             # 快取 10 分鐘
@@ -181,7 +174,7 @@ def cart_view(request):
 
 # === 快取失效處理 ===
 # 在 Staff 的 Create/Update/Delete Views 中加入快取清除
-
+@method_decorator(never_cache, name='dispatch')
 class DishCreateView(StaffRequiredMixin, CreateView):
     model = Dish
     fields = ['name_zh','name_en','description_zh','price','image_url','is_available']
@@ -200,12 +193,14 @@ class DishCreateView(StaffRequiredMixin, CreateView):
         # 清除所有搜尋快取（使用模式匹配）
         cache.delete_pattern('dish_search_*')
         print("🧹 已清除菜品列表快取")
-
+        
+@method_decorator(never_cache, name='dispatch')
 class DishUpdateView(StaffRequiredMixin, UpdateView):
     model = Dish
     fields = ['name_zh','name_en','description_zh','price','image_url','is_available']
     template_name = 'menu/dish_form.html'
-    success_url = '/menu/dishes/'
+    success_url = reverse_lazy('menu:dish_list')
+
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -218,11 +213,12 @@ class DishUpdateView(StaffRequiredMixin, UpdateView):
         print(f"🧹 已清除菜品 {dish_id} 相關快取")
         return response
 
+@method_decorator(never_cache, name='dispatch')
 class DishDeleteView(StaffRequiredMixin, DeleteView):
     model = Dish
     template_name = 'menu/dish_confirm_delete.html'
     success_url = '/menu/dishes/'
-
+    print("🎯 正在使用 Redis 嗎？", caches['default'].__class__)
     def delete(self, request, *args, **kwargs):
         dish_id = self.get_object().dish_id
         response = super().delete(request, *args, **kwargs)
@@ -230,8 +226,13 @@ class DishDeleteView(StaffRequiredMixin, DeleteView):
         cache.delete(f'dish_info_{dish_id}')
         cache.delete(f'dish_reviews_{dish_id}')
         cache.delete('dish_list_all_available')
-        cache.delete_pattern('dish_search_*')
-        print(f"🧹 已清除已刪除菜品 {dish_id} 相關快取")
+        from django_redis import get_redis_connection
+        redis_conn = get_redis_connection("default")
+        keys = redis_conn.keys("cloudnative_final:dish_search_*")
+        if keys:
+            redis_conn.delete(*keys)
+            print(f"🧹 已刪除 {len(keys)} 個 dish_search_* 快取")
+        print("✅ 刪除快取成功")
         return response
 
 # === 其他不變的 views ===

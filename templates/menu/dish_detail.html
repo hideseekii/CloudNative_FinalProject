@@ -52,7 +52,6 @@
 <table class="table table-bordered">
   <thead>
     <tr>
-      <th>{% trans "使用者" %}</th>
       <th>{% trans "評分" %}</th>
       <th>{% trans "評論" %}</th>
       <th>{% trans "時間" %}</th>
@@ -62,7 +61,6 @@
     {% if related_reviews %}
         {% for review in related_reviews %}
         <tr>
-          <td>{{ review.user.username }}</td>
           <td>{{ review.rating }}★</td>
           <td>
             {% if review.comment %}
