@@ -6,6 +6,7 @@ from django.core.cache import cache
 from menu.models import Dish
 from orders.models import Order, OrderItem
 from datetime import timedelta
+from unittest.mock import patch
 
 User = get_user_model()
 
@@ -118,3 +119,61 @@ class OrderTestCoverage(TestCase):
         response = self.client.get(reverse('orders:generate_monthly_report'))
         self.assertContains(response, 'NT$150')
         self.assertNotContains(response, 'NT$999')
+
+    def test_checkout_success(self):
+        self.login_customer()
+        session = self.client.session
+        session['cart'] = {str(self.dish.id): 2}
+        session.save()
+
+        response = self.client.post(reverse('orders:checkout'), {'pickup_time': '立即取餐'}, follow=True)
+        self.assertContains(response, "結帳成功！")
+        self.assertEqual(Order.objects.count(), 1)
+        self.assertEqual(OrderItem.objects.count(), 1)
+
+    def test_order_confirmation_view(self):
+        self.login_customer()
+        order = Order.objects.create(consumer=self.customer, total_price=100)
+        response = self.client.get(reverse('orders:confirmation', args=[order.pk]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, f"訂單 #{order.order_id}")
+
+    def test_order_status_api_success(self):
+        self.login_customer()
+        order = Order.objects.create(consumer=self.customer, total_price=300)
+        response = self.client.get(reverse('orders:order_status_api', args=[order.order_id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('state', response.json())
+
+    @patch('orders.views.cache.get', side_effect=Exception("Cache error"))
+    def test_order_detail_cache_exception(self, mock_cache):
+        self.login_customer()
+        order = Order.objects.create(consumer=self.customer, total_price=50)
+        response = self.client.get(reverse('orders:order_detail', args=[order.order_id]), follow=True)
+        self.assertContains(response, "載入訂單詳情時發生錯誤")
+
+    @patch('orders.views.cache.get', side_effect=Exception("Cache error"))
+    def test_order_history_cache_exception(self, mock_cache):
+        self.login_customer()
+        Order.objects.create(consumer=self.customer, total_price=88)
+        response = self.client.get(reverse('orders:order_history'))
+        self.assertContains(response, "訂單 #")
+
+    def test_clear_order_cache_function(self):
+        order = Order.objects.create(consumer=self.customer, total_price=120)
+        OrderItem.objects.create(order=order, dish=self.dish, quantity=1, unit_price=80)
+        cache.set(f'order_items_{order.order_id}', 'test')
+        cache.set(f'user_orders_{self.customer.id}', [order.order_id])
+
+        from orders.views import clear_order_cache
+        clear_order_cache(order.order_id, self.customer.id)
+
+        self.assertIsNone(cache.get(f'order_items_{order.order_id}'))
+        self.assertIsNone(cache.get(f'user_orders_{self.customer.id}'))
+
+    def test_clear_user_order_cache_function(self):
+        cache.set(f'user_orders_{self.customer.id}', [999])
+        from orders.views import clear_user_order_cache
+        clear_user_order_cache(self.customer.id)
+        self.assertIsNone(cache.get(f'user_orders_{self.customer.id}'))
+
