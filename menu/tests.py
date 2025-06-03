@@ -96,17 +96,6 @@ class CartFunctionTest(TestCase):
         session.save()
         response = self.client.get(reverse('menu:cart'))
         self.assertIn('pickup_times', response.context)
-        
-    def test_order_created_correctly(self):
-        response = self.client.post(reverse('menu:checkout'), {
-            'address': '123 台積電',
-            'phone': '0988123456'
-        })
-        self.assertEqual(Order.objects.count(), 1)
-        order = Order.objects.first()
-        self.assertEqual(order.total_price, self.dish.price)
-        self.assertEqual(order.consumer, self.user)
-        self.assertEqual(order.orderitem_set.count(), 1)
 
 
 class CheckoutTest(TestCase):
@@ -117,11 +106,21 @@ class CheckoutTest(TestCase):
         self.dish = Dish.objects.create(
             name_zh="牛肉麵", name_en="Beef Noodles", price=120, is_available=True
         )
-        self.client.login(username="checkoutuser", password="testpass")
         session = self.client.session
         session['cart'] = {str(self.dish.pk): 1}
         session.save()
 
+    def test_order_created_correctly(self):
+        response = self.client.post(reverse('menu:checkout'), {
+            'address': '123 台積電',
+            'phone': '0988123456'
+        })
+        self.assertEqual(Order.objects.count(), 1)
+        order = Order.objects.first()
+        self.assertEqual(order.total_price, self.dish.price)
+        self.assertEqual(order.consumer, self.user)
+        self.assertEqual(order.orderitem_set.count(), 1)
+    
     def test_checkout_process(self):
         response = self.client.post(reverse('menu:checkout'), {
             'address': '123 TSMC Road',
