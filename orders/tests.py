@@ -14,9 +14,9 @@ User = get_user_model()
 class OrderTestCoverage(TestCase):
     def setUp(self):
         self.client = Client()
-        self.customer = User.objects.create_user(username='customer', password='pass')
+        self.customer = User.objects.create_user(username='customer', email='customer@example.com', password='pass')
         # self.client.force_login(self.customer)
-        self.staff = User.objects.create_user(username='staff', password='pass', role=User.Role.STAFF)
+        self.staff = User.objects.create_user(username='staff', email='staff@example.com', password='pass', role=User.Role.STAFF)
         # self.client.force_login(self.staff)
 
         self.dish = Dish.objects.create(name_zh='滷肉飯', name_en='Braised Pork Rice', price=80, is_available=True)
