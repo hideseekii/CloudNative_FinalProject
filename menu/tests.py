@@ -29,6 +29,18 @@ class DishViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.dish.name_en)
 
+    def test_dish_list_view_with_search(self):
+        Dish.objects.create(name_zh="咖哩飯", name_en="Curry Rice", price=100)
+        response = self.client.get(reverse('menu:dish_list'), {'q': 'Curry'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Curry Rice")
+
+    def test_dish_list_view_with_price_filter(self):
+        Dish.objects.create(name_zh="沙拉", name_en="Salad", price=30)
+        response = self.client.get(reverse('menu:dish_list'), {'min_price': 20, 'max_price': 50})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Salad")
+
 
 class CartFunctionTest(TestCase):
     def setUp(self):
@@ -43,6 +55,13 @@ class CartFunctionTest(TestCase):
         session = self.client.session
         cart = session.get('cart', {})
         self.assertIn(str(self.dish.pk), cart)
+
+    def test_add_to_cart_twice(self):
+        self.client.get(reverse('menu:add_to_cart', args=[self.dish.pk]))
+        self.client.get(reverse('menu:add_to_cart', args=[self.dish.pk]))
+        session = self.client.session
+        cart = session.get('cart', {})
+        self.assertEqual(cart[str(self.dish.pk)], 2)
 
     def test_remove_from_cart(self):
         session = self.client.session
@@ -70,6 +89,24 @@ class CartFunctionTest(TestCase):
         response = self.client.get(reverse('menu:cart'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "雞腿飯")
+
+    def test_cart_view_includes_pickup_times(self):
+        session = self.client.session
+        session['cart'] = {str(self.dish.pk): 1}
+        session.save()
+        response = self.client.get(reverse('menu:cart'))
+        self.assertIn('pickup_times', response.context)
+        
+    def test_order_created_correctly(self):
+        response = self.client.post(reverse('menu:checkout'), {
+            'address': '123 台積電',
+            'phone': '0988123456'
+        })
+        self.assertEqual(Order.objects.count(), 1)
+        order = Order.objects.first()
+        self.assertEqual(order.total_price, self.dish.price)
+        self.assertEqual(order.consumer, self.user)
+        self.assertEqual(order.orderitem_set.count(), 1)
 
 
 class CheckoutTest(TestCase):
