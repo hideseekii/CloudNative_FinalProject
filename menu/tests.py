@@ -115,11 +115,22 @@ class CheckoutTest(TestCase):
             'address': '123 台積電',
             'phone': '0988123456'
         })
+        self.assertEqual(response.status_code, 302)
+
+        # 檢查是否成功建立訂單
         self.assertEqual(Order.objects.count(), 1)
         order = Order.objects.first()
-        self.assertEqual(order.total_price, self.dish.price)
+
+        # 檢查訂單欄位正確
         self.assertEqual(order.consumer, self.user)
-        self.assertEqual(order.orderitem_set.count(), 1)
+        self.assertEqual(order.total_price, self.dish.price)
+
+        # 檢查訂單項目
+        self.assertEqual(order.items.count(), 1)
+        item = order.items.first()
+        self.assertEqual(item.dish, self.dish)
+        self.assertEqual(item.quantity, 1)
+        self.assertEqual(item.unit_price, self.dish.price)
     
     def test_checkout_process(self):
         response = self.client.post(reverse('menu:checkout'), {
