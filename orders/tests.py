@@ -10,6 +10,11 @@ from unittest.mock import patch
 from django.http import JsonResponse
 
 User = get_user_model()
+@override_settings(CACHES={
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+})
 
 class OrderTestCoverage(TestCase):
     def setUp(self):
