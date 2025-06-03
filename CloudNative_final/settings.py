@@ -74,9 +74,11 @@ CACHES = {
                 'max_connections': 50,
                 'retry_on_timeout': True,
             },
+            "TIMEOUT": 1,
         },
         'KEY_PREFIX': 'cloudnative_final',
         'VERSION': 1,
+
     }
 }
 
