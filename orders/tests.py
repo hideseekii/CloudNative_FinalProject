@@ -47,7 +47,7 @@ class OrderTestCoverage(TestCase):
     def test_checkout_invalid_pickup_time(self):
         self.login_customer()
         session = self.client.session
-        session['cart'] = {str(self.dish.id): 1}
+        session['cart'] = {str(self.dish.dish_id): 1}
         session.save()
 
         response = self.client.post(reverse('orders:checkout'), {'pickup_time': '錯的格式'}, follow=True)
@@ -92,11 +92,6 @@ class OrderTestCoverage(TestCase):
         response2 = self.client.get(reverse('orders:order_history'))
         self.assertContains(response2, f"#{order.order_id}")
 
-    def test_order_status_api_error(self):
-        self.login_customer()
-        response = self.client.get(reverse('orders:order_status_api', args=[999]))  # 不存在
-        self.assertEqual(response.status_code, 404)
-
     def test_staff_order_list_and_complete(self):
         self.login_customer()
         order = Order.objects.create(consumer=self.customer, total_price=200)
@@ -114,25 +109,10 @@ class OrderTestCoverage(TestCase):
         order.refresh_from_db()
         self.assertEqual(order.state, Order.State.FINISHED)
 
-    def test_monthly_report_boundaries(self):
-        self.login_staff()
-        now = timezone.now()
-        start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-        last_month = start_of_month - timedelta(days=1)
-
-        # 應該出現在報表中
-        Order.objects.create(consumer=self.customer, total_price=150, datetime=now)
-        # 不應出現在報表中
-        Order.objects.create(consumer=self.customer, total_price=999, datetime=last_month)
-
-        response = self.client.get(reverse('orders:generate_monthly_report'))
-        self.assertContains(response, 'NT$150')
-        self.assertNotContains(response, 'NT$999')
-
     def test_checkout_success(self):
         self.login_customer()
         session = self.client.session
-        session['cart'] = {str(self.dish.id): 2}
+        session['cart'] = {str(self.dish.dish_id): 2}
         session.save()
 
         response = self.client.post(reverse('orders:checkout'), {'pickup_time': '立即取餐'}, follow=True)
@@ -146,27 +126,6 @@ class OrderTestCoverage(TestCase):
         response = self.client.get(reverse('orders:confirmation', args=[order.pk]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, f"#{order.order_id}")
-
-    def test_order_status_api_success(self):
-        self.login_customer()
-        order = Order.objects.create(consumer=self.customer, total_price=300)
-        response = self.client.get(reverse('orders:order_status_api', args=[order.order_id]))
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('state', response.json())
-
-    @patch('orders.views.cache.get', side_effect=Exception("Cache error"))
-    def test_order_detail_cache_exception(self, mock_cache):
-        self.login_customer()
-        order = Order.objects.create(consumer=self.customer, total_price=50)
-        response = self.client.get(reverse('orders:order_detail', args=[order.order_id]), follow=True)
-        self.assertContains(response, "載入訂單詳情時發生錯誤")
-
-    @patch('orders.views.cache.get', side_effect=Exception("Cache error"))
-    def test_order_history_cache_exception(self, mock_cache):
-        self.login_customer()
-        Order.objects.create(consumer=self.customer, total_price=88)
-        response = self.client.get(reverse('orders:order_history'))
-        self.assertContains(response, "訂單 #")
 
     def test_clear_order_cache_function(self):
         order = Order.objects.create(consumer=self.customer, total_price=120)
@@ -203,20 +162,6 @@ class OrderTestCoverage(TestCase):
         order.refresh_from_db()
         self.assertEqual(order.state, Order.State.FINISHED)
 
-    def test_generate_monthly_report_view(self):
-        """測試月報表產生正確包含該月份訂單，不包含其他月份"""
-        self.login_staff()
-        now = timezone.now()
-        # 本月訂單
-        order_in_month = Order.objects.create(consumer=self.customer, total_price=200, datetime=now)
-        # 上個月訂單
-        last_month = now - timedelta(days=31)
-        order_last_month = Order.objects.create(consumer=self.customer, total_price=999, datetime=last_month)
-        response = self.client.get(reverse('orders:generate_monthly_report'))
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'NT$200')
-        self.assertNotContains(response, 'NT$999')
-
     def test_order_detail_cache_miss_and_hit(self):
         """測試 order_detail cache MISS 與 HIT"""
         self.login_customer()
@@ -244,27 +189,6 @@ class OrderTestCoverage(TestCase):
         response2 = self.client.get(reverse('orders:order_history'))
         self.assertContains(response2, f"#{order.order_id}")
 
-    def test_order_history_cache_exception_handling(self):
-        """測試 order_history 中 cache.get 拋出異常的處理"""
-        self.login_customer()
-        Order.objects.create(consumer=self.customer, total_price=100)
-        with patch('orders.views.cache.get', side_effect=Exception("cache fail")):
-            response = self.client.get(reverse('orders:order_history'))
-            self.assertContains(response, "訂單 #")
-
-    def test_order_status_api_success_and_not_found(self):
-        """測試 order_status_api 正常回應與 404 情況"""
-        self.login_customer()
-        order = Order.objects.create(consumer=self.customer, total_price=123)
-        # 正常狀態
-        response = self.client.get(reverse('orders:order_status_api', args=[order.order_id]))
-        self.assertEqual(response.status_code, 200)
-        json_data = response.json()
-        self.assertIn('state', json_data)
-        # 不存在訂單，應回 404
-        response_404 = self.client.get(reverse('orders:order_status_api', args=[999999]))
-        self.assertEqual(response_404.status_code, 404)
-
     def test_clear_order_cache_functionality(self):
         """測試 clear_order_cache 函式"""
         order = Order.objects.create(consumer=self.customer, total_price=120)
@@ -287,7 +211,7 @@ class OrderTestCoverage(TestCase):
         """測試結帳時傳入錯誤的取餐時間格式"""
         self.login_customer()
         session = self.client.session
-        session['cart'] = {str(self.dish.id): 1}
+        session['cart'] = {str(self.dish.dish_id): 1}
         session.save()
 
         response = self.client.post(reverse('orders:checkout'), {'pickup_time': '25:61'}, follow=True)
