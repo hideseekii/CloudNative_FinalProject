@@ -88,8 +88,10 @@ class CheckoutTest(TestCase):
         # You can check redirect or order created here if needed
 
     def test_checkout_with_empty_cart(self):
-        self.client.session['cart'] = {}
-        self.client.session.save()
+        session = self.client.session
+        session['cart'] = {}
+        session.save()
+        
         response = self.client.post(reverse('menu:checkout'))
         self.assertRedirects(response, reverse('menu:cart'))
 
