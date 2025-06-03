@@ -7,6 +7,7 @@ from menu.models import Dish
 from orders.models import Order, OrderItem
 from datetime import timedelta
 from unittest.mock import patch
+from django.http import JsonResponse
 
 User = get_user_model()
 
@@ -176,4 +177,137 @@ class OrderTestCoverage(TestCase):
         from orders.views import clear_user_order_cache
         clear_user_order_cache(self.customer.id)
         self.assertIsNone(cache.get(f'user_orders_{self.customer.id}'))
+
+    def test_staff_order_list_view(self):
+        """測試 staff_order_list 的正常回傳與內容"""
+        self.login_staff()
+        order = Order.objects.create(consumer=self.customer, total_price=100)
+        response = self.client.get(reverse('orders:staff_order_list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, f"訂單 #{order.order_id}")
+
+    def test_mark_order_complete_post(self):
+        """測試標記訂單為完成"""
+        self.login_staff()
+        order = Order.objects.create(consumer=self.customer, total_price=100, state=Order.State.UNFINISHED)
+        response = self.client.post(reverse('orders:mark_order_complete', args=[order.order_id]))
+        self.assertEqual(response.status_code, 302)  # 302 重導向
+        order.refresh_from_db()
+        self.assertEqual(order.state, Order.State.FINISHED)
+
+    def test_generate_monthly_report_view(self):
+        """測試月報表產生正確包含該月份訂單，不包含其他月份"""
+        self.login_staff()
+        now = timezone.now()
+        # 本月訂單
+        order_in_month = Order.objects.create(consumer=self.customer, total_price=200, datetime=now)
+        # 上個月訂單
+        last_month = now - timedelta(days=31)
+        order_last_month = Order.objects.create(consumer=self.customer, total_price=999, datetime=last_month)
+        response = self.client.get(reverse('orders:generate_monthly_report'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'NT$200')
+        self.assertNotContains(response, 'NT$999')
+
+    def test_order_detail_cache_miss_and_hit(self):
+        """測試 order_detail cache MISS 與 HIT"""
+        self.login_customer()
+        order = Order.objects.create(consumer=self.customer, total_price=80)
+        OrderItem.objects.create(order=order, dish=self.dish, quantity=1, unit_price=80)
+
+        # 確保快取為空
+        cache.delete(f'order_items_{order.order_id}')
+        # 第一次請求，快取 MISS
+        response = self.client.get(reverse('orders:order_detail', args=[order.order_id]))
+        self.assertContains(response, self.dish.name_zh)
+        # 第二次請求，快取 HIT
+        response2 = self.client.get(reverse('orders:order_detail', args=[order.order_id]))
+        self.assertContains(response2, self.dish.name_zh)
+
+    def test_order_detail_cache_exception_handling(self):
+        """測試 order_detail 中 cache.get 拋出異常的處理"""
+        self.login_customer()
+        order = Order.objects.create(consumer=self.customer, total_price=50)
+        with patch('orders.views.cache.get', side_effect=Exception("cache failure")):
+            response = self.client.get(reverse('orders:order_detail', args=[order.order_id]), follow=True)
+            self.assertContains(response, "載入訂單詳情時發生錯誤")
+
+    def test_order_history_cache_miss_and_hit(self):
+        """測試 order_history 快取 MISS 與 HIT"""
+        self.login_customer()
+        order = Order.objects.create(consumer=self.customer, total_price=88)
+        cache.delete(f'user_orders_{self.customer.id}')
+        # MISS
+        response = self.client.get(reverse('orders:order_history'))
+        self.assertContains(response, f"訂單 #{order.order_id}")
+        # HIT
+        response2 = self.client.get(reverse('orders:order_history'))
+        self.assertContains(response2, f"訂單 #{order.order_id}")
+
+    def test_order_history_cache_exception_handling(self):
+        """測試 order_history 中 cache.get 拋出異常的處理"""
+        self.login_customer()
+        Order.objects.create(consumer=self.customer, total_price=100)
+        with patch('orders.views.cache.get', side_effect=Exception("cache fail")):
+            response = self.client.get(reverse('orders:order_history'))
+            self.assertContains(response, "訂單 #")
+
+    def test_order_status_api_success_and_not_found(self):
+        """測試 order_status_api 正常回應與 404 情況"""
+        self.login_customer()
+        order = Order.objects.create(consumer=self.customer, total_price=123)
+        # 正常狀態
+        response = self.client.get(reverse('orders:order_status_api', args=[order.order_id]))
+        self.assertEqual(response.status_code, 200)
+        json_data = response.json()
+        self.assertIn('state', json_data)
+        # 不存在訂單，應回 404
+        response_404 = self.client.get(reverse('orders:order_status_api', args=[999999]))
+        self.assertEqual(response_404.status_code, 404)
+
+    def test_clear_order_cache_functionality(self):
+        """測試 clear_order_cache 函式"""
+        order = Order.objects.create(consumer=self.customer, total_price=120)
+        OrderItem.objects.create(order=order, dish=self.dish, quantity=1, unit_price=80)
+        cache.set(f'order_items_{order.order_id}', 'dummy_data')
+        cache.set(f'user_orders_{self.customer.id}', [order.order_id])
+        from orders.views import clear_order_cache
+        clear_order_cache(order.order_id, self.customer.id)
+        self.assertIsNone(cache.get(f'order_items_{order.order_id}'))
+        self.assertIsNone(cache.get(f'user_orders_{self.customer.id}'))
+
+    def test_clear_user_order_cache_functionality(self):
+        """測試 clear_user_order_cache 函式"""
+        cache.set(f'user_orders_{self.customer.id}', [999])
+        from orders.views import clear_user_order_cache
+        clear_user_order_cache(self.customer.id)
+        self.assertIsNone(cache.get(f'user_orders_{self.customer.id}'))
+
+    def test_checkout_with_invalid_pickup_time_format(self):
+        """測試結帳時傳入錯誤的取餐時間格式"""
+        self.login_customer()
+        session = self.client.session
+        session['cart'] = {str(self.dish.id): 1}
+        session.save()
+
+        response = self.client.post(reverse('orders:checkout'), {'pickup_time': '25:61'}, follow=True)
+        self.assertContains(response, "取餐時間格式錯誤")
+
+    def test_checkout_with_immediate_pickup_and_cart_empty(self):
+        """測試結帳時立即取餐，但購物車為空的狀況"""
+        self.login_customer()
+        session = self.client.session
+        session['cart'] = {}
+        session.save()
+
+        response = self.client.post(reverse('orders:checkout'), {'pickup_time': '立即取餐'}, follow=True)
+        self.assertContains(response, "購物車是空的，無法結帳。")
+
+    def test_order_confirmation_view_access(self):
+        """測試訂單確認頁面"""
+        self.login_customer()
+        order = Order.objects.create(consumer=self.customer, total_price=123)
+        response = self.client.get(reverse('orders:confirmation', args=[order.pk]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, f"訂單 #{order.order_id}")
 
