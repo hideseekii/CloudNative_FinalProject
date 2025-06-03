@@ -25,6 +25,7 @@ class DishListView(ListView):
     model = Dish
     template_name = 'menu/dish_list.html'
     context_object_name = 'dishes'
+    paginate_by = None
 
     def get_queryset(self):
         # 取得查詢參數
@@ -40,7 +41,9 @@ class DishListView(ListView):
             if dishes is None:
                 print("🔴 Cache MISS: 全部菜單")
                 dishes = list(Dish.objects.all())
-                cache.set(cache_key, dishes, 900)  # 快取 15 分鐘
+
+                cache.set(cache_key, dishes, 1)  # 快取 15 分鐘
+
             else:
                 print("🟢 Cache HIT: 全部菜單")
 
@@ -69,7 +72,9 @@ class DishListView(ListView):
                     qs = qs.filter(price__lte=max_price)
 
                 dish_ids = list(qs.values_list('dish_id', flat=True))
-                cache.set(cache_key, dish_ids, 300)  # 快取 5 分鐘
+
+                cache.set(cache_key, dish_ids, 1)  # 快取 5 分鐘
+
             else:
                 print(f"🟢 Cache HIT: 搜尋 {search_params}")
 
@@ -99,7 +104,7 @@ class DishDetailView(DetailView):
                 )
             )
             # 快取 10 分鐘
-            cache.set(cache_key, related_reviews, 600)
+            cache.set(cache_key, related_reviews, 1)
         else:
             print(f"🟢 Cache HIT: 菜品 {dish.dish_id} 的評論")
         
@@ -143,7 +148,7 @@ def cart_view(request):
                 cached_dishes[dish['dish_id']] = dish
             
             # 批次設定快取（10分鐘）
-            cache.set_many(cache_data, 600)
+            cache.set_many(cache_data, 1)
         else:
             print("🟢 Cache HIT: 所有購物車菜品都有快取")
         
@@ -193,7 +198,7 @@ class DishCreateView(StaffRequiredMixin, CreateView):
         # 清除所有搜尋快取（使用模式匹配）
         cache.delete_pattern('dish_search_*')
         print("🧹 已清除菜品列表快取")
-        
+
 @method_decorator(never_cache, name='dispatch')
 class DishUpdateView(StaffRequiredMixin, UpdateView):
     model = Dish
@@ -226,6 +231,9 @@ class DishDeleteView(StaffRequiredMixin, DeleteView):
         cache.delete(f'dish_info_{dish_id}')
         cache.delete(f'dish_reviews_{dish_id}')
         cache.delete('dish_list_all_available')
+
+
+
         from django_redis import get_redis_connection
         redis_conn = get_redis_connection("default")
         keys = redis_conn.keys("cloudnative_final:dish_search_*")

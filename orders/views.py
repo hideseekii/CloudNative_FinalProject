@@ -133,7 +133,6 @@ def order_detail(request, order_id):
             for item in order_items:
                 items_data.append({
 
-
                     'quantity': item.quantity,
                     'unit_price': float(item.unit_price),
                     'dish_name_zh': item.dish.name_zh,
