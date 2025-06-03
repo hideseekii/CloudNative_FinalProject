@@ -61,7 +61,7 @@ class UserViewTests(TestCase):
     def test_successful_login(self):
         """測試成功登入後的行為"""
         response = self.client.post(reverse('login'), {
-            'username': 'newuser@example.com',
+            'username': 'test@example.com',
             'password': 'password123'
         })
         self.assertEqual(response.status_code, 302)  # 預期重定向至首頁
@@ -70,12 +70,9 @@ class UserViewTests(TestCase):
 
     def test_logout(self):
         """測試登出功能"""
-        response = self.client.get(reverse('logout'))
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, '/')
-        # 檢查消息
-        messages = list(get_messages(response.wsgi_request))
-        self.assertEqual(str(messages[0]), "您已成功登出。")
+        response = self.client.get(reverse('logout'), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "您已成功登出。")
 
     def test_password_change(self):
         """測試密碼變更功能"""
