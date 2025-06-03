@@ -10,11 +10,14 @@ from unittest.mock import patch
 from django.http import JsonResponse
 
 User = get_user_model()
-@override_settings(CACHES={
-    'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-    }
-})
+@override_settings(
+    CACHES={
+        'default': {
+            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        }
+    },
+    SESSION_ENGINE='django.contrib.sessions.backends.db'
+)
 
 class OrderTestCoverage(TestCase):
     def setUp(self):
@@ -27,10 +30,10 @@ class OrderTestCoverage(TestCase):
         self.dish = Dish.objects.create(name_zh='滷肉飯', name_en='Braised Pork Rice', price=80, is_available=True)
 
     def login_customer(self):
-        self.client.login(username='customer', password='pass')
+        self.client.force_login(self.customer)
 
     def login_staff(self):
-        self.client.login(username='staff', password='pass')
+        self.client.force_login(self.staff)
 
     def test_checkout_empty_cart(self):
         self.login_customer()
@@ -39,7 +42,7 @@ class OrderTestCoverage(TestCase):
         session.save()
 
         response = self.client.post(reverse('orders:checkout'), {'pickup_time': '立即取餐'}, follow=True)
-        self.assertContains(response, "購物車是空的")
+        self.assertContains(response, "購物車是空的，無法結帳。")
 
     def test_checkout_invalid_pickup_time(self):
         self.login_customer()
