@@ -22,6 +22,12 @@ class DishViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Braised Pork Rice")
 
+    def test_dish_detail_view(self):
+        response = self.client.get(reverse('menu:dish_detail', args=[self.dish.pk]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.dish.name_en)
+
+
 class CartFunctionTest(TestCase):
     def setUp(self):
         self.client = Client()
@@ -44,6 +50,13 @@ class CartFunctionTest(TestCase):
         response = self.client.get(reverse('menu:remove_from_cart', args=[self.dish.pk]))
         self.assertEqual(response.status_code, 302)
         self.assertNotIn(str(self.dish.pk), self.client.session.get('cart', {}))
+        
+    def test_remove_unavailable_dish_from_cart(self):
+        session = self.client.session
+        session['cart'] = {'999': 1}  # 不存在的 dish_id
+        session.save()
+        response = self.client.get(reverse('menu:remove_from_cart', args=[999]))
+        self.assertEqual(response.status_code, 404)
 
     def test_cart_view(self):
         session = self.client.session
@@ -74,6 +87,11 @@ class CheckoutTest(TestCase):
         self.assertEqual(response.status_code, 302)
         # You can check redirect or order created here if needed
 
+    def test_checkout_with_empty_cart(self):
+        self.client.session['cart'] = {}
+        self.client.session.save()
+        response = self.client.post(reverse('menu:checkout'))
+        self.assertRedirects(response, reverse('menu:cart'))
 
 class DishCRUDTest(TestCase):
     def setUp(self):
