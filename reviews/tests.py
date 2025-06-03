@@ -9,7 +9,7 @@ from django.utils import timezone
 User = get_user_model()
 
 class ReviewTests(TestCase):
-    def setUp(self
+    def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(username='testuser', password='testpassword')
         self.client.force_login(self.user)
