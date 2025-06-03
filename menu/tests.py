@@ -20,12 +20,13 @@ class DishViewsTest(TestCase):
     def test_dish_list_view(self):
         response = self.client.get(reverse('menu:dish_list'))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "滷肉飯")
+        self.assertContains(response, "Braised Pork Rice")
 
 class CartFunctionTest(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(username="testuser", password="password")
+        self.client.force_login(self.user)
         self.dish = Dish.objects.create(name_zh="雞腿飯", name_en="Chicken Rice", price=80, is_available=True)
         self.client.login(username="testuser", password="testpass")
         
@@ -56,6 +57,7 @@ class CheckoutTest(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(username="checkoutuser", password="testpass")
+        self.client.force_login(self.user)
         self.dish = Dish.objects.create(
             name_zh="牛肉麵", name_en="Beef Noodles", price=120, is_available=True
         )
@@ -77,9 +79,9 @@ class DishCRUDTest(TestCase):
     def setUp(self):
         self.client = Client()
         self.staff_user = User.objects.create_user(
-            username="staff", password="staffpass", is_staff=True
+            username="staff", password="staffpass", role=User.Role.STAFF
         )
-        self.client.login(username="staff", password="staffpass")
+        self.client.force_login(self.staff_user)
 
     def test_create_dish(self):
         response = self.client.post(reverse('menu:dish_add'), {
