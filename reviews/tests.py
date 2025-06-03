@@ -18,6 +18,15 @@ class ReviewTests(TestCase):
         self.order = Order.objects.create(order_id=123, consumer=self.user, total_price=100)
         self.dish = OrderItem.objects.create(item_id=1, order=self.order, dish=self.the_dish, quantity=1, unit_price=150)
 
+    def test_get_add_review_empty_form(self):
+        # 尚未有評論紀錄時 GET 應提供空表單
+        url = reverse('reviews:add_review', args=[self.order.order_id])
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('form', response.context)
+        self.assertContains(response, '<form')
+
     def test_add_review(self):
         """
         測試用戶是否可以對訂單新增評論
@@ -41,6 +50,34 @@ class ReviewTests(TestCase):
         self.assertEqual(review.comment, 'Good service and great food!')
         self.assertEqual(response.status_code, 302)  # 應該重定向到訂單詳情頁面
 
+    def test_get_add_review_prefilled_form(self):
+        # 先建立評論
+        Review.objects.create(user=self.user, order=self.order, rating=3, comment='Nice')
+
+        url = reverse('reviews:add_review', args=[self.order.order_id])
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('form', response.context)
+        self.assertContains(response, 'Nice')
+
+    def test_get_add_dish_review_empty_form(self):
+        url = reverse('reviews:add_dish_review', args=[self.order.order_id])
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '<form')
+        self.assertEqual(len(response.context['formset'].forms), 1)
+
+    def test_get_add_dish_review_with_existing_data(self):
+        DishReview.objects.create(user=self.user, order_item=self.dish, rating=3, comment='Okay')
+
+        url = reverse('reviews:add_dish_review', args=[self.order.order_id])
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Okay')
+    
     def test_add_multiple_dish_reviews(self):
         """
         測試用戶是否可以對多個菜品新增評論
@@ -96,6 +133,23 @@ class ReviewTests(TestCase):
         form = response.context['form']
         self.assertFormError(form, 'rating', 'Ensure this value is less than or equal to 5.')
 
+    def test_invalid_dish_review_submission(self):
+        url = reverse('reviews:add_dish_review', args=[self.order.order_id])
+        data = {
+            'form-TOTAL_FORMS': '1',
+            'form-INITIAL_FORMS': '0',
+            'form-MIN_NUM_FORMS': '0',
+            'form-MAX_NUM_FORMS': '1000',
+
+            'form-0-order_item': str(self.dish.pk),  # note: this is not actually used by form
+            'form-0-rating': 6,  # invalid
+            'form-0-comment': 'Too much stars!'
+        }
+
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(DishReview.objects.count(), 0)
+    
     def test_review_unique_constraint(self):
         """
         測試同一用戶對同一訂單的評論唯一性
