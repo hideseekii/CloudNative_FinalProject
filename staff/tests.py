@@ -14,7 +14,7 @@ class StaffAccountTests(TestCase):
             password='Password123',
             role=User.Role.STAFF
         )
-        self.client.force_login(self.customer)
+        self.client.force_login(self.staff_user)
 
     def test_signup_view(self):
         response = self.client.post(reverse('staff:signup'), {
