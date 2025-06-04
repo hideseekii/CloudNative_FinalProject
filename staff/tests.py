@@ -27,7 +27,7 @@ class StaffAccountTests(TestCase):
 
     def test_login_view(self):
         response = self.client.post(reverse('staff:login'), {
-            'username': 'teststaff',
+            'username': 'teststaff@example.com',
             'password': 'Password123',
         })
         self.assertEqual(response.status_code, 302)
@@ -35,13 +35,13 @@ class StaffAccountTests(TestCase):
         self.assertTrue(self.client.session.get('is_staff'))
 
     def test_logout_view(self):
-        self.client.login(username='teststaff', password='Password123')
+        self.client.login(username='teststaff@example.com', password='Password123')
         response = self.client.post(reverse('staff:logout'))
         self.assertEqual(response.status_code, 302)
         self.assertFalse('_auth_user_id' in self.client.session)
 
     def test_password_change(self):
-        self.client.login(username='teststaff', password='Password123')
+        self.client.login(username='teststaff@example.com', password='Password123')
         response = self.client.post(reverse('password_change'), {
             'old_password': 'Password123',
             'new_password1': 'NewPassword123',
@@ -62,13 +62,13 @@ class StaffAccountTests(TestCase):
         self.assertRedirects(response, f"{reverse('staff:login')}?next={reverse('profile')}")
 
     def test_profile_view_authenticated(self):
-        self.client.login(username='teststaff', password='Password123')
+        self.client.login(username='teststaff@example.com', password='Password123')
         response = self.client.get(reverse('profile'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'teststaff')
 
     def test_profile_edit(self):
-        self.client.login(username='teststaff', password='Password123')
+        self.client.login(username='teststaff@example.com', password='Password123')
         response = self.client.post(reverse('profile_edit'), {
             'username': 'updatedstaff',
             'email': 'updated@example.com',
