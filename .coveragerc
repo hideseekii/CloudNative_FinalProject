@@ -13,8 +13,6 @@ omit =
     CloudNative_final/wsgi.py
     common/mixins.py
     manage.py
-    staff/models.py
-    staff/tests.py
 
 [report]
 # 可選：排除條件式（如 if __name__ == "__main__"）
