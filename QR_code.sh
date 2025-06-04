@@ -4,7 +4,7 @@ echo "📱 生成 Port-Forward QR Code"
 echo "================================"
 
 # 確認 port-forward 地址
-URL="http://localhost:8080/health/"
+URL="http://140.113.193.244:8080"
 
 echo "🌐 訪問地址: $URL"
 echo ""

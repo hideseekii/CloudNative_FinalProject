@@ -38,6 +38,12 @@ jobs:
           chmod +x QR_code.sh
           ./QR_code.sh
 
+      - name: 📦 上傳 QR Code 圖片
+        uses: actions/upload-artifact@v4
+        with:
+          name: port-forward-qr
+          path: ./port-forward-qr.png
+
       - name: Run deploy.sh (local CD)
         run: |
           chmod +x deploy.sh
