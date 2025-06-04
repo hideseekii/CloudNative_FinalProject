@@ -14,7 +14,6 @@ class StaffAccountTests(TestCase):
             password='Password123',
             role=User.Role.STAFF
         )
-        self.client.force_login(self.staff_user)
 
     def test_signup_view(self):
         response = self.client.post(reverse('staff:signup'), {
@@ -37,7 +36,7 @@ class StaffAccountTests(TestCase):
 
     def test_logout_view(self):
         self.client.login(username='teststaff', password='Password123')
-        response = self.client.get(reverse('staff:logout'))
+        response = self.client.post(reverse('staff:logout'))
         self.assertEqual(response.status_code, 302)
         self.assertFalse('_auth_user_id' in self.client.session)
 
