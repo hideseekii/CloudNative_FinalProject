@@ -26,6 +26,9 @@
 - **API 優先設計**：RESTful API 支援前後端通訊
 - **可擴展性**：設計支援台積電內部使用者規模
 
+  ![image](https://github.com/user-attachments/assets/76c75851-69d2-4391-96ff-4ad3c63adebb)
+
+
 ## 快速部署
 
 ### 系統需求
