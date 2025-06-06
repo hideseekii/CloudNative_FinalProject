@@ -82,8 +82,9 @@ cd Cloud-Native-NYCU-FinalProject
 # 設定端口轉發以存取應用程式
 kubectl port-forward svc/django 8080:80 -n cloudnative-final
 
-# 在瀏覽器開啟 http://localhost:8080
 ```
+
+在瀏覽器開啟 http://localhost:8080
 
 ## 專案結構
 
