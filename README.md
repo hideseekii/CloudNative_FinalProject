@@ -122,25 +122,6 @@ kubectl port-forward svc/django 8080:80 -n cloudnative-final
 # 在瀏覽器開啟 http://localhost:8080
 ```
 
-## 專案結構
-
-```
-Cloud-Native-NYCU-FinalProject/
-├── CloudNative_final/    # Django 專案設定
-├── menu/                 # 菜單管理應用程式
-├── orders/               # 訂單處理應用程式  
-├── reviews/              # 評論評分系統
-├── users/                # 員工身分驗證
-├── static/               # 靜態資源 (CSS, JS, 圖片)
-├── templates/            # HTML 樣板
-├── k8s/                  # Kubernetes 部署檔案
-├── deploy.sh             # 自動化部署腳本
-├── Dockerfile            # 容器設定檔
-├── docker-compose.yml    # 本地開發環境設定
-├── requirements.txt      # Python 相依套件
-└── README.md
-```
-
 ## 開發環境設定
 
 本地開發環境（不使用 Kubernetes）：
